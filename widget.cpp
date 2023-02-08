@@ -37,34 +37,6 @@ void StateGuard<QPainter>::save(QPainter* p) { p->save(); }
 template<>
 void StateGuard<QPainter>::restore(QPainter* p) { p->restore(); }
 
-/*
-class TextRenderer {
-public:
-  TextRenderer(QStringView str, const QFont& fnt)
-    : _factory(fnt)
-  {
-    auto builder = LayoutBuilder<LinearLayout>(Qt::Horizontal);
-    std::ranges::for_each(
-          str,
-          [&](auto r) { builder.addItem(std::make_unique<RenderableItem>(r)); },
-          [&](auto c) { return _factory.item(c); }
-    );
-    _layout = builder.build();
-  }
-
-  void render(QPainter* p) const
-  {
-    StateGuard _(p);
-    p->setFont(_factory.font());
-    render_item(_layout.get(), p);
-  }
-
-private:
-  QCharRenderableFactory _factory;
-  std::unique_ptr<Layout> _layout;
-};
-*/
-
 
 Widget::Widget(QWidget *parent)
   : QWidget(parent)
@@ -137,8 +109,6 @@ void Widget::paintEvent(QPaintEvent* e)
 
   // ********* test code *********
   p.setPen(Qt::yellow);
-//  TextRenderer tro(txt, fnt);
-//  tro.render(&p);
   _clock->render(&p);
 
   e->accept();
