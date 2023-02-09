@@ -25,9 +25,9 @@ set(PROJECT_SOURCES
         render/state_guard.hpp
         render/layout.hpp
         clock/clock_widget.hpp
-        clock/char_renderable.hpp
+        skin/char_renderable.hpp
         skin/renderable_factory.hpp
-        clock/char_renderable_factory.hpp
+        skin/char_renderable_factory.hpp
         skin/clock_skin.hpp
         skin/classic_skin.hpp
 )

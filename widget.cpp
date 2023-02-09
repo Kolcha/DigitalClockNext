@@ -15,7 +15,7 @@
 #include "core/layout_builder.hpp"
 #include "core/linear_layout.hpp"
 #include "render/state_guard.hpp"
-#include "clock/char_renderable_factory.hpp"
+#include "skin/char_renderable_factory.hpp"
 #include "skin/classic_skin.hpp"
 #include "clock/clock_widget.hpp"
 
