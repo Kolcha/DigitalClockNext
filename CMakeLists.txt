@@ -23,13 +23,13 @@ set(PROJECT_SOURCES
         core/renderable_item.hpp
         core/layout_builder.hpp
         render/state_guard.hpp
-        render/layout.hpp
         clock/clock_widget.hpp
         skin/char_renderable.hpp
         skin/renderable_factory.hpp
         skin/char_renderable_factory.hpp
         skin/clock_skin.hpp
         skin/classic_skin.hpp
+        render/layout_renderer.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

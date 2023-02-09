@@ -8,7 +8,7 @@
 #include "core/linear_layout.hpp"
 #include "core/renderable_item.hpp"
 #include "skin/renderable_factory.hpp"
-#include "render/layout.hpp"
+#include "render/layout_renderer.hpp"
 
 
 // this is used (and returned) by ClassicClockSkin
@@ -26,8 +26,11 @@ public:
 protected:
   void renderImpl(QPainter* p) const override
   {
-    render_item(layout().get(), p);
+    _renderer.render(layout().get(), p);
   }
+
+private:
+  LayoutRenderer _renderer;
 };
 
 
