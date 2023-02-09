@@ -22,15 +22,6 @@ public:
   {
     ClockRenderable::setLayout(std::move(layout), std::move(separators));
   }
-
-protected:
-  void renderImpl(QPainter* p) const override
-  {
-    _renderer.render(layout().get(), p);
-  }
-
-private:
-  LayoutRenderer _renderer;
 };
 
 
@@ -41,6 +32,7 @@ class ClassicSkin : public ClockSkin {
 public:
   explicit ClassicSkin(std::shared_ptr<RenderableFactory> provider)
     : _factory(std::move(provider))
+    , _renderer(std::make_shared<LayoutRenderer>())
   {}
 
   std::shared_ptr<ClockRenderable> process(QStringView str) override
@@ -60,7 +52,7 @@ public:
     if (_widget) {
       _widget->setLayout(std::move(layout), std::move(seps));
     } else {
-      _widget = std::make_shared<ClassicSkinRenderable>(std::move(layout), std::move(seps));
+      _widget = std::make_shared<ClassicSkinRenderable>(_renderer, std::move(layout), std::move(seps));
     }
 
     return _widget;
@@ -68,5 +60,6 @@ public:
 
 private:
   std::shared_ptr<RenderableFactory> _factory;
+  std::shared_ptr<LayoutRenderer> _renderer;
   std::shared_ptr<ClassicSkinRenderable> _widget;
 };

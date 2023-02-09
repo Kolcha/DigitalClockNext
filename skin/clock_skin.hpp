@@ -8,15 +8,19 @@
 
 #include "core/layout.hpp"
 #include "core/renderable.hpp"
+#include "render/layout_renderer.hpp"
 
 
 class ClockRenderable : public RenderableBase {
+  using RendererPtr = std::shared_ptr<LayoutRenderer>;
   using LayoutPtr = std::unique_ptr<Layout>;
   using Separators = std::vector<std::shared_ptr<Renderable>>;
 
 public:
-  explicit ClockRenderable(LayoutPtr layout, Separators separators)
+  explicit ClockRenderable(RendererPtr renderer, LayoutPtr layout, Separators separators)
+    : _renderer(std::move(renderer))
   {
+    Q_ASSERT(_renderer);
     setLayout(std::move(layout), std::move(separators));
   }
 
@@ -36,6 +40,11 @@ public:
   }
 
 protected:
+  void renderImpl(QPainter* p) const final
+  {
+    _renderer->render(_layout.get(), p);
+  }
+
   void setLayout(LayoutPtr layout, Separators separators)
   {
     Q_ASSERT(layout);
@@ -47,6 +56,7 @@ protected:
   const auto& separators() const noexcept { return _separators; }
 
 private:
+  RendererPtr _renderer;
   LayoutPtr _layout;
   Separators _separators;
 };
