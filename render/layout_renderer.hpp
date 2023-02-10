@@ -11,20 +11,19 @@
 #include "core/renderable_item.hpp"
 #include "render/state_guard.hpp"
 
-/*
- * void apply_effects(effects, item, ctx, render_item);
- *
- * problem: render_item() has different signatures
- * options:
- *  - use templates     cons: multiple implementations
- *  - std::function     cons: lambda with cast inside
- */
+using RenderItemFn = std::function<void(const LayoutItem*, QPainter*)>;
 
 class Effect {
+public:
+  virtual ~Effect() = default;
+
+  virtual void apply(const LayoutItem* item, QPainter* p, RenderItemFn r) const = 0;
 };
 
 
 class LayoutRenderer {
+  using Effects = std::vector<std::shared_ptr<Effect>>;
+
 public:
   void render(const LayoutItem* item, QPainter* p) const
   {
@@ -32,17 +31,24 @@ public:
     render_item(item, p);
   }
 
-  // TODO: add effects API
+  void addItemEffect(std::shared_ptr<Effect> effect)
+  {
+    _item_effects.push_back(std::move(effect));
+  }
+
+  void addLayoutEffect(std::shared_ptr<Effect> effect)
+  {
+    _layout_effects.push_back(std::move(effect));
+  }
 
 private:
-  void apply_effects(const LayoutItem* item, QPainter* p,
-                     std::function<void(const LayoutItem*, QPainter*)> r) const {
-    // TODO: apply effects
-    // assumes flow:
-    // - effect context setup
-    // - item rendering
-    // - cleanup
-    r(item, p);
+  // this can be static
+  void apply_effects(const Effects& effects, const LayoutItem* item, QPainter* p, RenderItemFn r) const {
+    if (effects.empty()) {
+      r(item, p);
+    } else {
+      std::ranges::for_each(effects, [&](const auto& e) { e->apply(item, p, r); });
+    }
   }
 
   // this can be static
@@ -74,13 +80,15 @@ private:
     setup_context(p, item);
 
     if (auto ritem = dynamic_cast<const RenderableItem*>(item)) {
-      apply_effects(ritem, p, [this](const LayoutItem* item, QPainter* p) { render_item(static_cast<const RenderableItem*>(item), p); });
+      apply_effects(_item_effects, ritem, p, [this](const LayoutItem* item, QPainter* p) { render_item(static_cast<const RenderableItem*>(item), p); });
     }
 
     if (auto litem = dynamic_cast<const Layout*>(item)) {
-      apply_effects(litem, p, [this](const LayoutItem* item, QPainter* p) { render_item(static_cast<const Layout*>(item), p); });
+      apply_effects(_layout_effects, litem, p, [this](const LayoutItem* item, QPainter* p) { render_item(static_cast<const Layout*>(item), p); });
     }
   }
 
-  std::vector<std::shared_ptr<Effect>> _effects;
+private:
+  Effects _item_effects;
+  Effects _layout_effects;
 };

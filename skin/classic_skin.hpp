@@ -58,6 +58,17 @@ public:
     return _widget;
   }
 
+  // TODO: consider one method accepting enum value
+  void addItemEffect(std::shared_ptr<Effect> effect)
+  {
+    _renderer->addItemEffect(std::move(effect));
+  }
+
+  void addLayoutEffect(std::shared_ptr<Effect> effect)
+  {
+    _renderer->addLayoutEffect(std::move(effect));
+  }
+
 private:
   std::shared_ptr<RenderableFactory> _factory;
   std::shared_ptr<LayoutRenderer> _renderer;
