@@ -11,6 +11,7 @@
 #include <QPaintEvent>
 #include <QPalette>
 #include <QTimer>
+#include <QConicalGradient>
 
 #include "core/layout_builder.hpp"
 #include "core/linear_layout.hpp"
@@ -18,6 +19,7 @@
 #include "skin/char_renderable_factory.hpp"
 #include "skin/classic_skin.hpp"
 #include "clock/clock_widget.hpp"
+#include "render/texturing_effect.hpp"
 
 
 // TODO: move to skin implementaion file
@@ -49,6 +51,21 @@ Widget::Widget(QWidget *parent)
 
   auto provider = std::make_shared<QCharRenderableFactory>(fnt);
   auto skin = std::make_shared<ClassicSkin>(provider);
+
+  auto effect = std::make_shared<TexturingEffect>();
+
+  QConicalGradient g(0.5, 0.5, 45.0);
+  g.setStops({
+    {0.00, {170,   0,   0}},  // #aa0000
+    {0.20, {  0,  85, 255}},  // #0055ff
+    {0.45, {  0, 170,   0}},  // #00aa00
+    {0.65, {255, 255,   0}},  // #ffff00
+    {1.00, {170,   0,   0}},  // #aa0000
+  });
+
+  effect->setBrush(g);
+
+  skin->addItemEffect(effect);
 
   _clock = std::make_unique<ClockWidget>(txt, skin);
 
@@ -109,6 +126,8 @@ void Widget::paintEvent(QPaintEvent* e)
 
   // ********* test code *********
   p.setPen(Qt::yellow);
+  p.setRenderHint(QPainter::Antialiasing);
+  p.setRenderHint(QPainter::SmoothPixmapTransform);
   _clock->render(&p);
 
   e->accept();

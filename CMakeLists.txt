@@ -30,6 +30,7 @@ set(PROJECT_SOURCES
         skin/clock_skin.hpp
         skin/classic_skin.hpp
         render/layout_renderer.hpp
+        render/texturing_effect.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
