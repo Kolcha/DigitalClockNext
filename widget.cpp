@@ -12,6 +12,7 @@
 #include <QPalette>
 #include <QTimer>
 #include <QConicalGradient>
+#include <QLinearGradient>
 
 #include "core/layout_builder.hpp"
 #include "core/linear_layout.hpp"
@@ -52,20 +53,28 @@ Widget::Widget(QWidget *parent)
   auto provider = std::make_shared<QCharRenderableFactory>(fnt);
   auto skin = std::make_shared<ClassicSkin>(provider);
 
-  auto effect = std::make_shared<TexturingEffect>();
 
-  QConicalGradient g(0.5, 0.5, 45.0);
-  g.setStops({
+  QConicalGradient g1(0.5, 0.5, 45.0);
+  g1.setStops({
     {0.00, {170,   0,   0}},  // #aa0000
     {0.20, {  0,  85, 255}},  // #0055ff
     {0.45, {  0, 170,   0}},  // #00aa00
     {0.65, {255, 255,   0}},  // #ffff00
     {1.00, {170,   0,   0}},  // #aa0000
   });
+  auto effect1 = std::make_shared<TexturingEffect>();
+  effect1->setBrush(g1);
 
-  effect->setBrush(g);
+  QLinearGradient g2(0., 0., 0., 1.);
+  g2.setColorAt(0.0, Qt::blue);
+  g2.setColorAt(0.3, Qt::transparent);
+  g2.setColorAt(1.0, Qt::transparent);
+  g2.setCoordinateMode(QGradient::ObjectMode);
+  auto effect2 = std::make_shared<TexturingEffect>();
+  effect2->setBrush(g2);
 
-  skin->addItemEffect(effect);
+  skin->addItemEffect(effect1);
+  skin->addItemEffect(effect2);
 
   _clock = std::make_unique<ClockWidget>(txt, skin);
 

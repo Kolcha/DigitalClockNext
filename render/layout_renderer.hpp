@@ -21,10 +21,43 @@ public:
 };
 
 
-class LayoutRenderer {
-  using Effects = std::vector<std::shared_ptr<Effect>>;
-
+class CompositeEffect final : public Effect {
 public:
+  void apply(const LayoutItem* item, QPainter* p, RenderItemFn r) const override
+  {
+    if (_effects.empty() || item->rect().size().isEmpty()) {
+      r(item, p);
+    } else {
+      QSizeF sz = item->rect().size() * p->device()->devicePixelRatioF();
+      QPixmap res(sz.toSize());
+      res.setDevicePixelRatio(p->device()->devicePixelRatioF());
+      res.fill(Qt::transparent);
+      for (const auto& e : _effects) {
+        QPainter ep(&res);
+        ep.translate(-item->rect().topLeft());
+        e->apply(item, &ep, r);
+      }
+      p->drawPixmap(item->rect(), res, res.rect());
+    }
+  }
+
+  void addEffect(std::shared_ptr<Effect> effect)
+  {
+    _effects.push_back(std::move(effect));
+  }
+
+private:
+  std::vector<std::shared_ptr<Effect>> _effects;
+};
+
+
+class LayoutRenderer {
+public:
+  LayoutRenderer()
+    : _item_effect(std::make_shared<CompositeEffect>())
+    , _layout_effect(std::make_shared<CompositeEffect>())
+  {}
+
   void render(const LayoutItem* item, QPainter* p) const
   {
     // calls recursive function
@@ -33,24 +66,15 @@ public:
 
   void addItemEffect(std::shared_ptr<Effect> effect)
   {
-    _item_effects.push_back(std::move(effect));
+    _item_effect->addEffect(std::move(effect));
   }
 
   void addLayoutEffect(std::shared_ptr<Effect> effect)
   {
-    _layout_effects.push_back(std::move(effect));
+    _layout_effect->addEffect(std::move(effect));
   }
 
 private:
-  // this can be static
-  void apply_effects(const Effects& effects, const LayoutItem* item, QPainter* p, RenderItemFn r) const {
-    if (effects.empty()) {
-      r(item, p);
-    } else {
-      std::ranges::for_each(effects, [&](const auto& e) { e->apply(item, p, r); });
-    }
-  }
-
   // this can be static
   void setup_context(QPainter* p, const LayoutItem* item) const
   {
@@ -80,15 +104,15 @@ private:
     setup_context(p, item);
 
     if (auto ritem = dynamic_cast<const RenderableItem*>(item)) {
-      apply_effects(_item_effects, ritem, p, [this](const LayoutItem* item, QPainter* p) { render_item(static_cast<const RenderableItem*>(item), p); });
+      _item_effect->apply(ritem, p, [this](const LayoutItem* item, QPainter* p) { render_item(static_cast<const RenderableItem*>(item), p); });
     }
 
     if (auto litem = dynamic_cast<const Layout*>(item)) {
-      apply_effects(_layout_effects, litem, p, [this](const LayoutItem* item, QPainter* p) { render_item(static_cast<const Layout*>(item), p); });
+      _layout_effect->apply(litem, p, [this](const LayoutItem* item, QPainter* p) { render_item(static_cast<const Layout*>(item), p); });
     }
   }
 
 private:
-  Effects _item_effects;
-  Effects _layout_effects;
+  std::shared_ptr<CompositeEffect> _item_effect;
+  std::shared_ptr<CompositeEffect> _layout_effect;
 };
