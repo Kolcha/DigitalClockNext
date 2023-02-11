@@ -84,11 +84,7 @@ private:
   // this can be static
   void render_item(const RenderableItem* item, QPainter* p) const
   {
-    // TODO: remove this cast
-    if (auto rr = dynamic_pointer_cast<RenderableBase>(item->renderable())) {
-      rr->setRenderContext(p);
-      rr->render();
-    }
+    item->renderable()->render(p);
   }
 
   // ... but this one unfortunately not - it must call generic recursive function

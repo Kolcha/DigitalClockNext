@@ -2,6 +2,8 @@
 
 #include <QRectF>
 
+class QPainter;
+
 class Renderable {
 public:
   virtual ~Renderable() = default;
@@ -16,7 +18,7 @@ public:
 
   // no target rect here!
   // it is renderer responsibility to setup coordinate system
-  virtual void render() const = 0;
+  virtual void render(QPainter* p) const = 0;
 
   // TODO: consider `noexcept` just because the only flag is assumed
   virtual bool isVisible() const = 0;
@@ -24,22 +26,14 @@ public:
 };
 
 
-class QPainter;
-// used by implementation-specific LayoutRenderer
-// LayoutRenderer does cast to this interface
 class RenderableBase : public Renderable {
 public:
-  // called before every render() call
-  // TODO: maybe rename to updateContext()
-  // TODO: consider to make it protected (and LayoutRenderer as friend)
-  void setRenderContext(QPainter* p) { _p = p; }
-
-  void render() const final
+  void render(QPainter* p) const final
   {
-    if (!_visible || !_p)
+    if (!_visible || !p)
       return;
 
-    renderImpl(_p);
+    renderImpl(p);
   }
 
   bool isVisible() const final { return _visible; }
@@ -50,5 +44,4 @@ protected:
 
 private:
   bool _visible = true;
-  QPainter* _p = nullptr;
 };

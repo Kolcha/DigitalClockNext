@@ -36,8 +36,7 @@ public:
   {
     if (!p) return;
     StateGuard _(p);
-    _rendarable->setRenderContext(p);
-    _rendarable->render();
+    _rendarable->render(p);
   }
 
 private:
