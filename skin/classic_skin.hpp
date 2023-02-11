@@ -41,8 +41,7 @@ public:
     auto builder = LayoutBuilder<LinearLayout>(Qt::Horizontal);
     for (const auto& c : str) {
       auto r = _factory->item(c);
-      // TODO: implement isSeparator() instead
-      if (c == 'o')
+      if (isSeparator(c))
         seps.push_back(r);
       builder.addItem(std::make_unique<RenderableItem>(r));
     }
@@ -67,6 +66,13 @@ public:
   void addLayoutEffect(std::shared_ptr<Effect> effect)
   {
     _renderer->addLayoutEffect(std::move(effect));
+  }
+
+private:
+  bool isSeparator(QChar ch) const
+  {
+    // TODO: time_format.isSeparator(ch) && factory.isSeparator(ch)
+    return _factory->isSeparator(ch);
   }
 
 private:

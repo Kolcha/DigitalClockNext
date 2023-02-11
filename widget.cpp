@@ -51,6 +51,7 @@ Widget::Widget(QWidget *parent)
   QString txt = u"qofojg wofob"_qs;
 
   auto provider = std::make_shared<QCharRenderableFactory>(fnt);
+  provider->setSeparators("o");
   auto skin = std::make_shared<ClassicSkin>(provider);
 
 
