@@ -9,8 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Svg)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Svg)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -31,6 +31,9 @@ set(PROJECT_SOURCES
         skin/classic_skin.hpp
         render/layout_renderer.hpp
         render/texturing_effect.hpp
+        skin/classic_skin_loader.hpp
+        skin/legacy_skin_loader.hpp
+        skin/legacy_image_renderable.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -57,7 +60,7 @@ else()
 endif()
 
 target_include_directories(font_rendering_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(font_rendering_test PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(font_rendering_test PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Svg)
 
 set_target_properties(font_rendering_test PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
