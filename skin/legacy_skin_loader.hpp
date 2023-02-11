@@ -8,7 +8,7 @@
 #include <QHash>
 #include <QSettings>
 
-#include "skin/legacy_image_renderable.hpp"
+#include "render/legacy_image_renderable.hpp"
 
 class LegacyRenderableFactory final : public RenderableFactory {
 public:

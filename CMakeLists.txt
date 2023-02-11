@@ -24,7 +24,7 @@ set(PROJECT_SOURCES
         core/layout_builder.hpp
         render/state_guard.hpp
         clock/clock_widget.hpp
-        skin/char_renderable.hpp
+        render/char_renderable.hpp
         skin/renderable_factory.hpp
         skin/char_renderable_factory.hpp
         skin/clock_skin.hpp
@@ -33,7 +33,7 @@ set(PROJECT_SOURCES
         render/texturing_effect.hpp
         skin/classic_skin_loader.hpp
         skin/legacy_skin_loader.hpp
-        skin/legacy_image_renderable.hpp
+        render/legacy_image_renderable.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

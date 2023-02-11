@@ -4,7 +4,7 @@
 
 #include <QFont>
 
-#include "skin/char_renderable.hpp"
+#include "render/char_renderable.hpp"
 
 class QCharRenderableFactory final : public RenderableFactory {
 public:
