@@ -1,9 +1,11 @@
 #pragma once
 
-#include "render/layout_renderer.hpp"
+#include "core/effect.hpp"
 
 #include <QPainter>
 #include <QPixmap>
+
+#include "core/renderable.hpp"
 
 class TexturingEffect : public Effect {
 public:
@@ -12,7 +14,7 @@ public:
     _brush = std::move(brush);
   }
 
-  void apply(const LayoutItem* item, QPainter* p, RenderItemFn r) const override
+  void apply(const Renderable* item, QPainter* p, RenderItemFn r) const override
   {
     QSizeF sz = item->rect().size() * p->device()->devicePixelRatioF();
     if (sz.isEmpty()) return;                           // TODO: make first?

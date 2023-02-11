@@ -1,6 +1,10 @@
 #pragma once
 
+#include <memory>
+
 #include <QRectF>
+
+#include "core/effect.hpp"
 
 class QPainter;
 
@@ -23,25 +27,6 @@ public:
   // TODO: consider `noexcept` just because the only flag is assumed
   virtual bool isVisible() const = 0;
   virtual void setVisible(bool visible) = 0;
-};
 
-
-class RenderableBase : public Renderable {
-public:
-  void render(QPainter* p) const final
-  {
-    if (!_visible || !p)
-      return;
-
-    renderImpl(p);
-  }
-
-  bool isVisible() const final { return _visible; }
-  void setVisible(bool visible) final { _visible = visible; }
-
-protected:
-  virtual void renderImpl(QPainter* p) const = 0;
-
-private:
-  bool _visible = true;
+  virtual void addEffect(std::shared_ptr<Effect> effect) = 0;
 };

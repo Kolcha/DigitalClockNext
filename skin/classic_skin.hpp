@@ -8,6 +8,7 @@
 #include "core/linear_layout.hpp"
 #include "core/renderable_item.hpp"
 #include "skin/renderable_factory.hpp"
+#include "render/composite_effect.hpp"
 #include "render/layout_renderer.hpp"
 
 
@@ -29,10 +30,14 @@ public:
 // this will allow to change classic skins only with changing factory
 // TODO: add rendering customization functions
 class ClassicSkin : public ClockSkin {
+  using Separators = std::vector<std::shared_ptr<Renderable>>;
+
 public:
   explicit ClassicSkin(std::shared_ptr<RenderableFactory> provider)
     : _factory(std::move(provider))
     , _renderer(std::make_shared<LayoutRenderer>())
+    , _widget(std::make_shared<ClassicSkinRenderable>(_renderer, std::make_unique<Layout>(), Separators()))
+    , _item_effects(std::make_shared<CompositeEffect>())
   {}
 
   std::shared_ptr<ClockRenderable> process(QStringView str) override
@@ -41,31 +46,26 @@ public:
     auto builder = LayoutBuilder<LinearLayout>(Qt::Horizontal);
     for (const auto& c : str) {
       auto r = _factory->item(c);
+      r->addEffect(_item_effects);
       if (isSeparator(c))
         seps.push_back(r);
       builder.addItem(std::make_unique<RenderableItem>(r));
     }
 
     auto layout = builder.build();
-
-    if (_widget) {
-      _widget->setLayout(std::move(layout), std::move(seps));
-    } else {
-      _widget = std::make_shared<ClassicSkinRenderable>(_renderer, std::move(layout), std::move(seps));
-    }
+    _widget->setLayout(std::move(layout), std::move(seps));
 
     return _widget;
   }
 
-  // TODO: consider one method accepting enum value
   void addItemEffect(std::shared_ptr<Effect> effect)
   {
-    _renderer->addItemEffect(std::move(effect));
+    _item_effects->addEffect(std::move(effect));
   }
 
   void addLayoutEffect(std::shared_ptr<Effect> effect)
   {
-    _renderer->addLayoutEffect(std::move(effect));
+    _widget->addEffect(std::move(effect));
   }
 
 private:
@@ -79,4 +79,5 @@ private:
   std::shared_ptr<RenderableFactory> _factory;
   std::shared_ptr<LayoutRenderer> _renderer;
   std::shared_ptr<ClassicSkinRenderable> _widget;
+  std::shared_ptr<CompositeEffect> _item_effects;
 };

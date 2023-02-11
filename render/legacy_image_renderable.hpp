@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/renderable.hpp"
+#include "render/renderable_base.hpp"
 
 #include <memory>
 

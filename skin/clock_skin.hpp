@@ -6,28 +6,20 @@
 
 #include <QStringView>
 
-#include "core/layout.hpp"
-#include "core/renderable.hpp"
-#include "render/layout_renderer.hpp"
+#include "render/layout_renderable.hpp"
 
 
-class ClockRenderable : public RenderableBase {
+class ClockRenderable : public LayoutRenderable {
   using RendererPtr = std::shared_ptr<LayoutRenderer>;
   using LayoutPtr = std::unique_ptr<Layout>;
   using Separators = std::vector<std::shared_ptr<Renderable>>;
 
 public:
-  explicit ClockRenderable(RendererPtr renderer, LayoutPtr layout, Separators separators)
-    : _renderer(std::move(renderer))
+  ClockRenderable(RendererPtr renderer, LayoutPtr layout, Separators separators)
+    : LayoutRenderable(std::move(renderer), std::move(layout))
+    , _separators(std::move(separators))
   {
-    Q_ASSERT(_renderer);
-    setLayout(std::move(layout), std::move(separators));
   }
-
-  QRectF rect() const override { return _layout->geometry(); }
-
-  qreal advanceX() const override { return _layout->advanceX(); }
-  qreal advanceY() const override { return _layout->advanceY(); }
 
   void setSeparatorsVisible(bool visible)
   {
@@ -40,24 +32,15 @@ public:
   }
 
 protected:
-  void renderImpl(QPainter* p) const final
-  {
-    _renderer->render(_layout.get(), p);
-  }
-
   void setLayout(LayoutPtr layout, Separators separators)
   {
-    Q_ASSERT(layout);
-    _layout = std::move(layout);
+    LayoutRenderable::setLayout(std::move(layout));
     _separators = std::move(separators);
   }
 
-  const auto& layout() const noexcept { return _layout; }
   const auto& separators() const noexcept { return _separators; }
 
 private:
-  RendererPtr _renderer;
-  LayoutPtr _layout;
   Separators _separators;
 };
 

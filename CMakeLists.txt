@@ -34,6 +34,10 @@ set(PROJECT_SOURCES
         skin/classic_skin_loader.hpp
         skin/legacy_skin_loader.hpp
         render/legacy_image_renderable.hpp
+        core/effect.hpp
+        render/renderable_base.hpp
+        render/layout_renderable.hpp
+        render/composite_effect.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
