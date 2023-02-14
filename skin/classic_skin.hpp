@@ -46,6 +46,10 @@ public:
     auto builder = LayoutBuilder<LinearLayout>(Qt::Horizontal);
     for (const auto& c : str) {
       auto r = _factory->item(c);
+      if (!r) {
+        qDebug() << "no renderable: ch =" << c;
+        continue;
+      }
       r->addEffect(_item_effects);
       if (isSeparator(c))
         seps.push_back(r);

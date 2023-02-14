@@ -21,6 +21,7 @@
 #include "skin/classic_skin.hpp"
 #include "clock/clock_widget.hpp"
 #include "render/texturing_effect.hpp"
+#include "skin/legacy_skin_loader.hpp"
 
 
 // TODO: move to skin implementaion file
@@ -46,14 +47,17 @@ Widget::Widget(QWidget *parent)
 {
   _timer = new QTimer(this);
 
-  QFont fnt(u"Bad Script"_qs, 72);
+//  QFont fnt(u"Bad Script"_qs, 72);
 //  QFont fnt(u"Segoe Script"_qs, 48);
-  QString txt = u"qofojg wofob"_qs;
-
+//  QString txt = u"qofojg wofob"_qs;
+  QString txt = "00:00";
+/*
   auto provider = std::make_shared<QCharRenderableFactory>(fnt);
   provider->setSeparators("o");
   auto skin = std::make_shared<ClassicSkin>(provider);
-
+*/
+  LegacySkinLoader loader;
+  auto skin = loader.load("floral_digits");
 
   QConicalGradient g1(0.5, 0.5, 45.0);
   g1.setStops({
@@ -63,13 +67,14 @@ Widget::Widget(QWidget *parent)
     {0.65, {255, 255,   0}},  // #ffff00
     {1.00, {170,   0,   0}},  // #aa0000
   });
+  g1.setCoordinateMode(QGradient::ObjectMode);
   auto effect1 = std::make_shared<TexturingEffect>();
   effect1->setBrush(g1);
 
   QLinearGradient g2(0., 0., 0., 1.);
-  g2.setColorAt(0.0, Qt::blue);
-  g2.setColorAt(0.3, Qt::transparent);
-  g2.setColorAt(1.0, Qt::transparent);
+  g2.setColorAt(0.0, Qt::transparent);
+  g2.setColorAt(0.9, Qt::transparent);
+  g2.setColorAt(1.0, Qt::magenta);
   g2.setCoordinateMode(QGradient::ObjectMode);
   auto effect2 = std::make_shared<TexturingEffect>();
   effect2->setBrush(g2);
@@ -77,10 +82,11 @@ Widget::Widget(QWidget *parent)
   skin->addItemEffect(effect1);
   skin->addItemEffect(effect2);
 
-  _clock = std::make_unique<ClockWidget>(txt, skin);
+  _clock = std::make_unique<ClockWidget>(txt, std::move(skin));
 
   connect(_timer, &QTimer::timeout, this, [this]() { _clock->setSeparatorVisible(!_clock->isSeparatorVisible()); });
   connect(_timer, &QTimer::timeout, this, qOverload<>(&QWidget::update));
+  connect(_timer, &QTimer::timeout, this, [this]() { _clock->setDateTime(QDateTime::currentDateTime().toString("hh:mm:ssa")); });
 
   using namespace std::chrono_literals;
   _timer->start(500ms);
@@ -95,46 +101,6 @@ void Widget::paintEvent(QPaintEvent* e)
 {
   QPainter p(this);
 
-  p.setPen(Qt::red);
-  p.drawRect(rect());
-
-  p.setPen(Qt::black);
-  p.drawLine(0, height() / 2, width(), height() / 2);
-  p.drawLine(width() / 2, 0, width() / 2, height());
-
-  p.translate(rect().center());
-
-  QFont fnt(u"Bad Script"_qs, 72);
-//  QFont fnt(u"Segoe Script"_qs, 48);
-  QString txt = u"qofojg wofob"_qs;
-
-  QFontMetricsF fmf(fnt);
-  QRectF tbr = fmf.boundingRect(txt);
-  p.translate(-tbr.width() / 2., 0.);
-  qDebug() << "text br h:" << tbr.height()
-           << "font h:" << fmf.height()
-           << "line spacing:" << fmf.lineSpacing();
-  p.setPen(Qt::cyan);
-  p.drawRect(tbr);
-
-  // ********* reference code *********
-  p.save();
-  p.setFont(fnt);
-
-  for (const auto& ch : txt) {
-    QRectF br = fmf.boundingRect(ch);
-    p.setPen(Qt::blue);
-    p.drawRect(br);
-    p.setPen(palette().color(QPalette::Text));
-    p.drawText(QPointF(0., 0.), QString(ch));
-    p.setPen(Qt::green);
-    p.drawLine(QPointF(br.left(), 0.), QPointF(br.right(), 0.));
-    p.drawLine(QPointF(0., br.top()), QPointF(0., br.bottom()));
-    p.translate(fmf.horizontalAdvance(ch), 0.);
-  }
-  p.restore();
-
-  // ********* test code *********
   p.setPen(Qt::yellow);
   p.setRenderHint(QPainter::Antialiasing);
   p.setRenderHint(QPainter::SmoothPixmapTransform);
