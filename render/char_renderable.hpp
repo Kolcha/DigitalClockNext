@@ -26,14 +26,9 @@ public:
   qreal advanceX() const override { return _ax; }
   qreal advanceY() const override { return _ay; }
 
-  QChar chara() const { return _ch; }
-
 protected:
   void renderImpl(QPainter* p) const override
   {
-    // TODO: consider removal (parent guarantees non-null)
-    if (!p) return;
-
     StateGuard _(p);
     p->setFont(_font);
     // TODO: consider QStaticText

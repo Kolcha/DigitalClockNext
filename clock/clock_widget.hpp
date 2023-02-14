@@ -36,6 +36,7 @@ public:
   {
     if (!p) return;
     StateGuard _(p);
+    p->translate(-_rendarable->rect().topLeft());
     _rendarable->render(p);
   }
 
