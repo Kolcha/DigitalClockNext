@@ -75,6 +75,7 @@ protected:
     std::ranges::for_each(items, [](auto& i) { i->setGeometry(i->rect()); });
 
     auto prev_item = items.front().get();
+    this->setRect(prev_item->rect());
     for (auto iter = std::next(items.begin()); iter != items.end(); ++iter) {
       auto curr_item = iter->get();
       auto ppos = (prev_item->geometry().*_orientation->rpos)();
