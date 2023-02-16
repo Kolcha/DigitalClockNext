@@ -5,11 +5,14 @@
 #include <assert.h>
 #include <memory>
 #include <utility>
+#include <vector>
 
+#include "effect.hpp"
 #include "renderable.hpp"
 
 class RenderableItem final : public LayoutItem {
   using RenderablePtr = std::shared_ptr<Renderable>;
+  using Effects = std::vector<std::shared_ptr<Effect>>;
 
 public:
   explicit RenderableItem(RenderablePtr renderable)
@@ -29,6 +32,14 @@ public:
   qreal advanceX() const override { return _renderable->advanceX(); }
   qreal advanceY() const override { return _renderable->advanceY(); }
 
+  void addEffect(std::shared_ptr<Effect> effect)
+  {
+    _effects.push_back(std::move(effect));
+  }
+
+  const Effects& effects() const noexcept { return _effects; }
+
 private:
   RenderablePtr _renderable;
+  Effects _effects;
 };

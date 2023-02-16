@@ -16,21 +16,19 @@ public:
 
   void apply(const Renderable* item, QPainter* p, RenderItemFn r) const override
   {
-    QSizeF sz = item->rect().size() * p->device()->devicePixelRatioF();
-    if (sz.isEmpty()) return;                           // TODO: make first?
-    QPixmap buffer(sz.toSize());
+    QPixmap buffer(p->device()->width(), p->device()->height());
     buffer.setDevicePixelRatio(p->device()->devicePixelRatioF());
     buffer.fill(Qt::transparent);
     {
       QPainter tx_painter(&buffer);
-      tx_painter.translate(-item->rect().topLeft());
+//      tx_painter.translate(-item->rect().topLeft());
       r(item, &tx_painter);
       tx_painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
       tx_painter.setPen(Qt::NoPen);
       tx_painter.setBrush(_brush);
-      tx_painter.drawRect(item->rect());
+      tx_painter.drawRect(QRectF(QPointF(0, 0), buffer.deviceIndependentSize()));
     }
-    p->drawPixmap(item->rect(), buffer, buffer.rect());
+    p->drawPixmap(0, 0, buffer);
   }
 
 private:

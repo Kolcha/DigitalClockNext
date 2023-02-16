@@ -85,8 +85,9 @@ Widget::Widget(QWidget *parent)
   _clock = std::make_unique<ClockWidget>(txt, std::move(skin));
 
   connect(_timer, &QTimer::timeout, this, [this]() { _clock->setSeparatorVisible(!_clock->isSeparatorVisible()); });
-  connect(_timer, &QTimer::timeout, this, qOverload<>(&QWidget::update));
+//  connect(_timer, &QTimer::timeout, this, [this]() { _clock->setDateTime(QString("0")); });
   connect(_timer, &QTimer::timeout, this, [this]() { _clock->setDateTime(QDateTime::currentDateTime().toString("hh:mm:ssa")); });
+  connect(_timer, &QTimer::timeout, this, qOverload<>(&QWidget::update));
 
   using namespace std::chrono_literals;
   _timer->start(500ms);
@@ -100,10 +101,12 @@ Widget::~Widget()
 void Widget::paintEvent(QPaintEvent* e)
 {
   QPainter p(this);
+  p.scale(2, 4);
 
   p.setPen(Qt::yellow);
   p.setRenderHint(QPainter::Antialiasing);
   p.setRenderHint(QPainter::SmoothPixmapTransform);
+  p.setRenderHint(QPainter::LosslessImageRendering);
   _clock->render(&p);
 
   e->accept();

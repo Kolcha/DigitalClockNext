@@ -50,10 +50,11 @@ public:
         qDebug() << "no renderable: ch =" << c;
         continue;
       }
-      r->addEffect(_item_effects);
       if (isSeparator(c))
         seps.push_back(r);
-      builder.addItem(std::make_unique<RenderableItem>(r));
+      auto item = std::make_unique<RenderableItem>(r);
+      item->addEffect(_item_effects);
+      builder.addItem(std::move(item));
     }
 
     auto layout = builder.build();
@@ -69,7 +70,7 @@ public:
 
   void addLayoutEffect(std::shared_ptr<Effect> effect)
   {
-    _widget->addEffect(std::move(effect));
+//    _widget->addEffect(std::move(effect));
   }
 
 private:

@@ -17,16 +17,14 @@ public:
     if (_effects.empty() || item->rect().size().isEmpty()) {
       r(item, p);
     } else {
-      QSizeF sz = item->rect().size() * p->device()->devicePixelRatioF();
-      QPixmap res(sz.toSize());
+      QPixmap res(p->device()->width(), p->device()->height());
       res.setDevicePixelRatio(p->device()->devicePixelRatioF());
       res.fill(Qt::transparent);
       for (const auto& e : _effects) {
         QPainter ep(&res);
-        ep.translate(-item->rect().topLeft());
         e->apply(item, &ep, r);
       }
-      p->drawPixmap(item->rect(), res, res.rect());
+      p->drawPixmap(0, 0, res);
     }
   }
 
