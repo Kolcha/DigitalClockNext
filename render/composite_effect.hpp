@@ -3,10 +3,8 @@
 #include "core/effect.hpp"
 
 #include <memory>
+#include <ranges>
 #include <vector>
-
-#include <QPainter>
-#include <QPixmap>
 
 #include "core/renderable.hpp"
 
@@ -17,14 +15,7 @@ public:
     if (_effects.empty() || item->rect().size().isEmpty()) {
       r(item, p);
     } else {
-      QPixmap res(p->device()->width(), p->device()->height());
-      res.setDevicePixelRatio(p->device()->devicePixelRatioF());
-      res.fill(Qt::transparent);
-      for (const auto& e : _effects) {
-        QPainter ep(&res);
-        e->apply(item, &ep, r);
-      }
-      p->drawPixmap(0, 0, res);
+      std::ranges::for_each(_effects, [=](const auto& e) { e->apply(item, p, r); });
     }
   }
 
