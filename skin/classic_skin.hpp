@@ -30,17 +30,15 @@ public:
 // this will allow to change classic skins only with changing factory
 // TODO: add rendering customization functions
 class ClassicSkin : public ClockSkin {
-  using Separators = std::vector<std::shared_ptr<Renderable>>;
-
 public:
   explicit ClassicSkin(std::shared_ptr<RenderableFactory> provider)
     : _factory(std::move(provider))
     , _renderer(std::make_shared<LayoutRenderer>())
-    , _widget(std::make_shared<ClassicSkinRenderable>(_renderer, std::make_unique<Layout>(), Separators()))
     , _item_effects(std::make_shared<CompositeEffect>())
+    , _layout_effects(std::make_shared<CompositeEffect>())
   {}
 
-  std::shared_ptr<ClockRenderable> process(QStringView str) override
+  std::unique_ptr<RenderableItem> process(QStringView str) override
   {
     std::vector<std::shared_ptr<Renderable>> seps;
     auto builder = LayoutBuilder<LinearLayout>(Qt::Horizontal);
@@ -58,9 +56,10 @@ public:
     }
 
     auto layout = builder.build();
-    _widget->setLayout(std::move(layout), std::move(seps));
-
-    return _widget;
+    auto r = createRenderable(std::move(layout), std::move(seps));
+    auto item = std::make_unique<RenderableItem>(r);
+    item->addEffect(_layout_effects);
+    return item;
   }
 
   void addItemEffect(std::shared_ptr<Effect> effect)
@@ -70,7 +69,7 @@ public:
 
   void addLayoutEffect(std::shared_ptr<Effect> effect)
   {
-//    _widget->addEffect(std::move(effect));
+    _layout_effects->addEffect(std::move(effect));
   }
 
 private:
@@ -80,9 +79,19 @@ private:
     return _factory->isSeparator(ch);
   }
 
+  std::shared_ptr<ClockRenderable> createRenderable(auto... args)
+  {
+    if (_widget)
+      _widget->setLayout(std::move(args)...);
+    else
+      _widget = std::make_shared<ClassicSkinRenderable>(_renderer, std::move(args)...);
+    return _widget;
+  }
+
 private:
   std::shared_ptr<RenderableFactory> _factory;
   std::shared_ptr<LayoutRenderer> _renderer;
   std::shared_ptr<ClassicSkinRenderable> _widget;
   std::shared_ptr<CompositeEffect> _item_effects;
+  std::shared_ptr<CompositeEffect> _layout_effects;
 };

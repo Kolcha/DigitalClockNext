@@ -2,8 +2,9 @@
 
 #include <memory>
 
-#include "skin/clock_skin.hpp"
+#include "render/layout_renderer.hpp"
 #include "render/state_guard.hpp"
+#include "skin/clock_skin.hpp"
 
 // TODO: what about plugins' layouts? for now skin assumes only time
 // TODO: handle plugins' layouts using Qt' stuff - widgets may be clickable
@@ -12,6 +13,7 @@ class ClockWidget final {
 public:
   ClockWidget(QStringView str, std::shared_ptr<ClockSkin> skin)
     : _skin(skin)
+    , _renderer(std::make_unique<LayoutRenderer>())
   {
     // initial value must be supplied to build layout
     setDateTime(str);
@@ -21,26 +23,36 @@ public:
   // ignored for now, just use hardcoded string
   void setDateTime(QStringView str)
   {
-    _rendarable = _skin->process(str);
+    _item = _skin->process(str);
   }
 
   // TODO: what about fade in/out or glow animations?
   void setSeparatorVisible(bool visible)
   {
-    _rendarable->setSeparatorsVisible(visible);
+    renderable()->setSeparatorsVisible(visible);
   }
 
-  bool isSeparatorVisible() const { return _rendarable->areSeparatorsVisible(); }
+  bool isSeparatorVisible() const
+  {
+    return renderable()->areSeparatorsVisible();
+  }
 
   void render(QPainter* p) const
   {
     if (!p) return;
     StateGuard _(p);
-    p->translate(-_rendarable->rect().topLeft());
-    _rendarable->render(p);
+    p->translate(-_item->rect().topLeft());
+    _renderer->render(_item.get(), p);
+  }
+
+private:
+  std::shared_ptr<ClockRenderable> renderable() const
+  {
+    return static_pointer_cast<ClockRenderable>(_item->renderable());
   }
 
 private:
   std::shared_ptr<ClockSkin> _skin;
-  std::shared_ptr<ClockRenderable> _rendarable;
+  std::unique_ptr<LayoutRenderer> _renderer;
+  std::unique_ptr<RenderableItem> _item;
 };

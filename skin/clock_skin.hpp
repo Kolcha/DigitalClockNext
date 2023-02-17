@@ -6,6 +6,7 @@
 
 #include <QStringView>
 
+#include "core/renderable_item.hpp"
 #include "render/layout_renderable.hpp"
 
 
@@ -50,5 +51,5 @@ public:
   virtual ~ClockSkin() = default;
 
   // TODO: replace with date/time type, string for now
-  virtual std::shared_ptr<ClockRenderable> process(QStringView dt) = 0;
+  virtual std::unique_ptr<RenderableItem> process(QStringView dt) = 0;
 };
