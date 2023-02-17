@@ -2,14 +2,11 @@
 
 #include <chrono>
 #include <memory>
-#include <ranges>
 
 #include <QDebug>
 #include <QDateTime>
-#include <QFontMetrics>
 #include <QPainter>
 #include <QPaintEvent>
-#include <QPalette>
 #include <QTimer>
 #include <QConicalGradient>
 #include <QLinearGradient>
@@ -106,7 +103,6 @@ void Widget::paintEvent(QPaintEvent* e)
   QPainter p(this);
   p.scale(2, 4);
 
-  p.setPen(Qt::yellow);
   p.setRenderHint(QPainter::Antialiasing);
   p.setRenderHint(QPainter::SmoothPixmapTransform);
   p.setRenderHint(QPainter::LosslessImageRendering);
