@@ -14,7 +14,6 @@
 
 // this is used (and returned) by ClassicClockSkin
 // TODO: consider make it "implementation detail"
-// TODO: add rendering customization functions
 class ClassicSkinRenderable : public ClockRenderable {
 public:
   using ClockRenderable::ClockRenderable;
@@ -28,7 +27,8 @@ public:
 
 // TODO: consider to add setter for factory object -
 // this will allow to change classic skins only with changing factory
-// TODO: add rendering customization functions
+// TODO: add rendering customization functions (spacing, etc.)
+// TODO: consider shared renderer
 class ClassicSkin : public ClockSkin {
 public:
   explicit ClassicSkin(std::shared_ptr<RenderableFactory> provider)

@@ -8,7 +8,9 @@
 
 // TODO: what about plugins' layouts? for now skin assumes only time
 // TODO: handle plugins' layouts using Qt' stuff - widgets may be clickable
+// TODO: consider shared renderer
 // useless class, exists just for testing
+// TODO: make it useful! it can be embedded into QWidget derivative
 class ClockWidget final {
 public:
   ClockWidget(QStringView str, std::shared_ptr<ClockSkin> skin)
@@ -20,7 +22,6 @@ public:
   }
 
   // TODO: replace with date/time type
-  // ignored for now, just use hardcoded string
   void setDateTime(QStringView str)
   {
     _item = _skin->process(str);
