@@ -38,6 +38,7 @@ set(PROJECT_SOURCES
         render/renderable_base.hpp
         render/layout_renderable.hpp
         render/composite_effect.hpp
+        render/identity_effect.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

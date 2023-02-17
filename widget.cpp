@@ -20,6 +20,7 @@
 #include "skin/char_renderable_factory.hpp"
 #include "skin/classic_skin.hpp"
 #include "clock/clock_widget.hpp"
+#include "render/identity_effect.hpp"
 #include "render/texturing_effect.hpp"
 #include "skin/legacy_skin_loader.hpp"
 
@@ -80,7 +81,8 @@ Widget::Widget(QWidget *parent)
   effect2->setBrush(g2);
 
   skin->addItemEffect(effect1);
-  skin->addItemEffect(effect2);
+  skin->addLayoutEffect(std::make_unique<IdentityEffect>());
+  skin->addLayoutEffect(effect2);
 
   _clock = std::make_unique<ClockWidget>(txt, std::move(skin));
 
