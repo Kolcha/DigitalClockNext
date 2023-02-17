@@ -13,18 +13,17 @@
 // TODO: make it useful! it can be embedded into QWidget derivative
 class ClockWidget final {
 public:
-  ClockWidget(QStringView str, std::shared_ptr<ClockSkin> skin)
+  ClockWidget(const QDateTime& dt, std::shared_ptr<ClockSkin> skin)
     : _skin(skin)
     , _renderer(std::make_unique<LayoutRenderer>())
   {
     // initial value must be supplied to build layout
-    setDateTime(str);
+    setDateTime(dt);
   }
 
-  // TODO: replace with date/time type
-  void setDateTime(QStringView str)
+  void setDateTime(const QDateTime& dt)
   {
-    _item = _skin->process(str);
+    _item = _skin->process(dt);
   }
 
   // TODO: what about fade in/out or glow animations?

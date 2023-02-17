@@ -50,8 +50,6 @@ Widget::Widget(QWidget *parent)
 
 //  QFont fnt(u"Bad Script"_qs, 72);
 //  QFont fnt(u"Segoe Script"_qs, 48);
-//  QString txt = u"qofojg wofob"_qs;
-  QString txt = "00:00";
 /*
   auto provider = std::make_shared<QCharRenderableFactory>(fnt);
   provider->setSeparators("o");
@@ -84,11 +82,14 @@ Widget::Widget(QWidget *parent)
   skin->addLayoutEffect(std::make_unique<IdentityEffect>());
   skin->addLayoutEffect(effect2);
 
-  _clock = std::make_unique<ClockWidget>(txt, std::move(skin));
+  skin->formatter()->setFormat("hh:mm:ss a");
+
+  auto now = []() { return QDateTime::currentDateTime(); };
+
+  _clock = std::make_unique<ClockWidget>(now(), std::move(skin));
 
   connect(_timer, &QTimer::timeout, this, [this]() { _clock->setSeparatorVisible(!_clock->isSeparatorVisible()); });
-//  connect(_timer, &QTimer::timeout, this, [this]() { _clock->setDateTime(QString("0")); });
-  connect(_timer, &QTimer::timeout, this, [this]() { _clock->setDateTime(QDateTime::currentDateTime().toString("hh:mm:ssa")); });
+  connect(_timer, &QTimer::timeout, this, [this, now]() { _clock->setDateTime(now()); });
   connect(_timer, &QTimer::timeout, this, qOverload<>(&QWidget::update));
 
   using namespace std::chrono_literals;

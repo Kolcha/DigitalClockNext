@@ -4,7 +4,7 @@
 #include <ranges>
 #include <vector>
 
-#include <QStringView>
+#include <QDateTime>
 
 #include "core/renderable_item.hpp"
 #include "render/layout_renderable.hpp"
@@ -50,6 +50,5 @@ class ClockSkin {
 public:
   virtual ~ClockSkin() = default;
 
-  // TODO: replace with date/time type, string for now
-  virtual std::unique_ptr<RenderableItem> process(QStringView dt) = 0;
+  virtual std::unique_ptr<RenderableItem> process(const QDateTime& dt) = 0;
 };

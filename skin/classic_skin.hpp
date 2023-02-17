@@ -4,6 +4,7 @@
 
 #include <memory>
 
+#include "clock/datetime_formatter.hpp"
 #include "core/layout_builder.hpp"
 #include "core/linear_layout.hpp"
 #include "core/renderable_item.hpp"
@@ -36,13 +37,14 @@ public:
     , _renderer(std::make_shared<LayoutRenderer>())
     , _item_effects(std::make_shared<CompositeEffect>())
     , _layout_effects(std::make_shared<CompositeEffect>())
+    , _formatter(std::make_unique<DateTimeFormatter>("hh:mm a"))
   {}
 
-  std::unique_ptr<RenderableItem> process(QStringView str) override
+  std::unique_ptr<RenderableItem> process(const QDateTime& dt) override
   {
     std::vector<std::shared_ptr<Renderable>> seps;
     auto builder = LayoutBuilder<LinearLayout>(Qt::Horizontal);
-    for (const auto& c : str) {
+    for (const auto& c : _formatter->process(dt)) {
       auto r = _factory->item(c);
       if (!r) {
         qDebug() << "no renderable: ch =" << c;
@@ -72,11 +74,12 @@ public:
     _layout_effects->addEffect(std::move(effect));
   }
 
+  const auto& formatter() const noexcept { return _formatter; }
+
 private:
   bool isSeparator(QChar ch) const
   {
-    // TODO: time_format.isSeparator(ch) && factory.isSeparator(ch)
-    return _factory->isSeparator(ch);
+    return _formatter->isSeparator(ch) && _factory->isSeparator(ch);
   }
 
   std::shared_ptr<ClockRenderable> createRenderable(auto... args)
@@ -94,4 +97,5 @@ private:
   std::shared_ptr<ClassicSkinRenderable> _widget;
   std::shared_ptr<CompositeEffect> _item_effects;
   std::shared_ptr<CompositeEffect> _layout_effects;
+  std::unique_ptr<DateTimeFormatter> _formatter;
 };

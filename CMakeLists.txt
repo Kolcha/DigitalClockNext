@@ -39,6 +39,7 @@ set(PROJECT_SOURCES
         render/layout_renderable.hpp
         render/composite_effect.hpp
         render/identity_effect.hpp
+        clock/datetime_formatter.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
