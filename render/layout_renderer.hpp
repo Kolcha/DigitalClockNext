@@ -28,28 +28,28 @@ private:
   {
     assert(!item->rect().isEmpty());
     assert(!item->effects().empty());
-    StateGuard _(p);
-    qreal sx = p->transform().m11();
-    qreal sy = p->transform().m22();
-    QSizeF s = item->rect().size() * p->device()->devicePixelRatioF();
-    s.setWidth(s.width() * sx);
-    s.setHeight(s.height() * sy);
-    QPixmap res(s.toSize());
-    res.setDevicePixelRatio(p->device()->devicePixelRatioF());
-    res.fill(Qt::transparent);
+
+    QTransform t = p->transform();
+    QRectF br = p->transform().map(QPolygonF(item->rect())).boundingRect();
+
+    QSizeF sz = br.size() * p->device()->devicePixelRatioF();
+    QPixmap pxm(sz.toSize());
+    pxm.setDevicePixelRatio(p->device()->devicePixelRatioF());
+    pxm.fill(Qt::transparent);
+
+    // TODO: consider pixmap interface: QPixmap effect->apply(prev_res, orig_image);
     for (const auto& effect : item->effects()) {
-      QPainter ep(&res);
-      effect->apply(item->renderable().get(), &ep, [=](const Renderable* r, QPainter* p) {
+      QPainter ep(&pxm);
+      effect->apply(item->renderable().get(), &ep, [&](const Renderable* r, QPainter* p) {
         StateGuard _(p);
-        p->scale(sx, sy);
-        p->translate(-r->rect().topLeft());
+        p->translate(-br.topLeft());
+        p->setTransform(t, true);
         r->render(p);
       });
     }
-    QTransform t = p->transform();
-    t.setMatrix(1.0, t.m12(), t.m13(), t.m21(), 1.0, t.m23(), t.m31(), t.m32(), t.m33());
-    p->setTransform(t);
-    p->drawPixmap(QPointF(sx * item->rect().x(), sy * item->rect().y()), res);
+
+    p->resetTransform();
+    p->drawPixmap(br.topLeft(), pxm);
   }
 
   static void render_item(const RenderableItem* item, QPainter* p)

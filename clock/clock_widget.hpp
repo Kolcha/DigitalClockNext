@@ -41,7 +41,7 @@ public:
   {
     if (!p) return;
     StateGuard _(p);
-    p->translate(-_item->rect().topLeft());
+    p->translate(-_item->geometry().topLeft());
     _renderer->render(_item.get(), p);
   }
 
