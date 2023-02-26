@@ -21,6 +21,11 @@ public:
 private:
   static void setup_context(QPainter* p, const LayoutItem* item)
   {
+    p->translate(item->pos());
+  }
+
+  static void setup_context(QPainter* p, const RenderableItem* item)
+  {
     p->setTransform(item->transform(), true);
   }
 
@@ -74,6 +79,7 @@ private:
     setup_context(p, item);
 
     if (auto ritem = dynamic_cast<const RenderableItem*>(item)) {
+      setup_context(p, ritem);
       render_item(ritem, p);
     }
 

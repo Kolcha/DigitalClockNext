@@ -72,7 +72,7 @@ protected:
     if (items.empty())
       return;
 
-    std::ranges::for_each(items, [](auto& i) { i->setGeometry(i->rect()); });
+    std::ranges::for_each(items, [](auto& i) { i->setPos({}); });
 
     auto prev_item = items.front().get();
     this->setRect(prev_item->rect());
@@ -81,9 +81,9 @@ protected:
       auto ppos = (prev_item->geometry().*_orientation->rpos)();
       auto pd00 = (prev_item->rect().*_orientation->rpos)();
       auto padv = (prev_item->*_orientation->advance)();
-      QTransform t;
-      (_orientation->translate)(t, ppos - pd00 + padv + _spacing);
-      curr_item->setTransform(std::move(t));
+      QPointF pos;
+      (pos.*_orientation->wpos)(ppos - pd00 + padv + _spacing);
+      curr_item->setPos(std::move(pos));
       prev_item = curr_item;
     }
   }
@@ -91,21 +91,21 @@ protected:
 private:
   struct OrientationImpl {
     qreal(QRectF::*rpos)() const;
-    void(*translate)(QTransform&, qreal);
+    void(QPointF::*wpos)(qreal);
     qreal(QRectF::*length)() const;
     qreal(LayoutItem::*advance)() const;
   };
 
   static constexpr const OrientationImpl horizontal {
     &QRectF::x,
-    [](QTransform& tr, qreal dx) { tr.translate(dx, 0); },
+    &QPointF::setX,
     &QRectF::width,
     &LayoutItem::advanceX
   };
 
   static constexpr const OrientationImpl vertical {
     &QRectF::y,
-    [](QTransform& tr, qreal dy) { tr.translate(0, dy); },
+    &QPointF::setY,
     &QRectF::height,
     &LayoutItem::advanceY
   };

@@ -7,6 +7,8 @@
 #include <utility>
 #include <vector>
 
+#include <QTransform>
+
 #include "effect.hpp"
 #include "renderable.hpp"
 
@@ -24,13 +26,25 @@ public:
   {
     assert(renderable);
     _renderable = std::move(renderable);
-    this->setRect(_renderable->rect());
+    applyTransform();
   }
 
   auto renderable() const noexcept { return _renderable; }
 
+  // TODO: make dependant on transform
   qreal advanceX() const override { return _renderable->advanceX(); }
   qreal advanceY() const override { return _renderable->advanceY(); }
+
+  void setTransform(QTransform transform)
+  {
+    if (transform == _transform)
+      return;
+
+    _transform = std::move(transform);
+    applyTransform();
+  }
+
+  const QTransform& transform() const noexcept { return _transform; }
 
   void addEffect(std::shared_ptr<Effect> effect)
   {
@@ -40,6 +54,14 @@ public:
   const Effects& effects() const noexcept { return _effects; }
 
 private:
+  void applyTransform()
+  {
+    assert(_renderable);
+    setRect(_transform.mapRect(_renderable->rect()));
+  }
+
+private:
   RenderablePtr _renderable;
+  QTransform _transform;
   Effects _effects;
 };
