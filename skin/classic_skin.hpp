@@ -44,7 +44,8 @@ public:
   {
     std::vector<std::shared_ptr<Renderable>> seps;
     auto builder = LayoutBuilder<LinearLayout>(Qt::Horizontal);
-    for (const auto& c : _formatter->process(dt)) {
+    const auto str = _formatter->process(dt);
+    for (const auto& c : str) {
       auto r = _factory->item(c);
       if (!r) {
         qDebug() << "no renderable: ch =" << c;
