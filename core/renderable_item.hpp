@@ -58,6 +58,7 @@ private:
   {
     assert(_renderable);
     setRect(_transform.mapRect(_renderable->rect()));
+    updateGeometry();
   }
 
 private:

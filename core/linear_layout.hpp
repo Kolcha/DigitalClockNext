@@ -3,9 +3,6 @@
 #include "layout.hpp"
 
 #include <algorithm>
-#include <iterator>
-#include <memory>
-#include <numeric>
 #include <utility>
 
 class LinearLayout : public Layout {
@@ -16,14 +13,7 @@ public:
   {
     setOrientation(o);
   }
-/*
-  void addItem(std::unique_ptr<LayoutItem> item, bool rebuild = true)
-  {
-    Layout::addItem(std::move(item));
-    if (rebuild)
-      rebuildLayout();
-  }
-*/
+
   qreal spacing() const noexcept { return _spacing; }
 
   void setSpacing(qreal spacing)
@@ -33,7 +23,7 @@ public:
 
     _spacing = spacing;
 
-    rebuildLayout();
+    updateGeometry();
   }
 
   Qt::Orientation orientation() const noexcept
@@ -48,65 +38,47 @@ public:
 
     _orientation = orientation == Qt::Vertical ? &vertical : &horizontal;
 
-    rebuildLayout();
+    updateGeometry();
   }
 
-protected:
   void updateGeometry() final
   {
     auto&& items = this->items();
+
     if (items.empty()) {
       this->setRect({});
-    } else {
-      auto g = std::accumulate(items.begin(), items.end(),
-                               items.front()->geometry(),
-                               [](const auto& a, const auto& i) { return a | i->geometry(); });
-      this->setRect(std::move(g));
-    }
-  }
-
-  void rebuildLayout()
-  {
-    auto&& items = this->items();
-
-    if (items.empty())
       return;
+    }
 
     std::ranges::for_each(items, [](auto& i) { i->setPos({}); });
 
-    auto prev_item = items.front().get();
-    this->setRect(prev_item->rect());
-    for (auto iter = std::next(items.begin()); iter != items.end(); ++iter) {
-      auto curr_item = iter->get();
-      auto ppos = (prev_item->geometry().*_orientation->rpos)();
-      auto pd00 = (prev_item->rect().*_orientation->rpos)();
-      auto padv = (prev_item->*_orientation->advance)();
-      QPointF pos;
-      (pos.*_orientation->wpos)(ppos - pd00 + padv + _spacing);
-      curr_item->setPos(std::move(pos));
-      prev_item = curr_item;
+    auto g = items.front()->geometry();
+    qreal dpos = 0;
+    for (const auto& item : items) {
+      auto pos = item->pos();
+      (pos.*_orientation->wpos)(dpos);
+      item->setPos(std::move(pos));
+      dpos += (*item.*_orientation->advance)() + _spacing;
+      g |= item->geometry();
     }
+
+    this->setRect(std::move(g));
+    Layout::updateGeometry();
   }
 
 private:
   struct OrientationImpl {
-    qreal(QRectF::*rpos)() const;
     void(QPointF::*wpos)(qreal);
-    qreal(QRectF::*length)() const;
     qreal(LayoutItem::*advance)() const;
   };
 
   static constexpr const OrientationImpl horizontal {
-    &QRectF::x,
     &QPointF::setX,
-    &QRectF::width,
     &LayoutItem::advanceX
   };
 
   static constexpr const OrientationImpl vertical {
-    &QRectF::y,
     &QPointF::setY,
-    &QRectF::height,
     &LayoutItem::advanceY
   };
 

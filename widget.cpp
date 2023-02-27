@@ -11,8 +11,6 @@
 #include <QConicalGradient>
 #include <QLinearGradient>
 
-#include "core/layout_builder.hpp"
-#include "core/linear_layout.hpp"
 #include "render/state_guard.hpp"
 #include "skin/char_renderable_factory.hpp"
 #include "skin/classic_skin.hpp"
@@ -21,15 +19,6 @@
 #include "render/texturing_effect.hpp"
 #include "skin/legacy_skin_loader.hpp"
 
-
-// TODO: move to skin implementaion file
-// what if several implementations use LinearLayout?
-// let's keep here at least for now
-template<>
-void LayoutBuilder<LinearLayout>::LayoutTypeProxy::build()
-{
-  LinearLayout::rebuildLayout();
-}
 
 // TODO: move to layout renderer implementation file?
 // very likely no - template must be defined before specialization

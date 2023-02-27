@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "clock/datetime_formatter.hpp"
-#include "core/layout_builder.hpp"
+#include "core/layout_builder_impl.hpp"
 #include "core/linear_layout.hpp"
 #include "core/renderable_item.hpp"
 #include "skin/renderable_factory.hpp"
@@ -43,7 +43,8 @@ public:
   std::unique_ptr<RenderableItem> process(const QDateTime& dt) override
   {
     std::vector<std::shared_ptr<Renderable>> seps;
-    auto builder = LayoutBuilder<LinearLayout>(Qt::Horizontal);
+    auto builder = LayoutBuilder<LinearLayout>();
+    builder.init(Qt::Horizontal);
     const auto str = _formatter->process(dt);
     for (const auto& c : str) {
       auto r = _factory->item(c);

@@ -3,16 +3,17 @@
 #include <memory>
 #include <utility>
 
-#include "layout_item.hpp"
-
 template<typename LayoutType>
 class LayoutBuilder final {
 public:
   template<typename... T>
-  LayoutBuilder(T... args)
-    : _layout(std::make_unique<LayoutTypeProxy>(std::forward<T>(args)...))
-  {}
+  LayoutBuilder& init(T... args)
+  {
+    _layout = std::make_unique<LayoutProxy>(std::forward<T>(args)...);
+    return *this;
+  }
 
+  template<typename LayoutItem>
   LayoutBuilder& addItem(std::unique_ptr<LayoutItem> item)
   {
     _layout->addItem(std::move(item));
@@ -26,19 +27,15 @@ public:
   }
 
 private:
-  class LayoutTypeProxy final : public LayoutType {
+  class LayoutProxy final : public LayoutType {
   public:
     using LayoutType::LayoutType;
 
-    void addItem(std::unique_ptr<LayoutItem> item)
-    {
-      // Layout interface is assumed...
-      // TODO: maybe also provide as specialization?
-      LayoutType::addItem(std::move(item));
-    }
-
     // no implementation, specialization must be provided
+    template<typename LayoutItem>
+    void addItem(std::unique_ptr<LayoutItem> item);
+
     void build();
   };
-  std::unique_ptr<LayoutTypeProxy> _layout;
+  std::unique_ptr<LayoutProxy> _layout;
 };

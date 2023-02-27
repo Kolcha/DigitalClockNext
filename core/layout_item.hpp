@@ -18,22 +18,7 @@ public:
 
   const QRectF& geometry() const noexcept { return _geometry; }
 
-private:
-  void setGeometry(QRectF r)
-  {
-    if (r == _geometry)
-      return;
-
-    _geometry = std::move(r);
-
-    // TODO: consider drop it, user should explicitly call this
-    if (_parent)
-      _parent->updateGeometry();
-  }
-
-public:
   // means "original bounding rect", i.e. as was returned from the source
-  // this value will be used by layout as base value for transormation
   const QRectF& rect() const noexcept { return _rect; }
 
   virtual qreal advanceX() const { return _rect.width(); }
@@ -53,23 +38,39 @@ public:
 
   inline void setPos(qreal x, qreal y) { setPos({x, y}); }
 
-  inline void move(qreal dx, qreal dy)
+  void move(qreal dx, qreal dy)
   {
+    _pos.setX(_pos.x() + dx);
+    _pos.setY(_pos.y() + dy);
     setGeometry(geometry().translated(dx, dy));
   }
 
   inline void move(QPointF dp) { move(dp.x(), dp.y()); }
 
-protected:
-  virtual void updateGeometry() {}
+  // notify layout about item's geometry change
+  virtual void updateGeometry()
+  {
+    if (_parent)
+      _parent->updateGeometry();
+  }
 
+protected:
   void setRect(QRectF r)
   {
     if (r == _rect)
       return;
 
     _rect = std::move(r);
-    setGeometry(_rect);
+    setGeometry(_rect.translated(_pos));
+  }
+
+private:
+  void setGeometry(QRectF r)
+  {
+    if (r == _geometry)
+      return;
+
+    _geometry = std::move(r);
   }
 
 private:
