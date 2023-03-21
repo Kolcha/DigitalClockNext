@@ -1,10 +1,11 @@
 #include "widget.hpp"
 
-#include <QApplication>
+#include "app/application.hpp"
 
 int main(int argc, char *argv[])
 {
-  QApplication a(argc, argv);
+  Application a(argc, argv);
+  a.init();
   Widget w;
 /*
   w.setWindowFlag(Qt::FramelessWindowHint);

@@ -42,6 +42,8 @@ set(PROJECT_SOURCES
         clock/datetime_formatter.hpp
         core/settings.hpp
         settings/backend_qsettings.hpp
+        app/application.hpp
+        app/application.cpp
 )
 
 qt_add_executable(font_rendering_test
