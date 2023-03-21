@@ -18,6 +18,7 @@
 #include "render/identity_effect.hpp"
 #include "render/texturing_effect.hpp"
 #include "skin/legacy_skin_loader.hpp"
+#include "settings/backend_qsettings.hpp"
 
 
 // TODO: move to layout renderer implementation file?

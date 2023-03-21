@@ -40,6 +40,8 @@ set(PROJECT_SOURCES
         render/composite_effect.hpp
         render/identity_effect.hpp
         clock/datetime_formatter.hpp
+        core/settings.hpp
+        settings/backend_qsettings.hpp
 )
 
 qt_add_executable(font_rendering_test
