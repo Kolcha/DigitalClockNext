@@ -4,6 +4,14 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
+#include "settings/app_config.hpp"
+#include "settings/backend_qsettings.hpp"
+
+class ConfigStorageType final : public ConfigStorage<QString, QString, QVariant> {
+public:
+  using ConfigStorage::ConfigStorage;
+};
+
 using namespace Qt::Literals::StringLiterals;
 
 // constructor and destructor are required here to get
@@ -17,6 +25,7 @@ Application::~Application() = default;
 
 void Application::init()
 {
+  initConfig();
   initTray();
 }
 
@@ -27,6 +36,14 @@ void Application::showSettingsDialog()
 
 void Application::showAboutDialog()
 {
+}
+
+void Application::initConfig()
+{
+  // TODO: use file for now, switch to default later
+  auto backend = std::make_unique<BackendQSettings>(u"settings.ini"_s);
+  _config_storage = std::make_shared<ConfigStorageType>(std::move(backend));
+  _app_config = std::make_unique<AppConfig>(_config_storage);
 }
 
 void Application::initTray()

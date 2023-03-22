@@ -77,7 +77,7 @@ void merge_with_override(Map& target, const Map& source)
 
 // Tag - string-like type
 template<typename Tag, typename Key, typename Value>
-class ConfigStorage final {
+class ConfigStorage {
   class ConfigClientImpl final : public ConfigClient<Key, Value> {
     using ConfigStorageType = ConfigStorage<Tag, Key, Value>;
 
