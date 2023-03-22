@@ -9,8 +9,8 @@
   private:            \
     type _##name;     \
   public:             \
-    void set##name(const type& val) { _client->setValue(key, val); } \
-    type get##name() const { return _client->value(key, def_value); }
+    void set##name(const type& val) { client().setValue(key, val); } \
+    type get##name() const { return client().value(key, def_value); }
 
 
 template<typename Key, typename Value>
@@ -21,6 +21,12 @@ public:
   explicit ConfigBase(std::unique_ptr<ConfigClientType> client) noexcept
     : _client(std::move(client))
   {}
+
+  inline void commit() { _client->commit(); }
+  inline void discard() { _client->discard(); }
+
+protected:
+  inline ConfigClientType& client() const noexcept { return *_client; }
 
 private:
   std::unique_ptr<ConfigClientType> _client;

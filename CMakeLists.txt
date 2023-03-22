@@ -45,6 +45,11 @@ set(PROJECT_SOURCES
         app/application.hpp
         app/application.cpp
         settings/config_base.hpp
+        settings/app_config.hpp
+        settings/fr_appearance.hpp
+        settings/fr_classic_skin.hpp
+        settings/fr_state.hpp
+        settings/config_base_qvariant.hpp
 )
 
 qt_add_executable(font_rendering_test
