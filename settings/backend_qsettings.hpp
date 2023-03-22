@@ -37,31 +37,45 @@ public:
     const auto tags = _settings->childGroups();
     for (const auto& tag : tags) {
       auto& cur_settings = all_settings[tag];
-      _settings->beginGroup(tag);
+      GroupGuard _(*_settings, tag);
       const auto keys = _settings->allKeys();
       for (const auto& key : keys)
         cur_settings[key] = _settings->value(key);
-      _settings->endGroup();
     }
     return all_settings;
   }
 
   void setValue(const QString& tag, const QString& k, const QVariant& v) override
   {
-    _settings->setValue(backend_key(tag, k), v);
+    GroupGuard _(*_settings, tag);
+    _settings->setValue(k, v);
   }
 
   std::optional<QVariant> value(const QString& tag, const QString& k) const override
   {
-    QVariant v = _settings->value(backend_key(tag, k));
+    GroupGuard _(*_settings, tag);
+    QVariant v = _settings->value(k);
     return v.isValid() ? std::optional(v) : std::nullopt;
   }
 
 private:
-  static QString backend_key(const QString& tag, const QString& key)
+  class GroupGuard final
   {
-    return QString("%1/%2").arg(tag, key);
-  }
+  public:
+    GroupGuard(QSettings& s, QAnyStringView g)
+      : _settings(s)
+    {
+      _settings.beginGroup(g);
+    }
+
+    ~GroupGuard()
+    {
+      _settings.endGroup();
+    }
+
+  private:
+    QSettings& _settings;
+  };
 
 private:
   std::unique_ptr<QSettings> _settings;
