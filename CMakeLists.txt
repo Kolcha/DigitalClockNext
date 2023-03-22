@@ -44,6 +44,7 @@ set(PROJECT_SOURCES
         settings/backend_qsettings.hpp
         app/application.hpp
         app/application.cpp
+        settings/config_base.hpp
 )
 
 qt_add_executable(font_rendering_test
