@@ -59,20 +59,11 @@ public:
   }
 
 private:
-  class GroupGuard final
-  {
+  class GroupGuard final {
   public:
     GroupGuard(QSettings& s, QAnyStringView g)
-      : _settings(s)
-    {
-      _settings.beginGroup(g);
-    }
-
-    ~GroupGuard()
-    {
-      _settings.endGroup();
-    }
-
+      : _settings(s) { _settings.beginGroup(g); }
+    ~GroupGuard() { _settings.endGroup(); }
   private:
     QSettings& _settings;
   };
