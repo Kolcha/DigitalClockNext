@@ -40,7 +40,7 @@ set(PROJECT_SOURCES
         render/composite_effect.hpp
         render/identity_effect.hpp
         clock/datetime_formatter.hpp
-        core/settings.hpp
+        settings/settings.hpp
         settings/backend_qsettings.hpp
         app/application.hpp
         app/application.cpp
