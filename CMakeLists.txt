@@ -50,6 +50,11 @@ set(PROJECT_SOURCES
         settings/fr_classic_skin.hpp
         settings/fr_state.hpp
         settings/config_base_qvariant.hpp
+        app/main_window.cpp
+        app/main_window.hpp
+        app/clock_widget.cpp
+        app/clock_widget.hpp
+        render/state_guard_qpainter.hpp
 )
 
 qt_add_executable(font_rendering_test

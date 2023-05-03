@@ -3,14 +3,12 @@
 #include <memory>
 
 #include "render/layout_renderer.hpp"
-#include "render/state_guard.hpp"
+#include "render/state_guard_qpainter.hpp"
 #include "skin/clock_skin.hpp"
 
 // TODO: what about plugins' layouts? for now skin assumes only time
 // TODO: handle plugins' layouts using Qt' stuff - widgets may be clickable
 // TODO: consider shared renderer
-// useless class, exists just for testing
-// TODO: make it useful! it can be embedded into QWidget derivative
 class ClockWidget final {
 public:
   ClockWidget(const QDateTime& dt, std::shared_ptr<ClockSkin> skin)
@@ -43,6 +41,11 @@ public:
     StateGuard _(p);
     p->translate(-_item->geometry().topLeft());
     _renderer->render(_item.get(), p);
+  }
+
+  const auto& geometry() const noexcept
+  {
+    return _item->geometry();
   }
 
 private:

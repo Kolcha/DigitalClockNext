@@ -11,7 +11,7 @@
 #include <QConicalGradient>
 #include <QLinearGradient>
 
-#include "render/state_guard.hpp"
+#include "render/state_guard_qpainter.hpp"
 #include "skin/char_renderable_factory.hpp"
 #include "skin/classic_skin.hpp"
 #include "clock/clock_widget.hpp"
@@ -19,15 +19,6 @@
 #include "render/texturing_effect.hpp"
 #include "skin/legacy_skin_loader.hpp"
 #include "settings/backend_qsettings.hpp"
-
-
-// TODO: move to layout renderer implementation file?
-// very likely no - template must be defined before specialization
-// and those particular specializations are widely used
-template<>
-void StateGuard<QPainter>::save(QPainter* p) { p->save(); }
-template<>
-void StateGuard<QPainter>::restore(QPainter* p) { p->restore(); }
 
 
 Widget::Widget(QWidget *parent)
