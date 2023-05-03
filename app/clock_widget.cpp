@@ -36,6 +36,8 @@ void ClockWidgetWrap::setSkin(std::shared_ptr<ClockSkin> skin)
 void ClockWidgetWrap::setDateTime(const QDateTime& dt)
 {
   _impl->setDateTime(dt);
+  updateGeometry();
+  update();
 }
 
 void ClockWidgetWrap::setSeparatorVisible(bool visible)
