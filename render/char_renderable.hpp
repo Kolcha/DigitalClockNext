@@ -7,7 +7,7 @@
 #include <QPainter>
 #include <QString>
 
-#include "render/state_guard.hpp"
+#include "render/state_guard_qpainter.hpp"
 
 class QCharRenderable final : public RenderableBase {
 public:

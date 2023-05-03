@@ -9,7 +9,7 @@
 #include "core/effect.hpp"
 #include "core/layout.hpp"
 #include "core/renderable_item.hpp"
-#include "render/state_guard.hpp"
+#include "render/state_guard_qpainter.hpp"
 
 class LayoutRenderer {
 public:
