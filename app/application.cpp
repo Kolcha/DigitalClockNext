@@ -19,6 +19,12 @@ using namespace Qt::Literals::StringLiterals;
 Application::Application(int& argc, char** argv)
   : QApplication(argc, argv)
 {
+  setApplicationName(u"Digital Clock Next"_s);
+  setApplicationDisplayName(applicationName());
+  setApplicationVersion(u"1.0.0"_s);
+  setOrganizationName(u"Nick Korotysh"_s);
+  setOrganizationDomain(u"kolcha.github.com"_s);
+  setDesktopFileName(u"com.github.kolcha.DigitalClockNext"_s);
 }
 
 Application::~Application() = default;
