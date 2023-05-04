@@ -57,6 +57,11 @@ set(PROJECT_SOURCES
         render/state_guard_qpainter.hpp
         clock/time_source.hpp
         clock/legacy_skin_format_extension.hpp
+        app/application_private.hpp
+        app/application_tray.cpp
+        app/application_config.cpp
+        app/application_core.cpp
+        app/application_windows.cpp
 )
 
 qt_add_executable(font_rendering_test
