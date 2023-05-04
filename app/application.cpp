@@ -5,6 +5,7 @@
 #include <QSystemTrayIcon>
 
 #include "app/clock_window.hpp"
+#include "clock/legacy_skin_format_extension.hpp"
 #include "clock/time_source.hpp"
 #include "render/identity_effect.hpp"
 #include "render/texturing_effect.hpp"
@@ -96,6 +97,11 @@ void Application::createWindows()
   //       consider "skin type" enum, and and apply configuration (also change UI) depending on it
   LegacySkinLoader loader;
   auto skin = loader.load("floral_digits");
+
+  auto flashing_dots_ext = std::make_shared<LegacySkinFormatExtension>();
+  connect(_time_src.get(), &TimeSource::halfSecondUpdate,
+          flashing_dots_ext.get(), &LegacySkinFormatExtension::setSeparatorVisible);
+  skin->formatter()->addExtension(std::move(flashing_dots_ext));
 
   QConicalGradient g1(0.5, 0.5, 45.0);
   g1.setStops({

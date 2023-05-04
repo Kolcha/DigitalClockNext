@@ -56,6 +56,7 @@ set(PROJECT_SOURCES
         app/clock_widget.hpp
         render/state_guard_qpainter.hpp
         clock/time_source.hpp
+        clock/legacy_skin_format_extension.hpp
 )
 
 qt_add_executable(font_rendering_test

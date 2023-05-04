@@ -34,10 +34,10 @@ signals:
 private slots:
   void onTimeout()
   {
-    emit timeChanged(now());
     // this assumes 0.5s timer interval, reimplement on change
     _flag = !_flag;
     emit halfSecondUpdate(_flag);
+    emit timeChanged(now());
   }
 
 private:
