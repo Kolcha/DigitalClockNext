@@ -25,9 +25,9 @@ class WindowConfig final : public QObject
 public:
   WindowConfig(const ConfigStoragePtr& storage, std::size_t i, QObject* parent = nullptr)
     : QObject(parent)
-    , _appearance(std::make_unique<AppearanceConfig>(storage->client(t(i, "appearance"))))
-    , _classic_skin(std::make_unique<ClassicSkinConfig>(storage->client(t(i, "classic_skin"))))
-    , _state(std::make_unique<WindowState>(storage->client(t(i, "state"))))
+    , _appearance(std::make_unique<AppearanceConfig>(storage->client(t(i, "Appearance"))))
+    , _classic_skin(std::make_unique<ClassicSkinConfig>(storage->client(t(i, "ClassicSkin"))))
+    , _state(std::make_unique<WindowState>(storage->client(t(i, "State"))))
   {}
 
   AppearanceConfig& appearance() const noexcept { return *_appearance; }
@@ -83,7 +83,7 @@ public:
       _wnd_configs.resize(i + 1);
 
     auto& wnd_cfg = _wnd_configs[i];
-    if (wnd_cfg)
+    if (!wnd_cfg)
       wnd_cfg = std::make_unique<WindowConfig>(_storage, i);
 
     return *wnd_cfg;

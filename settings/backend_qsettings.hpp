@@ -4,16 +4,6 @@
 
 #include <QSettings>
 
-template<typename T>
-struct toValue<T, QVariant> {
-  QVariant operator ()(const T& v) { return QVariant::fromValue(v); }
-};
-
-template<typename T>
-struct fromValue<QVariant, T> {
-  T operator ()(const QVariant& v) { return qvariant_cast<T>(v); }
-};
-
 class BackendQSettings final : public ConfigBackend<QString, QString, QVariant> {
 public:
   BackendQSettings()
