@@ -1,16 +1,27 @@
 #include "application.hpp"
 #include "application_private.hpp"
 
-void ApplicationPrivate::initWindows()
+#include <ranges>
+#include <utility>
+
+void ApplicationPrivate::initWindows(QScreen* primary_screen, QList<QScreen*> screens)
 {
-  // TODO: create multiple windows, for now only one is supported
+  if (_app_config->global().getWindowPerScreen())
+    std::ranges::for_each(std::as_const(screens), [this](auto s) { createWindow(s); });
+  else
+    createWindow(primary_screen);
+}
+
+void ApplicationPrivate::createWindow(const QScreen* screen)
+{
+  std::size_t idx = _app_config->global().getConfigPerWindow() ? _windows.size() : 0;
   // TODO: apply time zone, for now local time zone is hardcoded
-  const auto& appearance = _app_config->window(0).appearance();
-  const auto& state = _app_config->window(0).state();
+  const auto& appearance = _app_config->window(idx).appearance();
+  const auto& state = _app_config->window(idx).state();
   auto skin = appearance.getUseFontInsteadOfSkin()
               ? _skin_manager->loadSkin(state.getTextSkinFont())
               : _skin_manager->loadSkin(state.getLastUsedSkin());
-  _skin_manager->configureSkin(skin, 0);
+  _skin_manager->configureSkin(skin, idx);
   auto wnd = std::make_unique<ClockWindow>(std::move(skin), _time_src->now().toLocalTime());
   connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::setDateTime);
   if (appearance.getFlashingSeparator())
@@ -21,5 +32,5 @@ void ApplicationPrivate::initWindows()
 
 void Application::createWindows()
 {
-  _impl->initWindows();
+  _impl->initWindows(primaryScreen(), screens());
 }

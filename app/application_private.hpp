@@ -54,10 +54,13 @@ public:
   inline const auto& time_source() const noexcept { return _time_src; }
 
   // windows
-  void initWindows();
+  void initWindows(QScreen* primary_screen, QList<QScreen*> screens);
 
   inline const auto& windows() const noexcept { return _windows; }
   inline const auto& window(std::size_t i) const noexcept { return _windows[i]; }
+
+private:
+  void createWindow(const QScreen* screen);
 
 private:
   // TODO: what about per window settings? overrides?

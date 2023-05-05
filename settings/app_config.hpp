@@ -9,6 +9,7 @@
 #include <QString>
 #include <QVariant>
 
+#include "fr_app_global.hpp"
 #include "fr_appearance.hpp"
 #include "fr_classic_skin.hpp"
 #include "fr_window_state.hpp"
@@ -74,6 +75,7 @@ public:
   explicit AppConfig(ConfigStoragePtr storage, QObject* parent = nullptr)
     : QObject(parent)
     , _storage(std::move(storage))
+    , _global_config(std::make_unique<AppGlobalConfig>(_storage->client("AppGlobal")))
   {}
 
   // create objects on demand
@@ -89,18 +91,23 @@ public:
     return *wnd_cfg;
   }
 
+  AppGlobalConfig& global() const noexcept { return *_global_config; }
+
 public slots:
   void commit()
   {
+    _global_config->commit();
     std::ranges::for_each(_wnd_configs, [](const auto& c) { c->commit(); });
   }
 
   void discard()
   {
+    _global_config->discard();
     std::ranges::for_each(_wnd_configs, [](const auto& c) { c->discard(); });
   }
 
 private:
   ConfigStoragePtr _storage;
+  std::unique_ptr<AppGlobalConfig> _global_config;
   std::vector<std::unique_ptr<WindowConfig>> _wnd_configs;
 };
