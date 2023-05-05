@@ -48,7 +48,7 @@ set(PROJECT_SOURCES
         settings/app_config.hpp
         settings/fr_appearance.hpp
         settings/fr_classic_skin.hpp
-        settings/fr_state.hpp
+        settings/fr_window_state.hpp
         settings/config_base_qvariant.hpp
         app/clock_window.cpp
         app/clock_window.hpp
