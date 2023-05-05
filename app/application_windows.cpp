@@ -15,16 +15,15 @@ void ApplicationPrivate::initWindows(QScreen* primary_screen, QList<QScreen*> sc
 void ApplicationPrivate::createWindow(const QScreen* screen)
 {
   std::size_t idx = _app_config->global().getConfigPerWindow() ? _windows.size() : 0;
+  const auto& cfg = _app_config->window(idx);
   // TODO: apply time zone, for now local time zone is hardcoded
-  const auto& appearance = _app_config->window(idx).appearance();
-  const auto& state = _app_config->window(idx).state();
-  auto skin = appearance.getUseFontInsteadOfSkin()
-              ? _skin_manager->loadSkin(state.getTextSkinFont())
-              : _skin_manager->loadSkin(state.getLastUsedSkin());
+  auto skin = cfg.appearance().getUseFontInsteadOfSkin()
+              ? _skin_manager->loadSkin(cfg.state().getTextSkinFont())
+              : _skin_manager->loadSkin(cfg.state().getLastUsedSkin());
   _skin_manager->configureSkin(skin, idx);
   auto wnd = std::make_unique<ClockWindow>(std::move(skin), _time_src->now().toLocalTime());
   connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::setDateTime);
-  if (appearance.getFlashingSeparator())
+  if (cfg.appearance().getFlashingSeparator())
     connect(_time_src.get(), &TimeSource::halfSecondUpdate, wnd.get(), &ClockWindow::setSeparatorVisible);
   wnd->show();
   _windows.emplace_back(std::move(wnd));

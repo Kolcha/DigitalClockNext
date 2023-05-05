@@ -51,10 +51,9 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
 {
   using namespace Qt::Literals::StringLiterals;
 
-  const auto& appearance = _app->app_config()->window(i).appearance();
-  const auto& skin_cfg = _app->app_config()->window(i).classicSkin();
+  const auto& cfg = _app->app_config()->window(i);
 
-  skin->formatter()->setExtensionEnabled(u"legacy_skin"_s, appearance.getFlashingSeparator());
+  skin->formatter()->setExtensionEnabled(u"legacy_skin"_s, cfg.appearance().getFlashingSeparator());
 
   QConicalGradient g1(0.5, 0.5, 45.0);
   g1.setStops({
@@ -80,5 +79,5 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   skin->addLayoutEffect(std::make_unique<IdentityEffect>());
   skin->addLayoutEffect(effect2);
 
-  skin->formatter()->setFormat(skin_cfg.getTimeFormat());
+  skin->formatter()->setFormat(cfg.classicSkin().getTimeFormat());
 }

@@ -4,7 +4,6 @@
 
 #include <memory>
 
-// forward declarations
 class ApplicationPrivate;
 
 class Application final : public QApplication

@@ -63,7 +63,6 @@ private:
   void createWindow(const QScreen* screen);
 
 private:
-  // TODO: what about per window settings? overrides?
   // config
   using ConfigStorageType = ConfigStorage<QString, QString, QVariant>;
   std::shared_ptr<ConfigStorageType> _config_storage;
