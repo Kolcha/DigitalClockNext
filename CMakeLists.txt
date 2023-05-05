@@ -62,6 +62,8 @@ set(PROJECT_SOURCES
         app/application_config.cpp
         app/application_core.cpp
         app/application_windows.cpp
+        app/skin_manager.cpp
+        app/skin_manager.hpp
 )
 
 qt_add_executable(font_rendering_test

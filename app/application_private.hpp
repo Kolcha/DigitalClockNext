@@ -15,6 +15,20 @@
 #include "settings/app_config.hpp"
 #include "settings/settings.hpp"
 
+
+class SkinManager : public QObject
+{
+  Q_OBJECT
+
+public:
+  using QObject::QObject;
+
+  using SkinPtr = std::shared_ptr<ClockSkin>;
+  virtual SkinPtr loadSkin(const QString& skin_name) const = 0;
+  virtual void configureSkin(const SkinPtr& skin, std::size_t i) const = 0;
+};
+
+
 class ApplicationPrivate : public QObject
 {
   Q_OBJECT
@@ -56,4 +70,5 @@ private:
   // clock-specific stuff
   std::vector<std::unique_ptr<ClockWindow>> _windows;
   std::unique_ptr<TimeSource> _time_src;
+  std::unique_ptr<SkinManager> _skin_manager;
 };
