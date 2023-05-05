@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 
+#include <QHash>
 #include <QDateTime>
 #include <QString>
 
@@ -11,6 +11,8 @@ public:
   class Extension {
   public:
     virtual ~Extension() = default;
+
+    virtual QString name() const = 0;
 
     void enable() noexcept { _enabled = true; }
     void disable() noexcept { _enabled = false; }
@@ -74,11 +76,19 @@ public:
 
   void addExtension(std::shared_ptr<Extension> ext)
   {
-    _extensions.push_back(std::move(ext));
+    auto key = ext->name();
+    _extensions[key] = std::move(ext);
+  }
+
+  void setExtensionEnabled(const QString& name, bool enabled)
+  {
+    auto iter = _extensions.find(name);
+    if (iter != _extensions.end())
+      iter.value()->setEnabled(enabled);
   }
 
 private:
   QString _format;
   QString _separators;
-  std::vector<std::shared_ptr<Extension>> _extensions;
+  QHash<QString, std::shared_ptr<Extension>> _extensions;
 };

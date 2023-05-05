@@ -12,6 +12,8 @@ class LegacySkinFormatExtension final : public QObject,
 public:
   using QObject::QObject;
 
+  QString name() const override { return QLatin1String("legacy_format"); }
+
 public slots:
   void setSeparatorVisible(bool visible)
   {
