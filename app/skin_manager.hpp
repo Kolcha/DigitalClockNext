@@ -14,6 +14,7 @@ class SkinManagerImpl final : public SkinManager
 public:
   explicit SkinManagerImpl(ApplicationPrivate* app, QObject* parent = nullptr);
 
+  SkinPtr loadSkin(const QFont& font) const override;
   SkinPtr loadSkin(const QString& skin_name) const override;
   void configureSkin(const SkinPtr& skin, std::size_t i) const override;
 

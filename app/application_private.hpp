@@ -24,6 +24,7 @@ public:
   using QObject::QObject;
 
   using SkinPtr = std::shared_ptr<ClockSkin>;
+  virtual SkinPtr loadSkin(const QFont& font) const = 0;
   virtual SkinPtr loadSkin(const QString& skin_name) const = 0;
   virtual void configureSkin(const SkinPtr& skin, std::size_t i) const = 0;
 };

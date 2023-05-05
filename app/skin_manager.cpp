@@ -3,6 +3,7 @@
 #include "clock/legacy_skin_format_extension.hpp"
 #include "render/identity_effect.hpp"
 #include "render/texturing_effect.hpp"
+#include "skin/char_renderable_factory.hpp"
 #include "skin/legacy_skin_loader.hpp"
 
 SkinManagerImpl::SkinManagerImpl(ApplicationPrivate* app, QObject* parent)
@@ -10,12 +11,17 @@ SkinManagerImpl::SkinManagerImpl(ApplicationPrivate* app, QObject* parent)
   , _app(app)
 {}
 
+SkinManager::SkinPtr SkinManagerImpl::loadSkin(const QFont& font) const
+{
+  auto provider = std::make_shared<QCharRenderableFactory>(font);
+//  provider->setSeparators("o");
+  auto skin = std::make_shared<ClassicSkin>(std::move(provider));
+  return skin;
+}
+
 SkinManager::SkinPtr SkinManagerImpl::loadSkin(const QString& skin_name) const
 {
   // only legacy skins for now
-  // TODO: support at least text skins.
-  //       is it worth? they are too unique...
-  //       maybe separate method for them...
   return loadLegacySkin(skin_name);
 }
 
