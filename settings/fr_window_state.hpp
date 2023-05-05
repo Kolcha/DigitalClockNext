@@ -5,10 +5,9 @@
 #include <QFont>
 #include <QString>
 
-using namespace Qt::Literals::StringLiterals;
-
 class WindowState final : public ConfigBaseQVariant {
-  CONFIG_OPTION(QFont, TextSkinFont, u"text_skin_font"_s, QFont(u"Segoe Script"_s, 48))
+  CONFIG_OPTION_Q(QFont, TextSkinFont, QFont("Segoe Script", 48))
+  CONFIG_OPTION_Q(QString, LastUsedSkin, QString())
 public:
   using ConfigBaseQVariant::ConfigBaseQVariant;
 };
