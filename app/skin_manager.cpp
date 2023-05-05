@@ -1,6 +1,6 @@
 #include "skin_manager.hpp"
 
-#include "clock/legacy_skin_format_extension.hpp"
+#include "clock/legacy_skin_extension.hpp"
 #include "render/identity_effect.hpp"
 #include "render/texturing_effect.hpp"
 #include "skin/char_renderable_factory.hpp"
@@ -39,9 +39,9 @@ SkinManagerImpl::ClassicSkinPtr SkinManagerImpl::loadLegacySkin(const QString& s
   LegacySkinLoader loader;
   auto skin = loader.load(skin_name);
 
-  auto flashing_dots_ext = std::make_shared<LegacySkinFormatExtension>();
+  auto flashing_dots_ext = std::make_shared<LegacySkinExtension>();
   connect(_app->time_source().get(), &TimeSource::halfSecondUpdate,
-          flashing_dots_ext.get(), &LegacySkinFormatExtension::setSeparatorVisible);
+          flashing_dots_ext.get(), &LegacySkinExtension::setSeparatorVisible);
   skin->formatter()->addExtension(std::move(flashing_dots_ext));
 
   return skin;
@@ -54,7 +54,7 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   const auto& appearance = _app->app_config()->window(i).appearance();
   const auto& skin_cfg = _app->app_config()->window(i).classicSkin();
 
-  skin->formatter()->setExtensionEnabled(u"legacy_format"_s, appearance.getFlashingSeparator());
+  skin->formatter()->setExtensionEnabled(u"legacy_skin"_s, appearance.getFlashingSeparator());
 
   QConicalGradient g1(0.5, 0.5, 45.0);
   g1.setStops({

@@ -4,15 +4,15 @@
 #include <QRegularExpression>
 #include "datetime_formatter.hpp"
 
-class LegacySkinFormatExtension final : public QObject,
-                                        public DateTimeFormatter::Extension
+class LegacySkinExtension final : public QObject,
+                                  public DateTimeFormatter::Extension
 {
   Q_OBJECT
 
 public:
   using QObject::QObject;
 
-  QString name() const override { return QLatin1String("legacy_format"); }
+  QString name() const override { return QLatin1String("legacy_skin"); }
 
 public slots:
   void setSeparatorVisible(bool visible)
