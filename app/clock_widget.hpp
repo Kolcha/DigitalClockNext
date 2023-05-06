@@ -4,8 +4,10 @@
 
 #include <memory>
 
+#include <QDateTime>
+#include <QTimeZone>
+
 class ClockSkin;
-class ClockWidget;
 
 class ClockWidgetWrap : public QWidget
 {
@@ -23,14 +25,17 @@ public:
   bool isSeparatorVisible() const;
 
   void setSkin(std::shared_ptr<ClockSkin> skin);
+  std::shared_ptr<ClockSkin> skin() const;
 
 public slots:
   void setDateTime(const QDateTime& dt);
+  void setTimeZone(const QTimeZone& tz);
   void setSeparatorVisible(bool visible);
 
 protected:
   void paintEvent(QPaintEvent* event) override;
 
 private:
-  std::unique_ptr<ClockWidget> _impl;
+  struct impl;
+  std::unique_ptr<impl> _impl;
 };

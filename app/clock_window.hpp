@@ -4,8 +4,8 @@
 
 #include <memory>
 
-#include <QDateTime>
-#include <QTimeZone>
+class QDateTime;
+class QTimeZone;
 
 class ClockSkin;
 
@@ -23,6 +23,7 @@ public:
   bool isSeparatorVisible() const;
 
   void setSkin(std::shared_ptr<ClockSkin> skin);
+  std::shared_ptr<ClockSkin> skin() const;
 
 signals:
   void settingsDialogRequested();
