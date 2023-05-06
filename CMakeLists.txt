@@ -65,6 +65,12 @@ set(PROJECT_SOURCES
         app/skin_manager.cpp
         app/skin_manager.hpp
         settings/fr_app_global.hpp
+        app/classic_skin_settings.cpp
+        app/classic_skin_settings.hpp
+        app/classic_skin_settings.ui
+        app/settings_dialog.cpp
+        app/settings_dialog.hpp
+        app/settings_dialog.ui
 )
 
 qt_add_executable(font_rendering_test
