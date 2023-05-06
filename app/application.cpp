@@ -9,8 +9,8 @@ Application::Application(int& argc, char** argv)
   : QApplication(argc, argv)
   , _impl(std::make_unique<ApplicationPrivate>())
 {
-  setApplicationName(u"Digital Clock Next"_s);
-  setApplicationDisplayName(applicationName());
+  setApplicationName(u"DigitalClockNext"_s);
+  setApplicationDisplayName(u"Digital Clock Next"_s);
   setApplicationVersion(u"1.0.0"_s);
   setOrganizationName(u"Nick Korotysh"_s);
   setOrganizationDomain(u"kolcha.github.com"_s);
