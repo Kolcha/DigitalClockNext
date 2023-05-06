@@ -32,4 +32,9 @@ void ApplicationPrivate::createWindow(const QScreen* screen)
 void Application::createWindows()
 {
   _impl->initWindows(primaryScreen(), screens());
+  for (const auto& wnd : _impl->windows()) {
+    connect(wnd.get(), &ClockWindow::settingsDialogRequested, this, &Application::showSettingsDialog);
+    connect(wnd.get(), &ClockWindow::aboutDialogRequested, this, &Application::showAboutDialog);
+    connect(wnd.get(), &ClockWindow::appExitRequested, this, &Application::quit);
+  }
 }

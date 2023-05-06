@@ -24,10 +24,18 @@ public:
 
   void setSkin(std::shared_ptr<ClockSkin> skin);
 
+signals:
+  void settingsDialogRequested();
+  void aboutDialogRequested();
+  void appExitRequested();
+
 public slots:
   void setDateTime(const QDateTime& utc);
   void setTimeZone(const QTimeZone& tz);
   void setSeparatorVisible(bool visible);
+
+protected:
+  void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
   struct impl;
