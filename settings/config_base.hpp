@@ -6,8 +6,6 @@
 #include "settings.hpp"
 
 #define CONFIG_OPTION(type, name, key, def_value) \
-  private:            \
-    type _##name;     \
   public:             \
     void set##name(const type& val) { client().setValue(key, val); } \
     type get##name() const { return client().value(key, def_value); }
