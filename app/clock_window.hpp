@@ -35,8 +35,14 @@ public slots:
   void setTimeZone(const QTimeZone& tz);
   void setSeparatorVisible(bool visible);
 
+  void setSnapToEdge(bool enable);
+  void setSnapThreshold(int threshold);
+
 protected:
   void contextMenuEvent(QContextMenuEvent* event) override;
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseMoveEvent(QMouseEvent* event) override;
+  void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
   struct impl;
