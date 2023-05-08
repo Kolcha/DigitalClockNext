@@ -25,6 +25,16 @@ SkinManager::SkinPtr SkinManagerImpl::loadSkin(const QString& skin_name) const
   return loadLegacySkin(skin_name);
 }
 
+SkinManager::SkinPtr SkinManagerImpl::loadSkin(std::size_t i) const
+{
+  const auto& cfg = _app->app_config()->window(i);
+  auto skin = cfg.appearance().getUseFontInsteadOfSkin()
+              ? loadSkin(cfg.state().getTextSkinFont())
+              : loadSkin(cfg.state().getLastUsedSkin());
+  configureSkin(skin, i);
+  return skin;
+}
+
 void SkinManagerImpl::configureSkin(const SkinPtr& skin, std::size_t i) const
 {
   // only classic skins for now

@@ -26,6 +26,7 @@ public:
   using SkinPtr = std::shared_ptr<ClockSkin>;
   virtual SkinPtr loadSkin(const QFont& font) const = 0;
   virtual SkinPtr loadSkin(const QString& skin_name) const = 0;
+  virtual SkinPtr loadSkin(std::size_t i) const = 0;
   virtual void configureSkin(const SkinPtr& skin, std::size_t i) const = 0;
 };
 
@@ -52,6 +53,7 @@ public:
   void initCore();
 
   inline const auto& time_source() const noexcept { return _time_src; }
+  inline const auto& skin_manager() const noexcept { return _skin_manager; }
 
   // windows
   void initWindows(QScreen* primary_screen, QList<QScreen*> screens);

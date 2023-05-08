@@ -16,6 +16,7 @@ public:
 
   SkinPtr loadSkin(const QFont& font) const override;
   SkinPtr loadSkin(const QString& skin_name) const override;
+  SkinPtr loadSkin(std::size_t i) const override;
   void configureSkin(const SkinPtr& skin, std::size_t i) const override;
 
 private:
