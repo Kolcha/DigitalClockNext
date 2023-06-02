@@ -10,6 +10,7 @@ struct ClockWidgetWrap::impl {
   std::shared_ptr<ClockSkin> skin;
   QDateTime dt;
   QTimeZone tz;
+  bool seps_visible = true;
 
   impl(const QDateTime& dt, const std::shared_ptr<ClockSkin>& skin)
     : n_impl(std::make_unique<ClockWidget>(dt, skin))
@@ -69,11 +70,13 @@ void ClockWidgetWrap::setTimeZone(const QTimeZone& tz)
 
 void ClockWidgetWrap::setSeparatorVisible(bool visible)
 {
-  _impl->n_impl->setSeparatorVisible(visible);
+  _impl->seps_visible = visible;
+  update();
 }
 
 void ClockWidgetWrap::paintEvent(QPaintEvent* event)
 {
+  _impl->n_impl->setSeparatorVisible(_impl->seps_visible);
   QPainter p(this);
   _impl->n_impl->render(&p);
   event->accept();
