@@ -47,6 +47,7 @@ void ClockWidgetWrap::setSkin(std::shared_ptr<ClockSkin> skin)
 {
   _impl->n_impl = std::make_unique<ClockWidget>(_impl->dt, skin);
   _impl->skin = std::move(skin);
+  update();
 }
 
 std::shared_ptr<ClockSkin> ClockWidgetWrap::skin() const
