@@ -27,9 +27,9 @@ void ApplicationPrivate::createWindow(const QScreen* screen)
   // TODO: apply time zone, for now local time zone is hardcoded
   auto skin = idx == 0 && !_windows.empty() ? _windows.front()->skin() : _skin_manager->loadSkin(idx);
   auto wnd = std::make_unique<ClockWindow>(std::move(skin), _time_src->now().toLocalTime());
+  wnd->setSeparatorFlashes(cfg.appearance().getFlashingSeparator());
   connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::setDateTime);
-  if (cfg.appearance().getFlashingSeparator())
-    connect(_time_src.get(), &TimeSource::halfSecondUpdate, wnd.get(), &ClockWindow::setSeparatorVisible);
+  connect(_time_src.get(), &TimeSource::halfSecondUpdate, wnd.get(), &ClockWindow::flipSeparator);
   wnd->show();
   _windows.emplace_back(std::move(wnd));
 }

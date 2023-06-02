@@ -36,6 +36,7 @@ private slots:
 
 private:
   void applySkin(std::shared_ptr<ClockSkin> skin);
+  void applyFlashingSeparator(bool enable);
 
 private:
   std::unique_ptr<Ui::SettingsDialog> ui;

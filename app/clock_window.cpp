@@ -16,6 +16,7 @@ struct ClockWindow::impl {
   int snap_threshold = 10;
   bool is_dragging = false;
   bool snap_to_edge = true;
+  bool separator_flashes = true;
 };
 
 ClockWindow::ClockWindow(const SkinPtr& skin, const QDateTime& dt, QWidget* parent)
@@ -46,6 +47,11 @@ bool ClockWindow::isSeparatorVisible() const
   return _impl->clock_widget->isSeparatorVisible();
 }
 
+bool ClockWindow::isSeparatorFlashes() const
+{
+  return _impl->separator_flashes;
+}
+
 void ClockWindow::setSkin(std::shared_ptr<ClockSkin> skin)
 {
   _impl->clock_widget->setSkin(std::move(skin));
@@ -69,6 +75,19 @@ void ClockWindow::setTimeZone(const QTimeZone& tz)
 void ClockWindow::setSeparatorVisible(bool visible)
 {
   _impl->clock_widget->setSeparatorVisible(visible);
+}
+
+void ClockWindow::setSeparatorFlashes(bool flashes)
+{
+  _impl->separator_flashes = flashes;
+}
+
+void ClockWindow::flipSeparator()
+{
+  if (!_impl->separator_flashes)
+    return;
+
+  setSeparatorVisible(!isSeparatorVisible());
 }
 
 void ClockWindow::setSnapToEdge(bool enable)

@@ -21,6 +21,7 @@ public:
   ~ClockWindow();
 
   bool isSeparatorVisible() const;
+  bool isSeparatorFlashes() const;
 
   void setSkin(std::shared_ptr<ClockSkin> skin);
   std::shared_ptr<ClockSkin> skin() const;
@@ -34,6 +35,9 @@ public slots:
   void setDateTime(const QDateTime& utc);
   void setTimeZone(const QTimeZone& tz);
   void setSeparatorVisible(bool visible);
+  void setSeparatorFlashes(bool flashes);
+
+  void flipSeparator();   // show/hide
 
   void setSnapToEdge(bool enable);
   void setSnapThreshold(int threshold);

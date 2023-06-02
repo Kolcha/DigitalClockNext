@@ -4,6 +4,9 @@
 #include <QFontDialog>
 
 #include "app/application_private.hpp"
+#include "skin/classic_skin.hpp"
+
+using namespace Qt::Literals::StringLiterals;
 
 struct SettingsDialog::Impl {
   ApplicationPrivate* app;
@@ -49,6 +52,7 @@ void SettingsDialog::reject()
 {
   impl->wcfg->discard();
   impl->wnd->setSkin(impl->last_skin);
+  applyFlashingSeparator(impl->wcfg->appearance().getFlashingSeparator());
   QDialog::reject();
 }
 
@@ -86,8 +90,8 @@ void SettingsDialog::on_skin_cbox_activated(int index)
 
 void SettingsDialog::on_is_separator_flashes_clicked(bool checked)
 {
+  applyFlashingSeparator(checked);
   impl->wcfg->appearance().setFlashingSeparator(checked);
-  // TODO: apply on runtime (timer per window?)
 }
 
 void SettingsDialog::applySkin(std::shared_ptr<ClockSkin> skin)
@@ -95,4 +99,13 @@ void SettingsDialog::applySkin(std::shared_ptr<ClockSkin> skin)
   if (!skin) return;
   impl->app->skin_manager()->configureSkin(skin, impl->idx);
   impl->wnd->setSkin(std::move(skin));
+}
+
+void SettingsDialog::applyFlashingSeparator(bool enable)
+{
+  if (auto cskin = std::dynamic_pointer_cast<ClassicSkin>(impl->wnd->skin()))
+    cskin->formatter()->setExtensionEnabled(u"legacy_skin"_s, enable);
+  impl->wnd->setSeparatorFlashes(enable);
+  if (!enable)
+    impl->wnd->setSeparatorVisible(true);
 }
