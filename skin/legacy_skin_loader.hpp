@@ -9,6 +9,7 @@
 #include <QSettings>
 
 #include "render/legacy_image_renderable.hpp"
+#include "skin/legacy_skin_validator.hpp"
 
 class LegacyRenderableFactory final : public RenderableFactory {
 public:
@@ -57,19 +58,18 @@ class LegacySkinLoader final : public ClassicSkinLoader {
 public:
   std::unique_ptr<ClassicSkin> load(const QString& path) const override
   {
-    QDir skin_dir(path);
-
-    if (!skin_dir.exists(skin_ini))
+    if (!tryLegacySkin(path))
       return nullptr;
 
-    auto files = getSkinFiles(skin_dir);
+    auto files = getSkinFiles(path);
     auto factory = std::make_unique<LegacyRenderableFactory>(files);
     return std::make_unique<ClassicSkin>(std::move(factory));
   }
 
 private:
-  static QHash<QChar, QString> getSkinFiles(const QDir& skin_dir)
+  static QHash<QChar, QString> getSkinFiles(const QString& path)
   {
+    QDir skin_dir(path);
     QHash<QChar, QString> files;
 
     auto add_file = [&](QChar ch, const QString& file) {
