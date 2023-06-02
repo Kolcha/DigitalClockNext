@@ -61,6 +61,8 @@ public:
   inline const auto& windows() const noexcept { return _windows; }
   inline const auto& window(std::size_t i) const noexcept { return _windows[i]; }
 
+  std::size_t window_index(const ClockWindow* w) const noexcept;
+
 private:
   void createWindow(const QScreen* screen);
 

@@ -12,6 +12,14 @@ void ApplicationPrivate::initWindows(QScreen* primary_screen, QList<QScreen*> sc
     createWindow(primary_screen);
 }
 
+std::size_t ApplicationPrivate::window_index(const ClockWindow* w) const noexcept
+{
+  for (std::size_t i = 0; i < _windows.size(); i++)
+    if (_windows[i].get() == w)
+      return i;
+  return 0;   // fallback to the first window
+}
+
 void ApplicationPrivate::createWindow(const QScreen* screen)
 {
   std::size_t idx = _app_config->global().getConfigPerWindow() ? _windows.size() : 0;
