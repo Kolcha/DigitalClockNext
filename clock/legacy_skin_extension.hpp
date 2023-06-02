@@ -25,9 +25,9 @@ protected:
   {
     Q_UNUSED(dt);
     auto res = fmt;
-    using namespace Qt::StringLiterals;
     if (_should_replace) {
-      auto pattern = QString("[%1]").arg(QRegularExpression::escape(seps));
+      using namespace Qt::StringLiterals;
+      auto pattern = QString(u"[%1]"_s).arg(QRegularExpression::escape(seps));
       res.replace(QRegularExpression(pattern), u" "_s);
     }
     return res;
