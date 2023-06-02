@@ -1,6 +1,8 @@
 #include "application.hpp"
 #include "application_private.hpp"
 
+#include "settings_dialog.hpp"
+
 using namespace Qt::Literals::StringLiterals;
 
 // constructor and destructor are required here to get
@@ -30,6 +32,11 @@ void Application::init()
 // TODO: consider to move to own files
 void Application::showSettingsDialog()
 {
+  auto w = qobject_cast<ClockWindow*>(sender());
+  // TODO: find window on current screen in case of tray icon clicked
+  auto dlg = new SettingsDialog(_impl.get(), _impl->window_index(w), w);
+  connect(dlg, &QDialog::finished, dlg, &QObject::deleteLater);
+  dlg->show();
 }
 
 void Application::showAboutDialog()
