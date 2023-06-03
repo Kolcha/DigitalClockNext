@@ -47,6 +47,7 @@ void ClockWidgetWrap::setSkin(std::shared_ptr<ClockSkin> skin)
 {
   _impl->n_impl = std::make_unique<ClockWidget>(_impl->dt.toTimeZone(_impl->tz), skin);
   _impl->skin = std::move(skin);
+  updateGeometry();
   update();
 }
 
