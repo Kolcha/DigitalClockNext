@@ -19,11 +19,11 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="general_tab">
       <attribute name="title">
-       <string>Tab 1</string>
+       <string>General</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="general_tab_layout">
        <item>
         <widget class="QGroupBox" name="skin_group">
          <property name="title">
@@ -43,7 +43,7 @@
           <item>
            <widget class="QToolButton" name="select_font_btn">
             <property name="text">
-             <string>...</string>
+             <string notr="true">...</string>
             </property>
            </widget>
           </item>
