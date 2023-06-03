@@ -27,6 +27,9 @@ public slots:
 private slots:
   void on_orientation_cbox_activated(int index);
   void on_spacing_edit_valueChanged(int arg1);
+  void on_time_format_cbox_textActivated(const QString& arg1);
+  void on_allow_format_edit_cb_toggled(bool checked);
+  void on_apply_format_btn_clicked();
 
 private:
   Ui::ClassicSkinSettings* ui;
