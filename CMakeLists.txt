@@ -69,6 +69,7 @@ set(PROJECT_SOURCES
         app/settings_dialog.cpp
         app/settings_dialog.hpp
         app/settings_dialog.ui
+        render/background_effect.hpp
 )
 
 qt_add_executable(font_rendering_test

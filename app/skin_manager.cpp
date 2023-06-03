@@ -5,6 +5,7 @@
 #include <QDir>
 
 #include "clock/legacy_skin_extension.hpp"
+#include "render/background_effect.hpp"
 #include "render/identity_effect.hpp"
 #include "render/texturing_effect.hpp"
 #include "skin/char_renderable_factory.hpp"
@@ -146,6 +147,7 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   effect2->setBrush(g2);
 
   skin->addItemEffect(effect1);
+  skin->addLayoutEffect(std::make_shared<BackgroundEffect>(QColor(0, 0, 0, 64)));
   skin->addLayoutEffect(std::make_unique<IdentityEffect>());
   skin->addLayoutEffect(effect2);
 
