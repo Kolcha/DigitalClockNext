@@ -128,7 +128,7 @@ void SettingsDialog::updateSkinSettingsTab()
   }
 
   if (auto cskin = std::dynamic_pointer_cast<ClassicSkin>(impl->wnd->skin())) {
-    auto w = new ClassicSkinSettings();
+    auto w = new ClassicSkinSettings(impl->app, impl->idx);
     ui->tabWidget->insertTab(skin_tab_pos, w, skin_tab_text);
   }
 }

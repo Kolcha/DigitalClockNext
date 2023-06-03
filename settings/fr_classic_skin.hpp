@@ -6,8 +6,8 @@
 
 class ClassicSkinConfig final : public ConfigBaseQVariant {
   CONFIG_OPTION_Q(QString, TimeFormat, QString("hh:mm:ss a"))
-  CONFIG_OPTION_Q(int, SpacingH, 0)
-  CONFIG_OPTION_Q(int, SpacingV, 0)
+  CONFIG_OPTION_Q(Qt::Orientation, Orientation, Qt::Horizontal)
+  CONFIG_OPTION_Q(int, Spacing, 0)
 public:
   using ConfigBaseQVariant::ConfigBaseQVariant;
 };
