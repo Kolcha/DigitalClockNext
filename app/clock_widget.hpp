@@ -32,6 +32,8 @@ public slots:
   void setTimeZone(const QTimeZone& tz);
   void setSeparatorVisible(bool visible);
 
+  void skinConfigured();
+
 protected:
   void paintEvent(QPaintEvent* event) override;
 

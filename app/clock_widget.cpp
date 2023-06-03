@@ -76,6 +76,17 @@ void ClockWidgetWrap::setSeparatorVisible(bool visible)
   update();
 }
 
+void ClockWidgetWrap::skinConfigured()
+{
+  // skin properties may vary depending on skin type and
+  // they are unknown here and may be modified outside
+  // we should be notified about these changes to rebuild
+  // widget's geometry after skin properties modification
+  _impl->n_impl->setDateTime(_impl->dt.toTimeZone(_impl->tz));
+  updateGeometry();
+  update();
+}
+
 void ClockWidgetWrap::paintEvent(QPaintEvent* event)
 {
   _impl->n_impl->setSeparatorVisible(_impl->seps_visible);

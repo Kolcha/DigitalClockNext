@@ -28,7 +28,6 @@ public:
 
 // TODO: consider to add setter for factory object -
 // this will allow to change classic skins only with changing factory
-// TODO: add rendering customization functions (spacing, etc.)
 // TODO: consider shared renderer
 class ClassicSkin : public ClockSkin {
 public:
@@ -37,6 +36,7 @@ public:
     , _renderer(std::make_shared<LayoutRenderer>())
     , _item_effects(std::make_shared<CompositeEffect>())
     , _layout_effects(std::make_shared<CompositeEffect>())
+    , _settings(std::make_unique<ClassicSkinSettings>())
     , _formatter(std::make_unique<DateTimeFormatter>("hh:mm a"))
   {}
 
@@ -44,7 +44,7 @@ public:
   {
     std::vector<std::shared_ptr<Renderable>> seps;
     auto builder = LayoutBuilder<LinearLayout>();
-    builder.init(Qt::Horizontal);
+    builder.init(_settings->orientation, _settings->spacing);
     const auto str = _formatter->process(dt);
     for (const auto& c : str) {
       auto r = _factory->item(c);
@@ -64,6 +64,16 @@ public:
     auto item = std::make_unique<RenderableItem>(r);
     item->addEffect(_layout_effects);
     return item;
+  }
+
+  void setOrientation(Qt::Orientation orientation)
+  {
+    _settings->orientation = orientation;
+  }
+
+  void setSpacing(qreal spacing)
+  {
+    _settings->spacing = spacing;
   }
 
   void addItemEffect(std::shared_ptr<Effect> effect)
@@ -94,10 +104,17 @@ private:
   }
 
 private:
+  struct ClassicSkinSettings {
+    Qt::Orientation orientation = Qt::Horizontal;
+    qreal spacing = 0;
+    // TODO: move effects here
+  };
+
   std::shared_ptr<RenderableFactory> _factory;
   std::shared_ptr<LayoutRenderer> _renderer;
   std::shared_ptr<ClassicSkinRenderable> _widget;
   std::shared_ptr<CompositeEffect> _item_effects;
   std::shared_ptr<CompositeEffect> _layout_effects;
+  std::unique_ptr<ClassicSkinSettings> _settings;
   std::unique_ptr<DateTimeFormatter> _formatter;
 };

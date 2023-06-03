@@ -49,12 +49,30 @@ ClassicSkinSettings::~ClassicSkinSettings()
   delete ui;
 }
 
+void ClassicSkinSettings::commitChanges()
+{
+  impl->scfg->commit();
+}
+
+void ClassicSkinSettings::discardChanges()
+{
+  impl->scfg->discard();
+  impl->skin->setOrientation(impl->scfg->getOrientation());
+  impl->skin->setSpacing(impl->scfg->getSpacing());
+  impl->wnd->skinConfigured();
+}
+
 void ClassicSkinSettings::on_orientation_cbox_activated(int index)
 {
-  //
+  auto orientation = ui->orientation_cbox->itemData(index).value<Qt::Orientation>();
+  impl->skin->setOrientation(orientation);
+  impl->wnd->skinConfigured();
+  impl->scfg->setOrientation(orientation);
 }
 
 void ClassicSkinSettings::on_spacing_edit_valueChanged(int arg1)
 {
-  //
+  impl->skin->setSpacing(arg1);
+  impl->wnd->skinConfigured();
+  impl->scfg->setSpacing(arg1);
 }

@@ -150,4 +150,6 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   skin->addLayoutEffect(effect2);
 
   skin->formatter()->setFormat(cfg.classicSkin().getTimeFormat());
+  skin->setOrientation(cfg.classicSkin().getOrientation());
+  skin->setSpacing(cfg.classicSkin().getSpacing());
 }

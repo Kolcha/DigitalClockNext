@@ -100,6 +100,11 @@ void ClockWindow::setSnapThreshold(int threshold)
   _impl->snap_threshold = threshold;
 }
 
+void ClockWindow::skinConfigured()
+{
+  _impl->clock_widget->skinConfigured();
+}
+
 void ClockWindow::contextMenuEvent(QContextMenuEvent* event)
 {
   _impl->context_menu->popup(event->globalPos());

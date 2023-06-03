@@ -27,7 +27,7 @@
    <item row="0" column="4">
     <widget class="QSpinBox" name="spacing_edit">
      <property name="minimum">
-      <number>-4</number>
+      <number>-8</number>
      </property>
      <property name="maximum">
       <number>16</number>
