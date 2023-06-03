@@ -136,7 +136,7 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   });
   g1.setCoordinateMode(QGradient::ObjectMode);
   auto effect1 = std::make_shared<TexturingEffect>();
-  effect1->setBrush(g1);
+  effect1->setBrush(std::move(g1));
 
   QLinearGradient g2(0., 0., 0., 1.);
   g2.setColorAt(0.0, Qt::transparent);
@@ -144,7 +144,7 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   g2.setColorAt(1.0, Qt::magenta);
   g2.setCoordinateMode(QGradient::ObjectMode);
   auto effect2 = std::make_shared<TexturingEffect>();
-  effect2->setBrush(g2);
+  effect2->setBrush(std::move(g2));
 
   skin->addItemEffect(effect1);
   skin->addLayoutEffect(std::make_shared<BackgroundEffect>(QColor(0, 0, 0, 64)));

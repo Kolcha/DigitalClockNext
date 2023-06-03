@@ -5,11 +5,13 @@
 #include <QPainter>
 #include <QPixmap>
 
-#include "core/renderable.hpp"
-
 class TexturingEffect : public Effect {
 public:
-  void setBrush(QBrush brush)
+  explicit TexturingEffect(QBrush brush = Qt::magenta) noexcept
+    : _brush(std::move(brush))
+  {}
+
+  void setBrush(QBrush brush) noexcept
   {
     _brush = std::move(brush);
   }
@@ -21,7 +23,6 @@ public:
     buffer.fill(Qt::transparent);
     {
       QPainter tx_painter(&buffer);
-//      tx_painter.translate(-item->rect().topLeft());
       r(item, &tx_painter);
       tx_painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
       tx_painter.setPen(Qt::NoPen);
@@ -32,5 +33,5 @@ public:
   }
 
 private:
-  QBrush _brush = Qt::magenta;
+  QBrush _brush;
 };
