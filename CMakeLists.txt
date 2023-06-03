@@ -69,8 +69,6 @@ set(PROJECT_SOURCES
         app/settings_dialog.cpp
         app/settings_dialog.hpp
         app/settings_dialog.ui
-        skin/legacy_skin_validator.cpp
-        skin/legacy_skin_validator.hpp
 )
 
 qt_add_executable(font_rendering_test

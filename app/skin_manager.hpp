@@ -25,7 +25,7 @@ public slots:
 
 private:
   using ClassicSkinPtr = std::shared_ptr<ClassicSkin>;
-  ClassicSkinPtr loadLegacySkin(const QString& skin_name) const;
+  ClassicSkinPtr loadLegacySkin(const QString& skin_path) const;
 
   void configureClassicSkin(const ClassicSkinPtr& skin, std::size_t i) const;
 

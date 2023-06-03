@@ -1,5 +1,7 @@
 #include "skin_manager.hpp"
 
+#include <optional>
+
 #include <QDir>
 
 #include "clock/legacy_skin_extension.hpp"
@@ -7,7 +9,18 @@
 #include "render/texturing_effect.hpp"
 #include "skin/char_renderable_factory.hpp"
 #include "skin/legacy_skin_loader.hpp"
-#include "skin/legacy_skin_validator.hpp"
+
+namespace {
+
+std::optional<QString> tryLegacySkin(const QString& path)
+{
+  LegacySkinLoader loader(path);
+  if (loader.valid())
+    return loader.meta()["name"].toString();
+  return std::nullopt;
+}
+
+} // namespace
 
 SkinManagerImpl::SkinManagerImpl(ApplicationPrivate* app, QObject* parent)
   : SkinManager(parent)
@@ -91,10 +104,10 @@ void SkinManagerImpl::findSkins()
   }
 }
 
-SkinManagerImpl::ClassicSkinPtr SkinManagerImpl::loadLegacySkin(const QString& skin_name) const
+SkinManagerImpl::ClassicSkinPtr SkinManagerImpl::loadLegacySkin(const QString& skin_path) const
 {
-  LegacySkinLoader loader;
-  auto skin = loader.load(skin_name);
+  LegacySkinLoader loader(skin_path);
+  auto skin = loader.skin();
 
   auto flashing_dots_ext = std::make_shared<LegacySkinExtension>();
   connect(_app->time_source().get(), &TimeSource::halfSecondUpdate,
