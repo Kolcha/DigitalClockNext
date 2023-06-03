@@ -41,7 +41,7 @@ private:
   void updateSkinSettingsTab();
 
 private:
-  std::unique_ptr<Ui::SettingsDialog> ui;
+  Ui::SettingsDialog* ui;
   struct Impl;
   std::unique_ptr<Impl> impl;
 };

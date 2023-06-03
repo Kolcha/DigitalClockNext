@@ -30,7 +30,7 @@ struct SettingsDialog::Impl {
 
 SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget* parent)
   : QDialog(parent)
-  , ui(std::make_unique<Ui::SettingsDialog>())
+  , ui(new Ui::SettingsDialog)
   , impl(std::make_unique<Impl>(app, idx))
 {
   ui->setupUi(this);
@@ -45,7 +45,10 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   updateSkinSettingsTab();
 }
 
-SettingsDialog::~SettingsDialog() = default;
+SettingsDialog::~SettingsDialog()
+{
+  delete ui;
+}
 
 void SettingsDialog::accept()
 {
