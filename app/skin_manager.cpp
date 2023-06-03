@@ -1,15 +1,20 @@
 #include "skin_manager.hpp"
 
+#include <QDir>
+
 #include "clock/legacy_skin_extension.hpp"
 #include "render/identity_effect.hpp"
 #include "render/texturing_effect.hpp"
 #include "skin/char_renderable_factory.hpp"
 #include "skin/legacy_skin_loader.hpp"
+#include "skin/legacy_skin_validator.hpp"
 
 SkinManagerImpl::SkinManagerImpl(ApplicationPrivate* app, QObject* parent)
   : SkinManager(parent)
   , _app(app)
-{}
+{
+  findSkins();
+}
 
 SkinManager::SkinPtr SkinManagerImpl::loadSkin(const QFont& font) const
 {
@@ -21,8 +26,14 @@ SkinManager::SkinPtr SkinManagerImpl::loadSkin(const QFont& font) const
 
 SkinManager::SkinPtr SkinManagerImpl::loadSkin(const QString& skin_name) const
 {
-  // only legacy skins for now
-  return loadLegacySkin(skin_name);
+  auto iter = _skins.find(skin_name);
+  if (iter != _skins.end()) {
+    switch (iter.value().type) {
+      case SkinType::Legacy:
+        return loadLegacySkin(iter.value().path);
+    }
+  }
+  return nullptr;
 }
 
 SkinManager::SkinPtr SkinManagerImpl::loadSkin(std::size_t i) const
@@ -41,6 +52,42 @@ void SkinManagerImpl::configureSkin(const SkinPtr& skin, std::size_t i) const
   if (auto cskin = std::dynamic_pointer_cast<ClassicSkin>(skin)) {
     configureClassicSkin(cskin, i);
     return;
+  }
+}
+
+QStringList SkinManagerImpl::availableSkins() const
+{
+  QStringList skins = _skins.keys();
+  skins.sort();
+  return skins;
+}
+
+void SkinManagerImpl::findSkins()
+{
+  _skins.clear();
+
+  using namespace Qt::Literals::StringLiterals;
+  // TODO: platform/distribution-specific search paths
+  const auto search_paths = {
+    u"."_s,   // only current path for now
+  };
+
+  constexpr std::pair<SkinType, std::optional<QString>(*)(const QString&)> validators[] = {
+    {SkinType::Legacy, &tryLegacySkin},
+  };
+
+  for (const auto& path : search_paths) {
+    QDir dir(path);
+    const auto items = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
+    for (const auto& item : items) {
+      auto skin_path = dir.absoluteFilePath(item);
+      for (const auto& [type, validator] : validators) {
+        if (auto name = (*validator)(skin_path)) {
+          _skins[*name] = {type, skin_path};
+          break;
+        }
+      }
+    }
   }
 }
 

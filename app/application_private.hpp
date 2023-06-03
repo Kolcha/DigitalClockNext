@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QVariant>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QSystemTrayIcon>
@@ -28,6 +29,10 @@ public:
   virtual SkinPtr loadSkin(const QString& skin_name) const = 0;
   virtual SkinPtr loadSkin(std::size_t i) const = 0;
   virtual void configureSkin(const SkinPtr& skin, std::size_t i) const = 0;
+  virtual QStringList availableSkins() const = 0;
+
+public slots:
+  virtual void findSkins() = 0;
 };
 
 

@@ -37,6 +37,8 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   const auto& appearance_cfg = impl->wcfg->appearance();
   ui->font_rbtn->setChecked(appearance_cfg.getUseFontInsteadOfSkin());
   ui->skin_rbtn->setChecked(!appearance_cfg.getUseFontInsteadOfSkin());
+  ui->skin_cbox->addItems(impl->app->skin_manager()->availableSkins());
+  ui->skin_cbox->setCurrentText(impl->wcfg->state().getLastUsedSkin());
   ui->is_separator_flashes->setChecked(appearance_cfg.getFlashingSeparator());
 }
 
