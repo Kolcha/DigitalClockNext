@@ -1,5 +1,3 @@
-#include "widget.hpp"
-
 #include "app/application.hpp"
 
 int main(int argc, char *argv[])

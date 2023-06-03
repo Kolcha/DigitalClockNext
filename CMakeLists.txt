@@ -14,8 +14,6 @@ find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets Svg)
 
 set(PROJECT_SOURCES
         main.cpp
-        widget.cpp
-        widget.hpp
         core/layout_item.hpp
         core/layout.hpp
         core/linear_layout.hpp
