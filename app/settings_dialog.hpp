@@ -38,6 +38,8 @@ private:
   void applySkin(std::shared_ptr<ClockSkin> skin);
   void applyFlashingSeparator(bool enable);
 
+  void updateSkinSettingsTab();
+
 private:
   std::unique_ptr<Ui::SettingsDialog> ui;
   struct Impl;

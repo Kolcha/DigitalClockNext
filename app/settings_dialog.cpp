@@ -4,6 +4,7 @@
 #include <QFontDialog>
 
 #include "app/application_private.hpp"
+#include "app/classic_skin_settings.hpp"
 #include "skin/classic_skin.hpp"
 
 using namespace Qt::Literals::StringLiterals;
@@ -40,6 +41,8 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->skin_cbox->addItems(impl->app->skin_manager()->availableSkins());
   ui->skin_cbox->setCurrentText(impl->wcfg->state().getLastUsedSkin());
   ui->is_separator_flashes->setChecked(appearance_cfg.getFlashingSeparator());
+
+  updateSkinSettingsTab();
 }
 
 SettingsDialog::~SettingsDialog() = default;
@@ -101,6 +104,7 @@ void SettingsDialog::applySkin(std::shared_ptr<ClockSkin> skin)
   if (!skin) return;
   impl->app->skin_manager()->configureSkin(skin, impl->idx);
   impl->wnd->setSkin(std::move(skin));
+  updateSkinSettingsTab();
 }
 
 void SettingsDialog::applyFlashingSeparator(bool enable)
@@ -110,4 +114,21 @@ void SettingsDialog::applyFlashingSeparator(bool enable)
   impl->wnd->setSeparatorFlashes(enable);
   if (!enable)
     impl->wnd->setSeparatorVisible(true);
+}
+
+void SettingsDialog::updateSkinSettingsTab()
+{
+  constexpr auto skin_tab_pos = 1;
+  const QString skin_tab_text = tr("Skin");
+
+  if (ui->tabWidget->tabText(skin_tab_pos) == skin_tab_text) {
+    auto skin_tab = ui->tabWidget->widget(skin_tab_pos);
+    ui->tabWidget->removeTab(skin_tab_pos);
+    delete skin_tab;
+  }
+
+  if (auto cskin = std::dynamic_pointer_cast<ClassicSkin>(impl->wnd->skin())) {
+    auto w = new ClassicSkinSettings();
+    ui->tabWidget->insertTab(skin_tab_pos, w, skin_tab_text);
+  }
 }
