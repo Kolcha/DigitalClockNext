@@ -24,6 +24,11 @@ public:
     _effects.push_back(std::move(effect));
   }
 
+  void clearEffects() noexcept
+  {
+    _effects.clear();
+  }
+
 private:
   std::vector<std::shared_ptr<Effect>> _effects;
 };

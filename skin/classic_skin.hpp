@@ -86,6 +86,16 @@ public:
     _layout_effects->addEffect(std::move(effect));
   }
 
+  void clearItemEffects()
+  {
+    _item_effects->clearEffects();
+  }
+
+  void clearLayoutEffects()
+  {
+    _layout_effects->clearEffects();
+  }
+
   const auto& formatter() const noexcept { return _formatter; }
 
 private:
