@@ -7,7 +7,7 @@
 
 class LinearLayout : public Layout {
 public:
-  LinearLayout(Qt::Orientation o, qreal spacing = 0.)
+  explicit LinearLayout(Qt::Orientation o, qreal spacing = 0.)
     : Layout()
     , _spacing(spacing)
   {

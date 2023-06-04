@@ -125,7 +125,7 @@ public:
   ConfigStorage& operator=(const ConfigStorage&) = delete;
   ConfigStorage& operator=(ConfigStorage&&) = default;
 
-  using SettingsData = ConfigBackendType::SettingsData;
+  using SettingsData = typename ConfigBackendType::SettingsData;
 
   SettingsData exportSettings() const
   {
