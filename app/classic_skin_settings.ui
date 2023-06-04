@@ -10,8 +10,8 @@
     <height>300</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="orientation_label">
@@ -71,7 +71,7 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="1" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="time_format_label">
@@ -172,15 +172,158 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="texture_group">
+     <property name="title">
+      <string>te&amp;xture</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="tx_solid_color_rbtn">
+        <property name="text">
+         <string>solid color</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QToolButton" name="tx_select_color_btn">
+        <property name="text">
+         <string notr="true">...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="tx_gradient_rbtn">
+        <property name="text">
+         <string>gradient</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QToolButton" name="tx_select_gradient_btn">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string notr="true">...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="tx_pattern_rbtn">
+        <property name="text">
+         <string>pattern</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QToolButton" name="tx_select_pattern_btn">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string notr="true">...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QCheckBox" name="tx_per_element_cb">
+        <property name="text">
+         <string>apply per element</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QGroupBox" name="background_group">
+     <property name="title">
+      <string>&amp;background</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="bg_solid_color_rbtn">
+        <property name="text">
+         <string>solid color</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QToolButton" name="bg_select_color_btn">
+        <property name="text">
+         <string notr="true">...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="bg_gradient_rbtn">
+        <property name="text">
+         <string>gradient</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QToolButton" name="bg_select_gradient_btn">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string notr="true">...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="bg_pattern_rbtn">
+        <property name="text">
+         <string>pattern</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QToolButton" name="bg_select_pattern_btn">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string notr="true">...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QCheckBox" name="bg_per_element_cb">
+        <property name="text">
+         <string>apply per element</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
-       <height>249</height>
+       <width>348</width>
+       <height>58</height>
       </size>
      </property>
     </spacer>
@@ -188,5 +331,102 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>tx_solid_color_rbtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>tx_select_color_btn</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>130</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>175</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tx_gradient_rbtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>tx_select_gradient_btn</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>130</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>175</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tx_pattern_rbtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>tx_select_pattern_btn</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>130</x>
+     <y>175</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>175</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bg_solid_color_rbtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>bg_select_color_btn</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>320</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bg_gradient_rbtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>bg_select_gradient_btn</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>320</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bg_pattern_rbtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>bg_select_pattern_btn</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>320</x>
+     <y>175</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

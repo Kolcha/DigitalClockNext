@@ -125,7 +125,7 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   const auto& cfg = _app->app_config()->window(i);
 
   skin->formatter()->setExtensionEnabled(u"legacy_skin"_s, cfg.appearance().getFlashingSeparator());
-
+/*
   QConicalGradient g1(0.5, 0.5, 45.0);
   g1.setStops({
     {0.00, {170,   0,   0}},  // #aa0000
@@ -150,6 +150,29 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   skin->addLayoutEffect(std::make_shared<BackgroundEffect>(QColor(0, 0, 0, 64)));
   skin->addLayoutEffect(std::make_unique<IdentityEffect>());
   skin->addLayoutEffect(effect2);
+*/
+  skin->clearItemEffects();
+  skin->clearLayoutEffects();
+
+  if (auto brush = cfg.classicSkin().getBackground(); brush.style() != Qt::NoBrush) {
+    auto effect = std::make_unique<BackgroundEffect>(std::move(brush));
+    if (cfg.classicSkin().getBackgroundPerElement()) {
+      skin->addItemEffect(std::move(effect));
+      skin->addItemEffect(std::make_unique<IdentityEffect>());
+    } else {
+      skin->addLayoutEffect(std::move(effect));
+      skin->addLayoutEffect(std::make_unique<IdentityEffect>());
+    }
+  }
+
+  if (auto brush = cfg.classicSkin().getTexture(); brush.style() != Qt::NoBrush) {
+    auto effect = std::make_unique<TexturingEffect>(std::move(brush));
+    if (cfg.classicSkin().getTexturePerElement()) {
+      skin->addItemEffect(std::move(effect));
+    } else {
+      skin->addLayoutEffect(std::move(effect));
+    }
+  }
 
   skin->formatter()->setFormat(cfg.classicSkin().getTimeFormat());
   skin->setOrientation(cfg.classicSkin().getOrientation());
