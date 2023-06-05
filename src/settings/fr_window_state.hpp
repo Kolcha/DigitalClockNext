@@ -3,19 +3,21 @@
 #include "config_base_qvariant.hpp"
 
 #include <QColor>
-//#include <QGradient>
+#include <QGradient>
 #include <QFont>
 #include <QPixmap>
 #include <QString>
+
+#include "sample_values.hpp"
 
 class WindowState final : public ConfigBaseQVariant {
   CONFIG_OPTION_Q(QFont, TextSkinFont, QFont("Segoe Script", 48))
   CONFIG_OPTION_Q(QString, LastUsedSkin, QString("Floral digits"))
   CONFIG_OPTION_Q(QColor, TextureColor, QColor(112, 96, 240))
-//  CONFIG_OPTION_Q(QGradient, TextureGradient, QGradient())
+  CONFIG_OPTION_Q(QGradient, TextureGradient, sample_conical_gradient())
   CONFIG_OPTION_Q(QPixmap, TexturePattern, QPixmap())
   CONFIG_OPTION_Q(QColor, BackgroundColor, QColor(0, 0, 0, 160))
-//  CONFIG_OPTION_Q(QGradient, BackgroundGradient, QGradient())
+  CONFIG_OPTION_Q(QGradient, BackgroundGradient, sample_linear_gradient())
   CONFIG_OPTION_Q(QPixmap, BackgroundPattern, QPixmap())
 public:
   using ConfigBaseQVariant::ConfigBaseQVariant;

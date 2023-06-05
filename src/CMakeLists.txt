@@ -70,6 +70,8 @@ set(PROJECT_SOURCES
         app/settings_dialog.hpp
         app/settings_dialog.ui
         render/background_effect.hpp
+        settings/sample_values.cpp
+        settings/sample_values.hpp
 )
 
 qt_add_executable(digital_clock_next
@@ -78,6 +80,7 @@ qt_add_executable(digital_clock_next
 )
 
 target_include_directories(digital_clock_next PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(digital_clock_next PRIVATE gradient_dialog)
 target_link_libraries(digital_clock_next PRIVATE Qt6::Widgets Qt6::Svg)
 
 set_target_properties(digital_clock_next PROPERTIES

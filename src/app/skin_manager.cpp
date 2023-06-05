@@ -125,32 +125,7 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   const auto& cfg = _app->app_config()->window(i);
 
   skin->formatter()->setExtensionEnabled(u"legacy_skin"_s, cfg.appearance().getFlashingSeparator());
-/*
-  QConicalGradient g1(0.5, 0.5, 45.0);
-  g1.setStops({
-    {0.00, {170,   0,   0}},  // #aa0000
-    {0.20, {  0,  85, 255}},  // #0055ff
-    {0.45, {  0, 170,   0}},  // #00aa00
-    {0.65, {255, 255,   0}},  // #ffff00
-    {1.00, {170,   0,   0}},  // #aa0000
-  });
-  g1.setCoordinateMode(QGradient::ObjectMode);
-  auto effect1 = std::make_shared<TexturingEffect>();
-  effect1->setBrush(std::move(g1));
 
-  QLinearGradient g2(0., 0., 0., 1.);
-  g2.setColorAt(0.0, Qt::transparent);
-  g2.setColorAt(0.9, Qt::transparent);
-  g2.setColorAt(1.0, Qt::magenta);
-  g2.setCoordinateMode(QGradient::ObjectMode);
-  auto effect2 = std::make_shared<TexturingEffect>();
-  effect2->setBrush(std::move(g2));
-
-  skin->addItemEffect(effect1);
-  skin->addLayoutEffect(std::make_shared<BackgroundEffect>(QColor(0, 0, 0, 64)));
-  skin->addLayoutEffect(std::make_unique<IdentityEffect>());
-  skin->addLayoutEffect(effect2);
-*/
   skin->clearItemEffects();
   skin->clearLayoutEffects();
 

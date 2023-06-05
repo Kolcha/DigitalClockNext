@@ -5,10 +5,9 @@
 #include <QColorDialog>
 #include <QSignalBlocker>
 
+#include <gradient_dialog.h>
+
 #include "app/application_private.hpp"
-#include "render/background_effect.hpp"
-#include "render/identity_effect.hpp"
-#include "render/texturing_effect.hpp"
 #include "skin/classic_skin.hpp"
 
 struct ClassicSkinSettings::Impl {
@@ -126,10 +125,10 @@ void ClassicSkinSettings::on_texture_group_clicked(bool checked)
   if (checked) {
     if (ui->tx_solid_color_rbtn->isChecked())
       brush = QBrush(impl->wcfg->state().getTextureColor());
-/*
+
     if (ui->tx_gradient_rbtn->isChecked())
       brush = QBrush(impl->wcfg->state().getTextureGradient());
-*/
+
     if (ui->tx_pattern_rbtn->isChecked())
       brush = QBrush(impl->wcfg->state().getTexturePattern());
   }
@@ -157,15 +156,20 @@ void ClassicSkinSettings::on_tx_select_color_btn_clicked()
 
 void ClassicSkinSettings::on_tx_gradient_rbtn_clicked()
 {
-/*
   impl->scfg->setTexture(impl->wcfg->state().getTextureGradient());
   updateEffects();
-*/
 }
 
 void ClassicSkinSettings::on_tx_select_gradient_btn_clicked()
 {
-  // show gradient dialog
+  bool ok = false;
+  auto gradient = GradientDialog::getGradient(&ok,
+                                              impl->wcfg->state().getTextureGradient(),
+                                              this);
+  if (!ok) return;
+  gradient.setCoordinateMode(QGradient::ObjectMode);
+  impl->scfg->setTexture(gradient);
+  impl->wcfg->state().setTextureGradient(gradient);
   updateEffects();
 }
 
@@ -201,10 +205,10 @@ void ClassicSkinSettings::on_background_group_clicked(bool checked)
   if (checked) {
     if (ui->bg_solid_color_rbtn->isChecked())
       brush = QBrush(impl->wcfg->state().getBackgroundColor());
-/*
+
     if (ui->bg_gradient_rbtn->isChecked())
       brush = QBrush(impl->wcfg->state().getBackgroundGradient());
-*/
+
     if (ui->bg_pattern_rbtn->isChecked())
       brush = QBrush(impl->wcfg->state().getBackgroundPattern());
   }
@@ -232,15 +236,20 @@ void ClassicSkinSettings::on_bg_select_color_btn_clicked()
 
 void ClassicSkinSettings::on_bg_gradient_rbtn_clicked()
 {
-/*
   impl->scfg->setBackground(impl->wcfg->state().getBackgroundGradient());
   updateEffects();
-*/
 }
 
 void ClassicSkinSettings::on_bg_select_gradient_btn_clicked()
 {
-  // show gradient dialog
+  bool ok = false;
+  auto gradient = GradientDialog::getGradient(&ok,
+                                              impl->wcfg->state().getBackgroundGradient(),
+                                              this);
+  if (!ok) return;
+  gradient.setCoordinateMode(QGradient::ObjectMode);
+  impl->scfg->setBackground(gradient);
+  impl->wcfg->state().setBackgroundGradient(gradient);
   updateEffects();
 }
 
