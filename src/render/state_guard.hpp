@@ -7,6 +7,12 @@ public:
   explicit StateGuard(Context* ctx) : _ctx(ctx) { save(_ctx); }
   ~StateGuard() { restore(_ctx); }
 
+  StateGuard(const StateGuard&) = delete;
+  StateGuard(StateGuard&&) noexcept = default;
+
+  StateGuard& operator=(const StateGuard&) = delete;
+  StateGuard& operator=(StateGuard&&) noexcept = default;
+
 protected:
   // no implementation, specialization must be provided
   inline void save(Context* ctx);
