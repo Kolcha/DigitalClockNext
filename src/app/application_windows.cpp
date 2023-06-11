@@ -4,8 +4,11 @@
 #include <ranges>
 #include <utility>
 
+#include <QPixmapCache>
+
 void ApplicationPrivate::initWindows(QScreen* primary_screen, QList<QScreen*> screens)
 {
+  // TODO: what about multiple windows on the same screen, e.g. per time zone?
   if (_app_config->global().getWindowPerScreen())
     std::ranges::for_each(std::as_const(screens), [this](auto s) { createWindow(s); });
   else
@@ -42,4 +45,8 @@ void Application::createWindows()
     connect(wnd.get(), &ClockWindow::aboutDialogRequested, this, &Application::showAboutDialog);
     connect(wnd.get(), &ClockWindow::appExitRequested, this, &Application::quit);
   }
+  // TODO: change pixmap cache size depending on scaling
+  // TODO: maybe move this to renderer and change heuristically
+  // for "common" (because cache is shared) 16 MB + 16 MB per window
+  QPixmapCache::setCacheLimit((1 + _impl->windows().size()) * 16 * 1024);
 }

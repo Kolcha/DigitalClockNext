@@ -10,6 +10,8 @@
 #include "render/state_guard_qpainter.hpp"
 
 class QCharRenderable final : public RenderableBase {
+  friend size_t qHashImpl(const QCharRenderable& r, size_t seed);
+
 public:
   QCharRenderable(QChar ch, const QFont& font)
     : _ch(ch)

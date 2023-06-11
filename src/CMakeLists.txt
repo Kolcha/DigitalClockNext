@@ -72,6 +72,10 @@ set(PROJECT_SOURCES
         render/background_effect.hpp
         settings/sample_values.cpp
         settings/sample_values.hpp
+        render/effects_hashing.cpp
+        render/effects_hashing.hpp
+        render/renderable_hashing.cpp
+        render/renderable_hashing.hpp
 )
 
 qt_add_executable(digital_clock_next

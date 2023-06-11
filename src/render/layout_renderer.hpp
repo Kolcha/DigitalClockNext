@@ -5,10 +5,12 @@
 
 #include <QPainter>
 #include <QPixmap>
+#include <QPixmapCache>
 
 #include "core/effect.hpp"
 #include "core/layout.hpp"
 #include "core/renderable_item.hpp"
+#include "render/renderable_hashing.hpp"
 #include "render/state_guard_qpainter.hpp"
 
 class LayoutRenderer {
@@ -38,21 +40,28 @@ private:
     QRectF br = p->transform().map(QPolygonF(item->rect())).boundingRect();
 
     QSizeF sz = br.size() * p->device()->devicePixelRatioF();
-    QPixmap pxm(sz.toSize());
-    pxm.setDevicePixelRatio(p->device()->devicePixelRatioF());
-    pxm.fill(Qt::transparent);
+    QString key = QString("%1_%2x%3").arg(qHash(*item)).arg(sz.width()).arg(sz.height());
+    QPixmap pxm;
+    if (!QPixmapCache::find(key, &pxm)) {
+      pxm = QPixmap(sz.toSize());
+      pxm.setDevicePixelRatio(p->device()->devicePixelRatioF());
+      pxm.fill(Qt::transparent);
 
-    // TODO: consider pixmap interface: QPixmap effect->apply(prev_res, orig_image);
-    for (const auto& effect : item->effects()) {
-      QPainter ep(&pxm);
-      effect->apply(item->renderable().get(), &ep, [&](const Renderable* r, QPainter* p) {
-        StateGuard _(p);
-        p->translate(-br.topLeft());
-        p->setTransform(t, true);
-        r->render(p);
-      });
+      // TODO: consider pixmap interface: QPixmap effect->apply(prev_res, orig_image);
+      for (const auto& effect : item->effects()) {
+        QPainter ep(&pxm);
+        effect->apply(item->renderable().get(), &ep, [&](const Renderable* r, QPainter* p) {
+          StateGuard _(p);
+          p->translate(-br.topLeft());
+          p->setTransform(t, true);
+          r->render(p);
+        });
+      }
+
+      QPixmapCache::insert(key, pxm);
     }
 
+    StateGuard _(p);
     p->resetTransform();
     p->drawPixmap(br.topLeft(), pxm);
   }

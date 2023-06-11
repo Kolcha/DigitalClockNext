@@ -15,6 +15,8 @@ public:
     _brush = std::move(brush);
   }
 
+  const QBrush& brush() const noexcept { return _brush; }
+
   void apply(const Renderable* item, QPainter* p, RenderItemFn r) const override
   {
     Q_UNUSED(item);

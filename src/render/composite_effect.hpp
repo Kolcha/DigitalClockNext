@@ -29,6 +29,8 @@ public:
     _effects.clear();
   }
 
+  const auto& effects() const noexcept { return _effects; }
+
 private:
   std::vector<std::shared_ptr<Effect>> _effects;
 };
