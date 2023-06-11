@@ -49,7 +49,6 @@ public:
     for (const auto& c : str) {
       auto r = _factory->item(c);
       if (!r) {
-        qDebug() << "no renderable: ch =" << c;
         continue;
       }
       if (isSeparator(c))

@@ -33,7 +33,6 @@ protected:
   {
     StateGuard _(p);
     p->setFont(_font);
-    // TODO: consider QStaticText
     p->drawText(QPointF(0., 0.), QString(_ch));
   }
 
