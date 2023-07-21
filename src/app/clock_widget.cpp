@@ -10,6 +10,8 @@ struct ClockWidgetWrap::impl {
   std::shared_ptr<ClockSkin> skin;
   QDateTime dt;
   QTimeZone tz;
+  qreal kx = 1;
+  qreal ky = 1;
   bool seps_visible = true;
 
   impl(const QDateTime& dt, const std::shared_ptr<ClockSkin>& skin)
@@ -18,6 +20,12 @@ struct ClockWidgetWrap::impl {
     , dt(dt.toUTC())
     , tz(dt.timeZone())
   {}
+
+  QSizeF scaledSize() const noexcept
+  {
+    auto s = n_impl->geometry().size();
+    return {kx * s.width(), ky * s.height()};
+  }
 };
 
 ClockWidgetWrap::ClockWidgetWrap(const SkinPtr& skin, const QDateTime& dt, QWidget* parent)
@@ -35,7 +43,7 @@ QSize ClockWidgetWrap::sizeHint() const
 
 QSize ClockWidgetWrap::minimumSizeHint() const
 {
-  return _impl->n_impl->geometry().size().toSize();
+  return _impl->scaledSize().toSize();
 }
 
 bool ClockWidgetWrap::isSeparatorVisible() const
@@ -73,6 +81,14 @@ void ClockWidgetWrap::setTimeZone(const QTimeZone& tz)
 void ClockWidgetWrap::setSeparatorVisible(bool visible)
 {
   _impl->seps_visible = visible;
+  update();
+}
+
+void ClockWidgetWrap::scale(qreal kx, qreal ky)
+{
+  _impl->kx = kx;
+  _impl->ky = ky;
+  updateGeometry();
   update();
 }
 

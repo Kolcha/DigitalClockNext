@@ -53,6 +53,8 @@ public slots:
 
   void flipSeparator();   // show/hide
 
+  void scale(int sx, int sy); // in percents
+
   void setSnapToEdge(bool enable);
   void setSnapThreshold(int threshold);
 

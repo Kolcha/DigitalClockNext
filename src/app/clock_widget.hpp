@@ -32,6 +32,8 @@ public slots:
   void setTimeZone(const QTimeZone& tz);
   void setSeparatorVisible(bool visible);
 
+  void scale(qreal kx, qreal ky);
+
   void skinConfigured();
 
 protected:

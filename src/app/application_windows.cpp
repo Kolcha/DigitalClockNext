@@ -34,6 +34,7 @@ void ApplicationPrivate::createWindow(const QScreen* screen)
   auto state = std::make_unique<ClockWindowState>(&cfg.state());
   auto wnd = std::make_unique<ClockWindow>(std::move(skin), _time_src->now().toLocalTime(), std::move(state));
   wnd->setSeparatorFlashes(cfg.appearance().getFlashingSeparator());
+  wnd->scale(cfg.appearance().getScaleFactorX(), cfg.appearance().getScaleFactorY());
   connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::setDateTime);
   connect(_time_src.get(), &TimeSource::halfSecondUpdate, wnd.get(), &ClockWindow::flipSeparator);
   wnd->show();

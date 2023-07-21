@@ -41,6 +41,8 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->skin_cbox->addItems(impl->app->skin_manager()->availableSkins());
   ui->skin_cbox->setCurrentText(impl->wcfg->state().getLastUsedSkin());
   ui->is_separator_flashes->setChecked(appearance_cfg.getFlashingSeparator());
+  ui->scaling_x_edit->setValue(appearance_cfg.getScaleFactorX());
+  ui->scaling_y_edit->setValue(appearance_cfg.getScaleFactorY());
 
   updateSkinSettingsTab();
 }
@@ -61,6 +63,7 @@ void SettingsDialog::reject()
   impl->wcfg->discard();
   impl->wnd->setSkin(impl->last_skin);
   applyFlashingSeparator(impl->wcfg->appearance().getFlashingSeparator());
+  impl->wnd->scale(impl->wcfg->appearance().getScaleFactorX(), impl->wcfg->appearance().getScaleFactorY());
   QDialog::reject();
 }
 
@@ -135,5 +138,29 @@ void SettingsDialog::updateSkinSettingsTab()
     connect(this, &QDialog::accepted, w, &ClassicSkinSettings::commitChanges);
     connect(this, &QDialog::rejected, w, &ClassicSkinSettings::discardChanges);
     ui->tabWidget->insertTab(skin_tab_pos, w, skin_tab_text);
+  }
+}
+
+void SettingsDialog::on_scaling_x_edit_valueChanged(int arg1)
+{
+  impl->wnd->scale(arg1, impl->wcfg->appearance().getScaleFactorY());
+  impl->wcfg->appearance().setScaleFactorX(arg1);
+}
+
+void SettingsDialog::on_scaling_y_edit_valueChanged(int arg1)
+{
+  impl->wnd->scale(impl->wcfg->appearance().getScaleFactorX(), arg1);
+  impl->wcfg->appearance().setScaleFactorY(arg1);
+}
+
+void SettingsDialog::on_scaling_same_btn_clicked(bool checked)
+{
+  if (checked) {
+    ui->scaling_y_edit->setValue(ui->scaling_x_edit->value());
+    connect(ui->scaling_x_edit, &QSpinBox::valueChanged, ui->scaling_y_edit, &QSpinBox::setValue);
+    connect(ui->scaling_y_edit, &QSpinBox::valueChanged, ui->scaling_x_edit, &QSpinBox::setValue);
+  } else {
+    disconnect(ui->scaling_x_edit, &QSpinBox::valueChanged, ui->scaling_y_edit, &QSpinBox::setValue);
+    disconnect(ui->scaling_y_edit, &QSpinBox::valueChanged, ui->scaling_x_edit, &QSpinBox::setValue);
   }
 }

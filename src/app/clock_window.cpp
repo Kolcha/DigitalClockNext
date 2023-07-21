@@ -100,6 +100,11 @@ void ClockWindow::flipSeparator()
   setSeparatorVisible(!isSeparatorVisible());
 }
 
+void ClockWindow::scale(int sx, int sy)
+{
+  _impl->clock_widget->scale(sx / 100., sy / 100.);
+}
+
 void ClockWindow::setSnapToEdge(bool enable)
 {
   _impl->snap_to_edge = enable;

@@ -34,6 +34,10 @@ private slots:
 
   void on_is_separator_flashes_clicked(bool checked);
 
+  void on_scaling_x_edit_valueChanged(int arg1);
+  void on_scaling_y_edit_valueChanged(int arg1);
+  void on_scaling_same_btn_clicked(bool checked);
+
 private:
   void applySkin(std::shared_ptr<ClockSkin> skin);
   void applyFlashingSeparator(bool enable);

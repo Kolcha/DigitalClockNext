@@ -87,11 +87,79 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="is_separator_flashes">
-         <property name="text">
-          <string>flashing separator</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QCheckBox" name="is_separator_flashes">
+           <property name="text">
+            <string>flashing separator</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="scaling_label">
+           <property name="text">
+            <string>Scaling:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="scaling_x_edit">
+           <property name="toolTip">
+            <string>horizontal scaling</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="suffix">
+            <string notr="true">%</string>
+           </property>
+           <property name="minimum">
+            <number>10</number>
+           </property>
+           <property name="maximum">
+            <number>800</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="scaling_same_btn">
+           <property name="toolTip">
+            <string>same scaling</string>
+           </property>
+           <property name="text">
+            <string notr="true">=</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="scaling_y_edit">
+           <property name="toolTip">
+            <string>vertical scaling</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="suffix">
+            <string notr="true">%</string>
+           </property>
+           <property name="minimum">
+            <number>10</number>
+           </property>
+           <property name="maximum">
+            <number>800</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer name="verticalSpacer">
