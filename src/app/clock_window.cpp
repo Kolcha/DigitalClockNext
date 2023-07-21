@@ -9,6 +9,7 @@
 #include "skin/clock_skin.hpp"
 
 struct ClockWindow::impl {
+  StatePtr state;
   ClockWidgetWrap* clock_widget;
   QGridLayout* main_layout;
   QMenu* context_menu;
@@ -19,10 +20,14 @@ struct ClockWindow::impl {
   bool separator_flashes = true;
 };
 
-ClockWindow::ClockWindow(const SkinPtr& skin, const QDateTime& dt, QWidget* parent)
+ClockWindow::State::~State() = default;
+
+ClockWindow::ClockWindow(const SkinPtr& skin, const QDateTime& dt, StatePtr state, QWidget* parent)
   : QWidget(parent)
   , _impl(std::make_unique<impl>())
 {
+  Q_ASSERT(state);
+  _impl->state = std::move(state);
   _impl->clock_widget = new ClockWidgetWrap(skin, dt, this);
   // clock widget supports resize and fills all available space by default
   _impl->clock_widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -40,6 +45,9 @@ ClockWindow::ClockWindow(const SkinPtr& skin, const QDateTime& dt, QWidget* pare
   menu->addAction(QIcon::fromTheme(u"application-exit"_s), tr("&Quit"),
                   this, &ClockWindow::appExitRequested);
   _impl->context_menu = menu;
+
+  // restore window state
+  move(_impl->state->getPos());
 }
 
 ClockWindow::~ClockWindow() = default;
@@ -147,7 +155,7 @@ void ClockWindow::mouseReleaseEvent(QMouseEvent* event)
 {
   if (event->button() == Qt::LeftButton) {
     _impl->is_dragging = false;
-    // TODO: save pos
+    _impl->state->setPos(pos());
     event->accept();
   }
 }

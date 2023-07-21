@@ -4,6 +4,10 @@
 
 #include <memory>
 
+#define DECLARE_STATE_PROPERTY(type, name)  \
+  virtual void set##name(const type& value) = 0;  \
+  virtual type get##name() const = 0;
+
 class QDateTime;
 class QTimeZone;
 
@@ -13,11 +17,21 @@ class ClockWindow : public QWidget
 {
   Q_OBJECT
 
+public:
+  class State
+  {
+  public:
+    virtual ~State();
+    DECLARE_STATE_PROPERTY(QPoint, Pos)
+  };
+
+private:
+  using StatePtr = std::unique_ptr<State>;
   using SkinPtr = std::shared_ptr<ClockSkin>;
 
 public:
   // dt should be in desired time zone, no sense to pass 2 arguments for this
-  ClockWindow(const SkinPtr& skin, const QDateTime& dt, QWidget* parent = nullptr);
+  ClockWindow(const SkinPtr& skin, const QDateTime& dt, StatePtr state, QWidget* parent = nullptr);
   ~ClockWindow();
 
   bool isSeparatorVisible() const;
