@@ -24,6 +24,8 @@ ClockWindow::ClockWindow(const SkinPtr& skin, const QDateTime& dt, QWidget* pare
   , _impl(std::make_unique<impl>())
 {
   _impl->clock_widget = new ClockWidgetWrap(skin, dt, this);
+  // clock widget supports resize and fills all available space by default
+  _impl->clock_widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   _impl->main_layout = new QGridLayout(this);
   _impl->main_layout->addWidget(_impl->clock_widget);
 

@@ -91,6 +91,8 @@ void ClockWidgetWrap::paintEvent(QPaintEvent* event)
 {
   _impl->n_impl->setSeparatorVisible(_impl->seps_visible);
   QPainter p(this);
+  auto s = _impl->n_impl->geometry().size();
+  p.scale(width() / s.width(), height() / s.height());
   _impl->n_impl->render(&p);
   event->accept();
 }
