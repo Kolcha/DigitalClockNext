@@ -77,6 +77,7 @@ set(PROJECT_SOURCES
         render/renderable_hashing.cpp
         render/renderable_hashing.hpp
         app/window_state.hpp
+        settings/fr_general.hpp
 )
 
 qt_add_executable(digital_clock_next

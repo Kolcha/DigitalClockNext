@@ -38,9 +38,13 @@ private slots:
   void on_scaling_y_edit_valueChanged(int arg1);
   void on_scaling_same_btn_clicked(bool checked);
 
+  void on_use_time_zone_clicked(bool checked);
+  void on_time_zone_edit_activated(int index);
+
 private:
   void applySkin(std::shared_ptr<ClockSkin> skin);
   void applyFlashingSeparator(bool enable);
+  void applyTimeZoneSettings();
 
   void updateSkinSettingsTab();
 

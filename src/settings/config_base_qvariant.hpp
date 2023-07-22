@@ -4,6 +4,7 @@
 
 #include <QBrush>
 #include <QString>
+#include <QTimeZone>
 #include <QVariant>
 
 template<typename T>
@@ -18,7 +19,7 @@ struct fromValue<QVariant, T> {
 
 // QBush seems not deserializes coordinate mode, and it is set
 // to default (QGradient::LogicalMode) after deserialization
-// this is not squitable, so re-create brush if required
+// this is not suitable, so re-create brush if required
 template<>
 struct fromValue<QVariant, QBrush> {
   QBrush operator ()(const QVariant& v)
@@ -47,6 +48,23 @@ struct fromValue<QVariant, QGradient> {
   QGradient operator ()(const QVariant& v)
   {
     return *fromValue<QVariant, QBrush>()(v).gradient();
+  }
+};
+
+// serialize QTimeZone as QString (IANA ID)
+template<>
+struct toValue<QTimeZone, QVariant> {
+  QVariant operator ()(const QTimeZone& v)
+  {
+    return toValue<QString, QVariant>()(QString::fromLatin1(v.id()));
+  }
+};
+
+template<>
+struct fromValue<QVariant, QTimeZone> {
+  QTimeZone operator ()(const QVariant& v)
+  {
+    return QTimeZone(fromValue<QVariant, QString>()(v).toLatin1());
   }
 };
 

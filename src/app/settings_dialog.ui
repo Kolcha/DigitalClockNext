@@ -162,6 +162,30 @@
         </layout>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="time_zone_layout">
+         <item>
+          <widget class="QCheckBox" name="use_time_zone">
+           <property name="text">
+            <string>&amp;time zone</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="time_zone_edit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -258,6 +282,22 @@
     <hint type="destinationlabel">
      <x>222</x>
      <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>use_time_zone</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>time_zone_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>94</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>161</y>
     </hint>
    </hints>
   </connection>

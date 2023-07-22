@@ -12,6 +12,7 @@
 #include "fr_app_global.hpp"
 #include "fr_appearance.hpp"
 #include "fr_classic_skin.hpp"
+#include "fr_general.hpp"
 #include "fr_window_state.hpp"
 #include "settings.hpp"
 
@@ -28,11 +29,13 @@ public:
     : QObject(parent)
     , _appearance(std::make_unique<AppearanceConfig>(storage->client(t(i, "Appearance"))))
     , _classic_skin(std::make_unique<ClassicSkinConfig>(storage->client(t(i, "ClassicSkin"))))
+    , _general(std::make_unique<GeneralConfig>(storage->client(t(i, "General"))))
     , _state(std::make_unique<WindowState>(storage->client(t(i, "State"))))
   {}
 
   AppearanceConfig& appearance() const noexcept { return *_appearance; }
   ClassicSkinConfig& classicSkin() const noexcept { return *_classic_skin; }
+  GeneralConfig& general() const noexcept { return *_general; }
   WindowState& state() const noexcept { return *_state; }
 
 public slots:
@@ -40,6 +43,7 @@ public slots:
   {
     _appearance->commit();
     _classic_skin->commit();
+    _general->commit();
     _state->commit();
   }
 
@@ -47,6 +51,7 @@ public slots:
   {
     _appearance->discard();
     _classic_skin->discard();
+    _general->discard();
     _state->discard();
   }
 
@@ -60,6 +65,7 @@ private:
 
   std::unique_ptr<AppearanceConfig> _appearance;
   std::unique_ptr<ClassicSkinConfig> _classic_skin;
+  std::unique_ptr<GeneralConfig> _general;
   std::unique_ptr<WindowState> _state;
 };
 

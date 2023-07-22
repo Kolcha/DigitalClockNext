@@ -7,7 +7,15 @@
 #include "app/classic_skin_settings.hpp"
 #include "skin/classic_skin.hpp"
 
+namespace {
 using namespace Qt::Literals::StringLiterals;
+
+QString tz_name(const QTimeZone& tz)
+{
+  return QString::fromLatin1(tz.id());
+}
+
+} // namespace
 
 struct SettingsDialog::Impl {
   ApplicationPrivate* app;
@@ -35,6 +43,16 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
 {
   ui->setupUi(this);
 
+  auto now = QDateTime::currentDateTimeUtc();
+  for (const auto& tz_id : QTimeZone::availableTimeZoneIds()) {
+    QTimeZone tz(tz_id);
+    ui->time_zone_edit->addItem(tz_name(tz), QVariant::fromValue(tz));
+    auto tooltip = QString("%1 (%2)").arg(
+                     tz.displayName(now, QTimeZone::LongName),
+                     tz.displayName(now, QTimeZone::OffsetName));
+    ui->time_zone_edit->setItemData(ui->time_zone_edit->count() - 1, tooltip, Qt::ToolTipRole);
+  }
+
   const auto& appearance_cfg = impl->wcfg->appearance();
   ui->font_rbtn->setChecked(appearance_cfg.getUseFontInsteadOfSkin());
   ui->skin_rbtn->setChecked(!appearance_cfg.getUseFontInsteadOfSkin());
@@ -43,6 +61,9 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->is_separator_flashes->setChecked(appearance_cfg.getFlashingSeparator());
   ui->scaling_x_edit->setValue(appearance_cfg.getScaleFactorX());
   ui->scaling_y_edit->setValue(appearance_cfg.getScaleFactorY());
+  const auto& general_cfg = impl->wcfg->general();
+  ui->use_time_zone->setChecked(!general_cfg.getShowLocalTime());
+  ui->time_zone_edit->setCurrentText(tz_name(impl->wcfg->state().getTimeZone()));
 
   updateSkinSettingsTab();
 }
@@ -63,6 +84,7 @@ void SettingsDialog::reject()
   impl->wcfg->discard();
   impl->wnd->setSkin(impl->last_skin);
   applyFlashingSeparator(impl->wcfg->appearance().getFlashingSeparator());
+  applyTimeZoneSettings();
   impl->wnd->scale(impl->wcfg->appearance().getScaleFactorX(), impl->wcfg->appearance().getScaleFactorY());
   QDialog::reject();
 }
@@ -122,6 +144,14 @@ void SettingsDialog::applyFlashingSeparator(bool enable)
     impl->wnd->setSeparatorVisible(true);
 }
 
+void SettingsDialog::applyTimeZoneSettings()
+{
+  if (impl->wcfg->general().getShowLocalTime())
+    impl->wnd->setTimeZone(QDateTime::currentDateTime().timeZone());
+  else
+    impl->wnd->setTimeZone(impl->wcfg->state().getTimeZone());
+}
+
 void SettingsDialog::updateSkinSettingsTab()
 {
   constexpr auto skin_tab_pos = 1;
@@ -163,4 +193,16 @@ void SettingsDialog::on_scaling_same_btn_clicked(bool checked)
     disconnect(ui->scaling_x_edit, &QSpinBox::valueChanged, ui->scaling_y_edit, &QSpinBox::setValue);
     disconnect(ui->scaling_y_edit, &QSpinBox::valueChanged, ui->scaling_x_edit, &QSpinBox::setValue);
   }
+}
+
+void SettingsDialog::on_use_time_zone_clicked(bool checked)
+{
+  impl->wcfg->general().setShowLocalTime(!checked);
+  applyTimeZoneSettings();
+}
+
+void SettingsDialog::on_time_zone_edit_activated(int index)
+{
+  impl->wcfg->state().setTimeZone(ui->time_zone_edit->itemData(index).value<QTimeZone>());
+  applyTimeZoneSettings();
 }
