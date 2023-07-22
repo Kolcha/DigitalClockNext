@@ -78,6 +78,8 @@ set(PROJECT_SOURCES
         render/renderable_hashing.hpp
         app/window_state.hpp
         settings/fr_general.hpp
+        app/window_positioning.cpp
+        app/window_positioning.hpp
 )
 
 qt_add_executable(digital_clock_next

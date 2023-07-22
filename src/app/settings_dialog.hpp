@@ -41,6 +41,8 @@ private slots:
   void on_use_time_zone_clicked(bool checked);
   void on_time_zone_edit_activated(int index);
 
+  void onAlignmentButtonClicked(int id);
+
 private:
   void applySkin(std::shared_ptr<ClockSkin> skin);
   void applyFlashingSeparator(bool enable);

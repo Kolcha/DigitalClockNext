@@ -18,6 +18,7 @@ public:
   {}
 
   BIND_WINDOW_STATE_PROPERTY(QPoint, Pos)
+  BIND_WINDOW_STATE_PROPERTY(Qt::Alignment, Alignment)
 
 private:
   WindowState& _state;

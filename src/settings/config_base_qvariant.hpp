@@ -68,6 +68,23 @@ struct fromValue<QVariant, QTimeZone> {
   }
 };
 
+// serialize QFlags<> as int
+template<typename T>
+struct toValue<QFlags<T>, QVariant> {
+  QVariant operator ()(const QFlags<T>& v)
+  {
+    return toValue<int, QVariant>()(static_cast<int>(v));
+  }
+};
+
+template<typename T>
+struct fromValue<QVariant, QFlags<T>> {
+  QFlags<T> operator ()(const QVariant& v)
+  {
+    return static_cast<QFlags<T>>(fromValue<QVariant, int>()(v));
+  }
+};
+
 using ConfigBaseQVariant = ConfigBase<QString, QVariant>;
 
 #define CONFIG_OPTION_Q(type, name, def_value) \

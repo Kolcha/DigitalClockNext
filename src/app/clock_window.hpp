@@ -23,6 +23,7 @@ public:
   public:
     virtual ~State();
     DECLARE_STATE_PROPERTY(QPoint, Pos)
+    DECLARE_STATE_PROPERTY(Qt::Alignment, Alignment)
   };
 
 private:
@@ -55,6 +56,8 @@ public slots:
 
   void scale(int sx, int sy); // in percents
 
+  void setAlignment(Qt::Alignment alignment);
+
   void setSnapToEdge(bool enable);
   void setSnapThreshold(int threshold);
 
@@ -66,6 +69,8 @@ protected:
   void mousePressEvent(QMouseEvent* event) override;
   void mouseMoveEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
+  void resizeEvent(QResizeEvent* event) override;
+  void showEvent(QShowEvent* event) override;
 
 private:
   struct impl;

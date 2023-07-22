@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 
 #include "app/clock_widget.hpp"
+#include "app/window_positioning.hpp"
 #include "skin/clock_skin.hpp"
 
 struct ClockWindow::impl {
@@ -14,6 +15,8 @@ struct ClockWindow::impl {
   QGridLayout* main_layout;
   QMenu* context_menu;
   QPoint drag_pos;
+  QPoint ref_point;
+  Qt::Alignment alignment = Qt::AlignTop | Qt::AlignLeft;
   int snap_threshold = 10;
   bool is_dragging = false;
   bool snap_to_edge = true;
@@ -47,8 +50,13 @@ ClockWindow::ClockWindow(const SkinPtr& skin, const QDateTime& dt, StatePtr stat
                   this, &ClockWindow::appExitRequested);
   _impl->context_menu = menu;
 
+  // even for debug purpose, window must be frameless,
+  // at least on X11, see Qt documentation for details
+  setWindowFlag(Qt::FramelessWindowHint);
+
   // restore window state
-  move(_impl->state->getPos());
+  _impl->ref_point = _impl->state->getPos();
+  _impl->alignment = _impl->state->getAlignment();
 }
 
 ClockWindow::~ClockWindow() = default;
@@ -106,6 +114,17 @@ void ClockWindow::scale(int sx, int sy)
   _impl->clock_widget->scale(sx / 100., sy / 100.);
 }
 
+void ClockWindow::setAlignment(Qt::Alignment alignment)
+{
+  if (_impl->alignment == alignment)
+    return;
+
+  _impl->alignment = alignment;
+  _impl->ref_point = pick_ref_point({pos(), sizeHint()}, alignment);
+  _impl->state->setAlignment(alignment);
+  _impl->state->setPos(_impl->ref_point);
+}
+
 void ClockWindow::setSnapToEdge(bool enable)
 {
   _impl->snap_to_edge = enable;
@@ -161,7 +180,25 @@ void ClockWindow::mouseReleaseEvent(QMouseEvent* event)
 {
   if (event->button() == Qt::LeftButton) {
     _impl->is_dragging = false;
-    _impl->state->setPos(pos());
+    _impl->ref_point = pick_ref_point(frameGeometry(), _impl->alignment);
+    _impl->state->setPos(_impl->ref_point);
     event->accept();
   }
+}
+
+void ClockWindow::resizeEvent(QResizeEvent* event)
+{
+  // ignore the first resize event, it happens before show()
+  // also ignore invalid (yes, this happens!) frame geometry
+  if (!_impl->is_dragging && event->oldSize().isValid() && frameGeometry().isValid())
+    move(aligned_rect(frameGeometry(), _impl->ref_point, _impl->alignment).topLeft());
+  QWidget::resizeEvent(event);
+}
+
+void ClockWindow::showEvent(QShowEvent* event)
+{
+  // frame geometry is known before showing
+  if (!event->spontaneous())
+    move(aligned_rect(frameGeometry(), _impl->ref_point, _impl->alignment).topLeft());
+  QWidget::showEvent(event);
 }
