@@ -4,7 +4,7 @@
 
 #include <QPainter>
 
-class BackgroundEffect : public Effect {
+class BackgroundEffect final : public SimpleEffect {
 public:
   explicit BackgroundEffect(QBrush brush = Qt::black) noexcept
     : _brush(std::move(brush))
@@ -17,12 +17,11 @@ public:
 
   const QBrush& brush() const noexcept { return _brush; }
 
-  void apply(const Renderable* item, QPainter* p, RenderItemFn r) const override
+private:
+  void simpleApply(QPainter* p, const QRectF& r) const override
   {
-    Q_UNUSED(item);
-    Q_UNUSED(r);
     // TODO: what about non-rectangular regions?
-    p->fillRect(QRect(0, 0, p->device()->width(), p->device()->height()), _brush);
+    p->fillRect(r, _brush);
   }
 
 private:

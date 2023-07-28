@@ -1,6 +1,6 @@
 #pragma once
 
-#include "render/renderable_base.hpp"
+#include "core/skin_resource.hpp"
 
 #include <QFont>
 #include <QFontMetricsF>
@@ -9,7 +9,7 @@
 
 #include "render/state_guard_qpainter.hpp"
 
-class QCharRenderable final : public RenderableBase {
+class QCharRenderable final : public SkinResource {
   friend size_t qHashImpl(const QCharRenderable& r, size_t seed);
 
 public:
@@ -28,8 +28,7 @@ public:
   qreal advanceX() const override { return _ax; }
   qreal advanceY() const override { return _ay; }
 
-protected:
-  void renderImpl(QPainter* p) const override
+  void render(QPainter* p) override
   {
     StateGuard _(p);
     p->setFont(_font);

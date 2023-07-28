@@ -21,7 +21,7 @@ public:
     _has_2_seps = _resources.contains(':') && _resources.contains(' ');
   }
 
-  std::shared_ptr<Renderable> item(QChar ch) const override
+  std::shared_ptr<SkinResource> item(QChar ch) const override
   {
     if (RenderableFactory::isSeparator(ch) && ch != ' ')
       ch = ':';
@@ -35,7 +35,7 @@ public:
   }
 
 private:
-  static std::shared_ptr<Renderable> createRenderable(const QString& path)
+  static std::shared_ptr<SkinResource> createRenderable(const QString& path)
   {
     QFileInfo fi(path);
     QString ext = fi.suffix().toLower();
@@ -50,7 +50,7 @@ private:
   }
 
 private:
-  QHash<QChar, std::shared_ptr<Renderable>> _resources;
+  QHash<QChar, std::shared_ptr<SkinResource>> _resources;
   bool _has_2_seps = false;
 };
 

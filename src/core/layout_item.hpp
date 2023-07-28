@@ -1,82 +1,44 @@
 #pragma once
 
-#include <utility>
+#include <memory>
 
 #include <QRectF>
+#include <QTransform>
 
-class LayoutItem {
+class LayoutItem : public std::enable_shared_from_this<LayoutItem> {
 public:
   virtual ~LayoutItem() = default;
 
-  LayoutItem() = default;
-
-  LayoutItem(const LayoutItem&) = delete;
-  LayoutItem(LayoutItem&&) = default;
-
-  LayoutItem& operator=(const LayoutItem&) = delete;
-  LayoutItem& operator=(LayoutItem&&) = default;
-
-  const QRectF& geometry() const noexcept { return _geometry; }
-
   // means "original bounding rect", i.e. as was returned from the source
-  const QRectF& rect() const noexcept { return _rect; }
+  QRectF rect() const { return _rect; }
 
   virtual qreal advanceX() const { return _rect.width(); }
   virtual qreal advanceY() const { return _rect.height(); }
 
-  const QPointF& pos() const noexcept { return _pos; }
+  QTransform transform() const { return _transform; }
 
-  void setPos(QPointF p)
-  {
-    if (p == _pos)
-      return;
-
-    _pos = std::move(p);
-
-    setGeometry(rect().translated(_pos));
-  }
-
-  inline void setPos(qreal x, qreal y) { setPos({x, y}); }
-
-  void move(qreal dx, qreal dy)
-  {
-    _pos.setX(_pos.x() + dx);
-    _pos.setY(_pos.y() + dy);
-    setGeometry(geometry().translated(dx, dy));
-  }
-
-  inline void move(QPointF dp) { move(dp.x(), dp.y()); }
-
-  // notify layout about item's geometry change
-  virtual void updateGeometry()
-  {
-    if (_parent)
-      _parent->updateGeometry();
-  }
+  // TODO: cache geometry? is it worth? what about rect change?
+  QRectF geometry() const { return _transform.mapRect(_rect); }
 
 protected:
   void setRect(QRectF r)
   {
-    if (r == _rect)
-      return;
-
     _rect = std::move(r);
-    setGeometry(_rect.translated(_pos));
+
+    if (auto parent = _parent.lock())
+      parent->updateGeometry();
   }
 
 private:
-  void setGeometry(QRectF r)
-  {
-    if (r == _geometry)
-      return;
-
-    _geometry = std::move(r);
-  }
+  friend class LayoutItemModifier;
+  void setParent(const std::shared_ptr<LayoutItem>& p) { _parent = p; }
+  void setTransform(QTransform t) { _transform = std::move(t); }
 
 private:
-  friend class Layout;
-  LayoutItem* _parent = nullptr;
-  QPointF _pos;
+  virtual void updateGeometry() {}
+
+private:
   QRectF _rect;
-  QRectF _geometry;
+  QTransform _transform;
+  std::weak_ptr<LayoutItem> _parent;
 };

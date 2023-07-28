@@ -2,28 +2,50 @@
 
 #include "layout_item.hpp"
 
-#include <assert.h>
-
+#include <algorithm>
 #include <memory>
-#include <utility>
-#include <vector>
+
+#include "layout_algorithm.hpp"
 
 class Layout : public LayoutItem {
-  using ItemsList = std::vector<std::unique_ptr<LayoutItem>>;
-
 public:
-  const ItemsList& items() const noexcept { return _items; }
-
-protected:
-  void addItem(std::unique_ptr<LayoutItem> item)
+  void addItem(std::shared_ptr<LayoutItem> item)
   {
-    assert(item);
-    item->_parent = this;
+    if (!item) return;
+
+    LayoutItemModifier(*item).setParent(shared_from_this());
     _items.push_back(std::move(item));
+
+    updateGeometry();
   }
 
-  void clearItems() noexcept { _items.clear(); }
+  void setAlgorithm(std::shared_ptr<LayoutAlgorithm> algo)
+  {
+    if (!algo) return;
+
+    _algorithm = std::move(algo);
+
+    updateGeometry();
+  }
 
 private:
-  ItemsList _items;
+  void updateGeometry() override
+  {
+    QRectF r;
+    if (_algorithm && !_items.empty()) {
+      (*_algorithm)(_items);
+      // TODO: std::transform_reduce ?
+      r = std::accumulate(
+            std::next(_items.begin()), _items.end(),
+            _items.front()->geometry(),
+            [](const auto& r, const auto& i) { return r | i->geometry(); }
+      );
+    }
+    // TODO: what about dx/dy? protected members ?
+    setRect(std::move(r));
+  }
+
+private:
+  std::shared_ptr<LayoutAlgorithm> _algorithm;
+  LayoutItemsList _items;
 };

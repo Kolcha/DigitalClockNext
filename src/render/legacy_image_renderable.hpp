@@ -1,6 +1,6 @@
 #pragma once
 
-#include "render/renderable_base.hpp"
+#include "core/skin_resource.hpp"
 
 #include <memory>
 
@@ -8,7 +8,7 @@
 #include <QPainter>
 #include <QSvgRenderer>
 
-class LegacyImageRenderable : public RenderableBase {
+class LegacyImageRenderable : public SkinResource {
   friend size_t qHashImpl(const LegacyImageRenderable& r, size_t seed);
 
 public:
@@ -38,8 +38,7 @@ public:
     return QRectF(QPointF(0, 0), m_size);
   }
 
-protected:
-  void renderImpl(QPainter* p) const override
+  void render(QPainter* p) override
   {
     p->drawPixmap(QPointF(0, 0), m_icon.pixmap(m_size));
   }
@@ -63,8 +62,7 @@ public:
     return QRectF(QPointF(0, 0), m_renderer->defaultSize());
   }
 
-protected:
-  void renderImpl(QPainter* p) const override
+  void render(QPainter* p) override
   {
     m_renderer->render(p, rect());
   }

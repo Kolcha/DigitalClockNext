@@ -6,19 +6,17 @@
 #include <ranges>
 #include <vector>
 
-#include "core/renderable.hpp"
-
 class CompositeEffect final : public Effect {
-public:
-  void apply(const Renderable* item, QPainter* p, RenderItemFn r) const override
+  void apply(QPainter* p, const QRectF& rc, RenderItemFn r) const override
   {
-    if (_effects.empty() || item->rect().size().isEmpty()) {
-      r(item, p);
+    if (_effects.empty() || rc.size().isEmpty()) {
+      r(p);
     } else {
-      std::ranges::for_each(_effects, [=](const auto& e) { e->apply(item, p, r); });
+      std::ranges::for_each(_effects, [=](const auto& e) { (*e)(p, rc, r); });
     }
   }
 
+public:
   void addEffect(std::shared_ptr<Effect> effect)
   {
     _effects.push_back(std::move(effect));

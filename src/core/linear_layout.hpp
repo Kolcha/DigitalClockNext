@@ -1,87 +1,56 @@
 #pragma once
 
-#include "layout.hpp"
+#include "layout_algorithm.hpp"
 
-#include <algorithm>
-#include <utility>
-
-class LinearLayout : public Layout {
+class LinearLayout final : public LayoutAlgorithm {
 public:
-  explicit LinearLayout(Qt::Orientation o, qreal spacing = 0.)
-    : Layout()
-    , _spacing(spacing)
+  LinearLayout() noexcept = default;
+
+  explicit LinearLayout(Qt::Orientation o, qreal spacing = 0.0) noexcept
+    : _spacing(spacing)
   {
     setOrientation(o);
   }
 
   qreal spacing() const noexcept { return _spacing; }
-
-  void setSpacing(qreal spacing)
-  {
-    if (qFuzzyCompare(spacing, _spacing))
-      return;
-
-    _spacing = spacing;
-
-    updateGeometry();
-  }
+  void setSpacing(qreal spacing) noexcept { _spacing = spacing; }
 
   Qt::Orientation orientation() const noexcept
   {
     return _orientation == &vertical ? Qt::Vertical : Qt::Horizontal;
   }
 
-  void setOrientation(Qt::Orientation orientation)
+  void setOrientation(Qt::Orientation orientation) noexcept
   {
-    if (orientation == this->orientation())
-      return;
-
     _orientation = orientation == Qt::Vertical ? &vertical : &horizontal;
-
-    updateGeometry();
   }
 
-  void updateGeometry() final
+private:
+  void apply(const LayoutItemsList& items) const override
   {
-    auto&& items = this->items();
-
-    if (items.empty()) {
-      this->setRect({});
-      return;
-    }
-
-    std::ranges::for_each(items, [](auto& i) { i->setPos({}); });
-
-    auto g = items.front()->geometry();
     qreal dpos = 0;
     for (const auto& item : items) {
-      auto pos = item->pos();
-      (pos.*_orientation->wpos)(dpos);
-      item->setPos(std::move(pos));
+      modifier(*item).setTransform((*_orientation->transform)(dpos));
       dpos += (*item.*_orientation->advance)() + _spacing;
-      g |= item->geometry();
     }
-
-    this->setRect(std::move(g));
-    Layout::updateGeometry();
   }
 
 private:
   struct OrientationImpl {
-    void(QPointF::*wpos)(qreal);
+    QTransform(*transform)(qreal);
     qreal(LayoutItem::*advance)() const;
   };
 
   static constexpr const OrientationImpl horizontal {
-    &QPointF::setX,
+    [](qreal dx) { return QTransform::fromTranslate(dx, 0); },
     &LayoutItem::advanceX
   };
 
   static constexpr const OrientationImpl vertical {
-    &QPointF::setY,
+    [](qreal dy) { return QTransform::fromTranslate(0, dy); },
     &LayoutItem::advanceY
   };
 
   const OrientationImpl* _orientation = &horizontal;
-  qreal _spacing;
+  qreal _spacing = 0.0;
 };

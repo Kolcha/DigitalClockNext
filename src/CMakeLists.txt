@@ -17,9 +17,6 @@ set(PROJECT_SOURCES
         core/layout_item.hpp
         core/layout.hpp
         core/linear_layout.hpp
-        core/renderable.hpp
-        core/renderable_item.hpp
-        core/layout_builder.hpp
         render/state_guard.hpp
         clock/clock_widget.hpp
         render/char_renderable.hpp
@@ -27,14 +24,11 @@ set(PROJECT_SOURCES
         skin/char_renderable_factory.hpp
         skin/clock_skin.hpp
         skin/classic_skin.hpp
-        render/layout_renderer.hpp
         render/texturing_effect.hpp
         skin/classic_skin_loader.hpp
         skin/legacy_skin_loader.hpp
         render/legacy_image_renderable.hpp
         core/effect.hpp
-        render/renderable_base.hpp
-        render/layout_renderable.hpp
         render/composite_effect.hpp
         render/identity_effect.hpp
         clock/datetime_formatter.hpp
@@ -72,14 +66,18 @@ set(PROJECT_SOURCES
         render/background_effect.hpp
         settings/sample_values.cpp
         settings/sample_values.hpp
-        render/effects_hashing.cpp
-        render/effects_hashing.hpp
-        render/renderable_hashing.cpp
-        render/renderable_hashing.hpp
+#        render/effects_hashing.cpp
+#        render/effects_hashing.hpp
+#        render/renderable_hashing.cpp
+#        render/renderable_hashing.hpp
         app/window_state.hpp
         settings/fr_general.hpp
         app/window_positioning.cpp
         app/window_positioning.hpp
+        core/geometry.hpp
+        core/rendering.hpp
+        core/skin_resource.hpp
+        core/layout_algorithm.hpp
 )
 
 qt_add_executable(digital_clock_next

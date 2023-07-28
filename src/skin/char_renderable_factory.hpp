@@ -15,7 +15,7 @@ public:
 public:
   const QFont& font() const noexcept { return _fnt; }
 
-  std::shared_ptr<Renderable> item(QChar ch) const override
+  std::shared_ptr<SkinResource> item(QChar ch) const override
   {
     return std::make_shared<QCharRenderable>(ch, _fnt);
   }
