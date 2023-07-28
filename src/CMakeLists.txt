@@ -78,6 +78,7 @@ set(PROJECT_SOURCES
         core/rendering.hpp
         core/skin_resource.hpp
         core/layout_algorithm.hpp
+        render/frame_border_effect.hpp
 )
 
 qt_add_executable(digital_clock_next
