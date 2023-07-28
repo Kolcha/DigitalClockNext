@@ -20,7 +20,6 @@ public:
 private:
   void simpleApply(QPainter* p, const QRectF& r) const override
   {
-    // TODO: what about non-rectangular regions?
     p->fillRect(r, _brush);
   }
 

@@ -34,7 +34,6 @@ private:
     QRectF r;
     if (_algorithm && !_items.empty()) {
       (*_algorithm)(_items);
-      // TODO: std::transform_reduce ?
       r = std::accumulate(
             std::next(_items.begin()), _items.end(),
             _items.front()->geometry(),

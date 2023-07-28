@@ -23,7 +23,6 @@ public:
   void setVisible(bool visible) noexcept { _visible = visible; }
   bool isVisible() const noexcept { return _visible; }
 
-  // TODO: make protected ?
   virtual std::shared_ptr<LayoutItem> item() = 0;
 
   void render(QPainter* p)
@@ -100,7 +99,7 @@ class LayoutSkinElement : public Layout, public SkinElement {
 public:
   void addElement(std::shared_ptr<SkinElement> element)
   {
-    addItem(element->item()); // TODO: make protected?
+    addItem(element->item());
     _elements.push_back(std::move(element));
   }
 

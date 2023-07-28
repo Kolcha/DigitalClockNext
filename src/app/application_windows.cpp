@@ -1,7 +1,7 @@
 #include "application.hpp"
 #include "application_private.hpp"
 
-#include <ranges>
+#include <algorithm>
 #include <utility>
 
 #include <QPixmapCache>

@@ -10,25 +10,22 @@
 
 
 class ClockRenderable : public LayoutSkinElement {
-  // TODO: consider to move it to protected section
-  using Separators = std::vector<std::shared_ptr<SkinElement>>;
-
 public:
   void setSeparatorsVisible(bool visible)
   {
     std::ranges::for_each(_separators, [=](const auto& s) { s->setVisible(visible); });
   }
 
-  // TODO: rename: drop "are"
-  bool areSeparatorsVisible() const
+  bool separatorsVisible() const
   {
     return std::ranges::all_of(_separators, [](const auto& s) { return s->isVisible(); });
   }
 
 protected:
+  using Separators = std::vector<std::shared_ptr<SkinElement>>;
+
   void setSeparators(Separators seps) noexcept { _separators = std::move(seps); }
-  // TODO: drop auto, use concrete type instead
-  const auto& separators() const noexcept { return _separators; }
+  const Separators& separators() const noexcept { return _separators; }
 
 private:
   Separators _separators;

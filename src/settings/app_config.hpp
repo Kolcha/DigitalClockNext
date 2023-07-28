@@ -2,8 +2,8 @@
 
 #include <QObject>
 
+#include <algorithm>
 #include <memory>
-#include <ranges>
 #include <vector>
 
 #include <QString>

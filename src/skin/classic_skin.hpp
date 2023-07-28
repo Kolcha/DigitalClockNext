@@ -29,7 +29,6 @@ public:
     , _layout_alg(std::make_shared<LinearLayout>())
     , _item_effects(std::make_shared<CompositeEffect>())
     , _layout_effects(std::make_shared<CompositeEffect>())
-    , _settings(std::make_unique<ClassicSkinSettings>())
     , _formatter(std::make_unique<DateTimeFormatter>("hh:mm a"))
   {}
 
@@ -37,9 +36,6 @@ public:
   {
     auto layout = std::make_shared<ClassicSkinRenderable>();
     std::vector<std::shared_ptr<SkinElement>> seps;
-    // TODO: is it really required to set settigns here every time ?
-    _layout_alg->setOrientation(_settings->orientation);
-    _layout_alg->setSpacing(_settings->spacing);
     layout->setAlgorithm(_layout_alg);
 
     const auto str = _formatter->process(dt);
@@ -63,12 +59,12 @@ public:
 
   void setOrientation(Qt::Orientation orientation)
   {
-    _settings->orientation = orientation;
+    _layout_alg->setOrientation(orientation);
   }
 
   void setSpacing(qreal spacing)
   {
-    _settings->spacing = spacing;
+    _layout_alg->setSpacing(spacing);
   }
 
   void addItemEffect(std::shared_ptr<Effect> effect)
@@ -100,16 +96,9 @@ private:
   }
 
 private:
-  struct ClassicSkinSettings {
-    Qt::Orientation orientation = Qt::Horizontal;
-    qreal spacing = 0;
-    // TODO: move effects here
-  };
-
   std::shared_ptr<RenderableFactory> _factory;
   std::shared_ptr<LinearLayout> _layout_alg;
   std::shared_ptr<CompositeEffect> _item_effects;
   std::shared_ptr<CompositeEffect> _layout_effects;
-  std::unique_ptr<ClassicSkinSettings> _settings;
   std::unique_ptr<DateTimeFormatter> _formatter;
 };

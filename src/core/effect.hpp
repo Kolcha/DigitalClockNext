@@ -15,7 +15,6 @@ public:
   // p - output painter
   // r - item rect
   // render_item - function to render original item
-  // TODO: declare own type for render_item
   void operator ()(QPainter* p, const QRectF& r,
                    RenderItemFn render_item) const
   {

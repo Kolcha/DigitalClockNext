@@ -2,8 +2,8 @@
 
 #include "core/effect.hpp"
 
+#include <algorithm>
 #include <memory>
-#include <ranges>
 #include <vector>
 
 class CompositeEffect final : public Effect {
