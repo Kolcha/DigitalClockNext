@@ -83,8 +83,7 @@ void ClassicSkinSettings::commitChanges()
 void ClassicSkinSettings::discardChanges()
 {
   impl->scfg->discard();
-  impl->app->skin_manager()->configureSkin(impl->skin, impl->idx);
-  impl->wnd->skinConfigured();
+  updateEffects();
 }
 
 void ClassicSkinSettings::on_orientation_cbox_activated(int index)

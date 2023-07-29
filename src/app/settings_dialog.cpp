@@ -107,6 +107,8 @@ void SettingsDialog::reject()
 {
   impl->wcfg->discard();
   impl->wnd->setSkin(impl->last_skin);
+  impl->app->skin_manager()->configureSkin(impl->last_skin, impl->idx);
+  impl->wnd->skinConfigured();
   applyFlashingSeparator(impl->wcfg->appearance().getFlashingSeparator());
   applyTimeZoneSettings();
   impl->wnd->scale(impl->wcfg->appearance().getScaleFactorX(), impl->wcfg->appearance().getScaleFactorY());
