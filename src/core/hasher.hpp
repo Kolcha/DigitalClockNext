@@ -41,7 +41,10 @@ template <std::ranges::input_range R>
 requires std::is_convertible_v<std::ranges::range_value_t<R>, std::shared_ptr<Hashable>>
 size_t hasher(R&& r)
 {
-  // TODO: what about handling invalid values?
+  auto has_invalid_hash = [](auto&& item) { return item->hash() == Hashable::Invalid; };
+  if (std::ranges::any_of(r, has_invalid_hash))
+    return Hashable::Invalid;
+
   return std::transform_reduce(
         std::ranges::cbegin(r), std::ranges::cend(r),
         static_cast<size_t>(0),
