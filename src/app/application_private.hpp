@@ -14,7 +14,7 @@
 #include "app/clock_window.hpp"
 #include "clock/time_source.hpp"
 #include "settings/app_config.hpp"
-#include "settings/settings.hpp"
+#include "settings/core/settings.hpp"
 
 
 class SkinManager : public QObject

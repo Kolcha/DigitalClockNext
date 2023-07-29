@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/effect.hpp"
+#include "render/effect.hpp"
 
 // does nothing, just renders already visible content
 // may be required to apply layout effect on top of item effects

@@ -6,7 +6,7 @@
 
 #include <QDateTime>
 
-#include "core/rendering.hpp"
+#include "render/rendering.hpp"
 
 
 class ClockRenderable : public LayoutSkinElement {

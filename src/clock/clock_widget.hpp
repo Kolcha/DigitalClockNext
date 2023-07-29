@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "core/rendering.hpp"
+#include "render/rendering.hpp"
 #include "render/state_guard_qpainter.hpp"
 #include "skin/clock_skin.hpp"
 

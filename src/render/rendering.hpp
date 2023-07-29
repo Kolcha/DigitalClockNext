@@ -4,9 +4,9 @@
 #include <memory>
 #include <vector>
 
+#include "core/geometry.hpp"
+#include "core/hashable.hpp"
 #include "effect.hpp"
-#include "geometry.hpp"
-#include "hashable.hpp"
 #include "skin_resource.hpp"
 
 class SkinElement : public Hashable {

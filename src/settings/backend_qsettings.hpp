@@ -1,6 +1,6 @@
 #pragma once
 
-#include "settings.hpp"
+#include "settings/core/settings.hpp"
 
 #include <QSettings>
 

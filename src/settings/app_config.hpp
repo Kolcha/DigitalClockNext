@@ -9,12 +9,12 @@
 #include <QString>
 #include <QVariant>
 
-#include "fr_app_global.hpp"
-#include "fr_appearance.hpp"
-#include "fr_classic_skin.hpp"
-#include "fr_general.hpp"
-#include "fr_window_state.hpp"
-#include "settings.hpp"
+#include "core/settings.hpp"
+#include "sections/app_global.hpp"
+#include "sections/appearance.hpp"
+#include "sections/classic_skin.hpp"
+#include "sections/general.hpp"
+#include "sections/window_state.hpp"
 
 
 class WindowConfig final : public QObject

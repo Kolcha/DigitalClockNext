@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hashable.hpp"
+#include "core/hashable.hpp"
 
 #include <QPainter>
 #include <QRectF>

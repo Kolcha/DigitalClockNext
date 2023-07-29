@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/effect.hpp"
+#include "render/effect.hpp"
 
 class TexturingEffect final : public SimpleEffect {
 public:

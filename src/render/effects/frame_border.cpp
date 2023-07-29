@@ -1,4 +1,4 @@
-#include "frame_border_effect.hpp"
+#include "frame_border.hpp"
 
 #include "core/hasher.hpp"
 #include "render/state_guard_qpainter.hpp"

@@ -1,4 +1,4 @@
-#include "composite_effect.hpp"
+#include "composite.hpp"
 
 #include <QPainter>
 #include <QPixmap>

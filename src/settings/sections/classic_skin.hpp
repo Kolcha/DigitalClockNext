@@ -1,6 +1,6 @@
 #pragma once
 
-#include "config_base_qvariant.hpp"
+#include "settings/config_base_qvariant.hpp"
 
 #include <QBrush>
 #include <QString>

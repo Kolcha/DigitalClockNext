@@ -1,7 +1,7 @@
 #pragma once
 
 #include "app/clock_window.hpp"
-#include "settings/fr_window_state.hpp"
+#include "settings/sections/window_state.hpp"
 
 #define BIND_WINDOW_STATE_PROPERTY(Type, Name)  \
   void set##Name(const Type& value) override    \

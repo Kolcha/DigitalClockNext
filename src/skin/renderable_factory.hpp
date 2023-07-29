@@ -5,7 +5,7 @@
 #include <QChar>
 #include <QString>
 
-#include "core/skin_resource.hpp"
+#include "render/skin_resource.hpp"
 
 class RenderableFactory {
 public:

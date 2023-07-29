@@ -1,4 +1,4 @@
-#include "texturing_effect.hpp"
+#include "texturing.hpp"
 
 #include "core/hasher.hpp"
 #include "render/state_guard_qpainter.hpp"

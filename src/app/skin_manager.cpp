@@ -6,9 +6,9 @@
 #include <QDir>
 
 #include "clock/legacy_skin_extension.hpp"
-#include "render/background_effect.hpp"
-#include "render/identity_effect.hpp"
-#include "render/texturing_effect.hpp"
+#include "render/effects/background.hpp"
+#include "render/effects/identity.hpp"
+#include "render/effects/texturing.hpp"
 #include "skin/char_renderable_factory.hpp"
 #include "skin/legacy_skin_loader.hpp"
 

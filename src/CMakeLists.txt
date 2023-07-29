@@ -24,23 +24,23 @@ set(PROJECT_SOURCES
         skin/char_renderable_factory.hpp
         skin/clock_skin.hpp
         skin/classic_skin.hpp
-        render/texturing_effect.hpp
+        render/effects/texturing.hpp
         skin/classic_skin_loader.hpp
         skin/legacy_skin_loader.hpp
         render/legacy_image_renderable.hpp
-        core/effect.hpp
-        render/composite_effect.hpp
-        render/identity_effect.hpp
+        render/effect.hpp
+        render/effects/composite.hpp
+        render/effects/identity.hpp
         clock/datetime_formatter.hpp
-        settings/settings.hpp
+        settings/core/settings.hpp
         settings/backend_qsettings.hpp
         app/application.hpp
         app/application.cpp
-        settings/config_base.hpp
+        settings/core/config_base.hpp
         settings/app_config.hpp
-        settings/fr_appearance.hpp
-        settings/fr_classic_skin.hpp
-        settings/fr_window_state.hpp
+        settings/sections/appearance.hpp
+        settings/sections/classic_skin.hpp
+        settings/sections/window_state.hpp
         settings/config_base_qvariant.hpp
         app/clock_window.cpp
         app/clock_window.hpp
@@ -56,37 +56,35 @@ set(PROJECT_SOURCES
         app/application_windows.cpp
         app/skin_manager.cpp
         app/skin_manager.hpp
-        settings/fr_app_global.hpp
+        settings/sections/app_global.hpp
         app/classic_skin_settings.cpp
         app/classic_skin_settings.hpp
         app/classic_skin_settings.ui
         app/settings_dialog.cpp
         app/settings_dialog.hpp
         app/settings_dialog.ui
-        render/background_effect.hpp
-        settings/sample_values.cpp
-        settings/sample_values.hpp
-#        render/effects_hashing.cpp
-#        render/effects_hashing.hpp
-#        render/renderable_hashing.cpp
-#        render/renderable_hashing.hpp
+        render/effects/background.hpp
+        settings/sections/sample_values.cpp
+        settings/sections/sample_values.hpp
         app/window_state.hpp
-        settings/fr_general.hpp
+        settings/sections/general.hpp
         app/window_positioning.cpp
         app/window_positioning.hpp
         core/geometry.hpp
-        core/rendering.hpp
-        core/skin_resource.hpp
+        render/rendering.hpp
+        render/skin_resource.hpp
         core/layout_algorithm.hpp
-        render/frame_border_effect.hpp
-        core/rendering.cpp
+        render/effects/frame_border.hpp
+        render/rendering.cpp
         core/hashable.hpp
         core/hasher.hpp
-        render/background_effect.cpp
-        render/composite_effect.cpp
-        render/frame_border_effect.cpp
-        render/texturing_effect.cpp
+        render/effects/background.cpp
+        render/effects/composite.cpp
+        render/effects/frame_border.cpp
+        render/effects/texturing.cpp
         render/char_renderable.cpp
+        skin/classic_skin.cpp
+        skin/legacy_skin_loader.cpp
 )
 
 qt_add_executable(digital_clock_next

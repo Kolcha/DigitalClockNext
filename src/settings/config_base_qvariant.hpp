@@ -1,6 +1,6 @@
 #pragma once
 
-#include "config_base.hpp"
+#include "settings/core/config_base.hpp"
 
 #include <QBrush>
 #include <QString>

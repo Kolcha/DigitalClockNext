@@ -6,19 +6,8 @@
 
 #include "clock/datetime_formatter.hpp"
 #include "core/linear_layout.hpp"
-#include "core/rendering.hpp"
+#include "render/effects/composite.hpp"
 #include "skin/renderable_factory.hpp"
-#include "render/composite_effect.hpp"
-
-
-// this is used (and returned) by ClassicClockSkin
-// TODO: consider make it "implementation detail"
-class ClassicSkinRenderable : public ClockRenderable {
-  friend class ClassicSkin;
-public:
-  using ClockRenderable::ClockRenderable;
-};
-
 
 // TODO: consider to add setter for factory object -
 // this will allow to change classic skins only with changing factory
@@ -32,30 +21,7 @@ public:
     , _formatter(std::make_unique<DateTimeFormatter>("hh:mm a"))
   {}
 
-  std::shared_ptr<ClockRenderable> process(const QDateTime& dt) override
-  {
-    auto layout = std::make_shared<ClassicSkinRenderable>();
-    std::vector<std::shared_ptr<SkinElement>> seps;
-    layout->setAlgorithm(_layout_alg);
-
-    const auto str = _formatter->process(dt);
-    for (const auto& c : str) {
-      auto r = _factory->item(c);
-      if (!r) {
-        continue;
-      }
-
-      auto item = std::make_shared<SimpleSkinElement>(std::move(r));
-      if (isSeparator(c))
-        seps.push_back(item);
-      item->addEffect(_item_effects);
-      layout->addElement(std::move(item));
-    }
-
-    layout->setSeparators(std::move(seps));
-    layout->addEffect(_layout_effects);
-    return layout;
-  }
+  std::shared_ptr<ClockRenderable> process(const QDateTime& dt) override;
 
   void setOrientation(Qt::Orientation orientation)
   {

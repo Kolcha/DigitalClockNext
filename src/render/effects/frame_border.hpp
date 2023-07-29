@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/effect.hpp"
+#include "render/effect.hpp"
 
 class FrameBorderEffect final : public SimpleEffect {
 public:
