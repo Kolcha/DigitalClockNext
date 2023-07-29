@@ -9,18 +9,20 @@
 #include <QSvgRenderer>
 
 class LegacyImageRenderable : public SkinResource {
-  friend size_t qHashImpl(const LegacyImageRenderable& r, size_t seed);
-
 public:
   explicit LegacyImageRenderable(const QString& filename)
     : m_filename(filename)
+    , m_hash(qHash(filename))
   {}
+
+  std::size_t hash() const noexcept override { return m_hash; }
 
   qreal advanceX() const override { return rect().width(); }
   qreal advanceY() const override { return rect().height(); }
 
 private:
   QString m_filename;
+  std::size_t m_hash;   // do not calculate hash every time
 };
 
 

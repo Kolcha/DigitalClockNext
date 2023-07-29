@@ -2,18 +2,11 @@
 
 #include "core/effect.hpp"
 
-#include <QPainter>
-
 class BackgroundEffect final : public SimpleEffect {
 public:
-  explicit BackgroundEffect(QBrush brush = Qt::black) noexcept
-    : _brush(std::move(brush))
-  {}
+  explicit BackgroundEffect(QBrush brush = Qt::black);
 
-  void setBrush(QBrush brush) noexcept
-  {
-    _brush = std::move(brush);
-  }
+  void setBrush(QBrush brush);
 
   const QBrush& brush() const noexcept { return _brush; }
 

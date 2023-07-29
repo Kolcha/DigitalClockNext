@@ -79,6 +79,14 @@ set(PROJECT_SOURCES
         core/skin_resource.hpp
         core/layout_algorithm.hpp
         render/frame_border_effect.hpp
+        core/rendering.cpp
+        core/hashable.hpp
+        core/hasher.hpp
+        render/background_effect.cpp
+        render/composite_effect.cpp
+        render/frame_border_effect.cpp
+        render/texturing_effect.cpp
+        render/char_renderable.cpp
 )
 
 qt_add_executable(digital_clock_next

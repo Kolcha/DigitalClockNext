@@ -1,12 +1,13 @@
 #pragma once
 
+#include "hashable.hpp"
+
 #include <functional>
 
-// TODO: forward declarations should be enough
 #include <QPainter>
 #include <QRectF>
 
-class Effect {
+class Effect : public Hashable {
 public:
   virtual ~Effect() = default;
 
@@ -21,6 +22,17 @@ public:
     apply(p, r, std::move(render_item));
   }
 
+  // effect objects is not supposed to change often
+  // but they may have many options what makes hash
+  // calculation pretty heavy, so do it only if necessary
+  // (i.e. when some of effect options changes)
+  // inherited class should care about updating it
+  std::size_t hash() const noexcept final { return _hash; }
+
+protected:
+  // inherited classes should call this on options change
+  void updateHash(std::size_t h) noexcept { _hash = h; }
+
 private:
   virtual void apply(QPainter* p, const QRectF& r,
                      RenderItemFn render_item) const
@@ -28,6 +40,9 @@ private:
     Q_UNUSED(r);
     render_item(p);
   }
+
+private:
+  std::size_t _hash = Hashable::Invalid;
 };
 
 

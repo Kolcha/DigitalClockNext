@@ -4,14 +4,12 @@
 #include <memory>
 #include <vector>
 
-#include <QPainter>
-#include <QPixmap>
-
 #include "effect.hpp"
 #include "geometry.hpp"
+#include "hashable.hpp"
 #include "skin_resource.hpp"
 
-class SkinElement {
+class SkinElement : public Hashable {
 public:
   virtual ~SkinElement() = default;
 
@@ -20,41 +18,14 @@ public:
     _effects.push_back(std::move(effect));
   }
 
+  const auto& effects() const noexcept { return _effects; }
+
   void setVisible(bool visible) noexcept { _visible = visible; }
   bool isVisible() const noexcept { return _visible; }
 
   virtual std::shared_ptr<LayoutItem> item() = 0;
 
-  void render(QPainter* p)
-  {
-    if (!isVisible() || item()->rect().isEmpty())
-      return;
-
-    p->save();
-    p->setTransform(item()->transform(), true);
-
-    // rasterization for effects and efficient caching
-    auto br = p->transform().mapRect(item()->rect());
-    QPixmap pxm((br.size() * p->device()->devicePixelRatioF()).toSize());
-    pxm.setDevicePixelRatio(p->device()->devicePixelRatioF());
-    pxm.fill(Qt::transparent);
-    {
-      QPainter pp(&pxm);
-      pp.setRenderHint(QPainter::Antialiasing);
-      pp.translate(-br.topLeft());
-      pp.setTransform(p->transform(), true);
-      _effects.empty() ? renderImpl(&pp) : applyEffects(&pp);
-    }
-
-    // TODO: cache rendering result
-//    pxm.save(QString("%1.png").arg((uintptr_t)(this)));
-
-//    renderImpl(p);
-    p->resetTransform();
-    p->translate(br.topLeft());
-    p->drawPixmap(0, 0, pxm);
-    p->restore();
-  }
+  void render(QPainter* p);
 
 protected:
   virtual void renderImpl(QPainter* p) = 0;
@@ -86,6 +57,8 @@ public:
   qreal advanceY() const override { return _res->advanceY(); }
 
   std::shared_ptr<LayoutItem> item() override { return shared_from_this(); }
+
+  size_t hash() const noexcept override;
 
 protected:
   void renderImpl(QPainter* p) override { _res->render(p); }

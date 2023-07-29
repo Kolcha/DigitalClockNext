@@ -2,8 +2,8 @@
 
 #include "layout_item.hpp"
 
-#include <algorithm>
 #include <memory>
+#include <numeric>
 
 #include "layout_algorithm.hpp"
 

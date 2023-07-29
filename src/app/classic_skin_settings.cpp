@@ -3,6 +3,7 @@
 
 #include <QFileDialog>
 #include <QColorDialog>
+#include <QPixmapCache>
 #include <QSignalBlocker>
 
 #include <gradient_dialog.h>
@@ -281,6 +282,7 @@ void ClassicSkinSettings::on_bg_per_element_cb_clicked(bool checked)
 
 void ClassicSkinSettings::updateEffects()
 {
+  QPixmapCache::clear();
   impl->app->skin_manager()->configureSkin(impl->skin, impl->idx);
   impl->wnd->skinConfigured();
 }

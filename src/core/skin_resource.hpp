@@ -1,11 +1,11 @@
 #pragma once
 
+#include "hashable.hpp"
+
 #include <QPainter>
 #include <QRectF>
 
-// TODO: forward declare QPainter
-
-class SkinResource {
+class SkinResource : public Hashable {
 public:
   virtual ~SkinResource() = default;
 
