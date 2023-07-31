@@ -51,7 +51,6 @@ void Application::createWindows()
     connect(wnd.get(), &ClockWindow::appExitRequested, this, &Application::quit);
   }
   // TODO: change pixmap cache size depending on scaling
-  // TODO: maybe move this to renderer and change heuristically
   // for "common" (because cache is shared) 16 MB + 16 MB per window
   QPixmapCache::setCacheLimit((1 + _impl->windows().size()) * 16 * 1024);
 }

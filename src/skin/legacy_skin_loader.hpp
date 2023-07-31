@@ -20,6 +20,8 @@ public:
   {
     if (RenderableFactory::isSeparator(ch) && ch != ' ')
       ch = ':';
+    if (!_has_2_seps && ch == ' ')
+      ch = ':';
     auto iter = _resources.find(ch);
     return iter != _resources.end() ? iter.value() : nullptr;
   }

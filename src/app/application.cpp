@@ -29,7 +29,6 @@ void Application::init()
   createWindows();
 }
 
-// TODO: consider to move to own files
 void Application::showSettingsDialog()
 {
   auto w = qobject_cast<ClockWindow*>(sender());

@@ -35,6 +35,7 @@ ClockWindow::ClockWindow(const SkinPtr& skin, const QDateTime& dt, StatePtr stat
   // clock widget supports resize and fills all available space by default
   _impl->clock_widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   _impl->main_layout = new QGridLayout(this);
+  _impl->main_layout->setContentsMargins(0, 0, 0, 0);
   _impl->main_layout->addWidget(_impl->clock_widget);
   _impl->main_layout->setSizeConstraint(QLayout::SetFixedSize);
 
