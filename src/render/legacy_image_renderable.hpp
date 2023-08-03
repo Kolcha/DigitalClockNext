@@ -11,8 +11,7 @@
 class LegacyImageRenderable : public SkinResource {
 public:
   explicit LegacyImageRenderable(const QString& filename)
-    : m_filename(filename)
-    , m_hash(qHash(filename))
+    : m_hash(qHash(filename))
   {}
 
   std::size_t hash() const noexcept override { return m_hash; }
@@ -21,7 +20,6 @@ public:
   qreal advanceY() const override { return rect().height(); }
 
 private:
-  QString m_filename;
   std::size_t m_hash;   // do not calculate hash every time
 };
 

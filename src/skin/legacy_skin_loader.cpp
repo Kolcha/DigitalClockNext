@@ -42,9 +42,9 @@ std::shared_ptr<SkinResource> LegacyRenderableFactory::createRenderable(const QS
 }
 
 
-void LegacySkinLoader::init()
+void LegacySkinLoader::init(const QString& skin_root)
 {
-  QFileInfo finfo(path());
+  QFileInfo finfo(skin_root);
   if (!finfo.isDir())
     return;
 

@@ -12,18 +12,6 @@
 
 #include "hashable.hpp"
 
-// there is no overload for size_t in QDataStream ...
-// so use macro tricks to cast it to appropriate quint
-inline QDataStream& operator<<(QDataStream& s, size_t v)
-{
-#define CC_IMPL(a, b) a##b
-#define CC(a, b) CC_IMPL(a, b)
-  s << static_cast<CC(quint, __SIZE_WIDTH__)>(v);
-#undef CC_IMPL
-#undef CC
-  return s;
-}
-
 // this hasher may be pretty heavy but yet flexible
 // as so as it uses serialization under the hood
 // use with caution, avoid recalculation if possible

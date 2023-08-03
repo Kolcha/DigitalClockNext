@@ -43,9 +43,8 @@ private:
 class LegacySkinLoader final : public ClassicSkinLoader {
 public:
   explicit LegacySkinLoader(const QString& path)
-    : ClassicSkinLoader(path)
   {
-    init();
+    init(path);
   }
 
   std::unique_ptr<ClassicSkin> skin() const override
@@ -58,7 +57,7 @@ public:
   }
 
 private:
-  void init();
+  void init(const QString& skin_root);
 
   void loadMeta(const QDir& skin_dir, QSettings& s);
   void loadFiles(const QDir& skin_dir, QSettings& s);
