@@ -4,19 +4,12 @@
 #include "about_dialog.hpp"
 #include "settings_dialog.hpp"
 
-using namespace Qt::Literals::StringLiterals;
-
 // constructor and destructor are required here to get
 // std::unique_ptr to work with forward declarations
 Application::Application(int& argc, char** argv)
   : QApplication(argc, argv)
   , _impl(std::make_unique<ApplicationPrivate>())
 {
-  setApplicationName(u"DigitalClockNext"_s);
-  setApplicationDisplayName(u"Digital Clock Next"_s);
-  setOrganizationName(u"Nick Korotysh"_s);
-  setOrganizationDomain(u"kolcha.github.com"_s);
-  setDesktopFileName(u"com.github.kolcha.DigitalClockNext"_s);
 }
 
 Application::~Application() = default;

@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(DigitalClockNext VERSION 5.0.0 LANGUAGES CXX)
+project(DigitalClockNext
+  VERSION 5.0.0
+  DESCRIPTION "beautiful highly customizable clock"
+  HOMEPAGE_URL "https://digitalclock4.sourceforge.io"
+  LANGUAGES CXX
+)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -91,7 +96,7 @@ set(PROJECT_SOURCES
         src/app/about_dialog.ui
 )
 
-qt_add_executable(digital_clock_next
+qt_add_executable(${PROJECT_NAME}
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
 )
@@ -100,12 +105,12 @@ configure_file(src/version.hpp.in src/version.hpp @ONLY)
 
 add_subdirectory(dep)
 
-target_include_directories(digital_clock_next PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_include_directories(digital_clock_next PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
-target_link_libraries(digital_clock_next PRIVATE gradient_dialog)
-target_link_libraries(digital_clock_next PRIVATE Qt6::Widgets Qt6::Svg)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
+target_link_libraries(${PROJECT_NAME} PRIVATE gradient_dialog)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::Svg)
 
-set_target_properties(digital_clock_next PROPERTIES
+set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -113,8 +118,8 @@ set_target_properties(digital_clock_next PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-install(TARGETS digital_clock_next
+install(TARGETS ${PROJECT_NAME}
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-qt_finalize_executable(digital_clock_next)
+qt_finalize_executable(${PROJECT_NAME})

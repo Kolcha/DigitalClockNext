@@ -1,5 +1,7 @@
 #pragma once
 
+static constexpr const char* APP_PROJECT_NAME = "@PROJECT_NAME@";
+
 static constexpr int APP_VERSION_MAJOR = @PROJECT_VERSION_MAJOR@;
 static constexpr int APP_VERSION_MINOR = @PROJECT_VERSION_MINOR@;
 static constexpr int APP_VERSION_PATCH = @PROJECT_VERSION_PATCH@;

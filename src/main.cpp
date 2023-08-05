@@ -13,7 +13,12 @@ int main(int argc, char *argv[])
   QIcon::setThemeName(u"unicons-line"_s);
   QIcon::setFallbackThemeName(system_theme);
 
+  QApplication::setApplicationName(QString::fromLatin1(APP_PROJECT_NAME));
+  QApplication::setApplicationDisplayName(u"Digital Clock Next"_s);
   QApplication::setApplicationVersion(QString::fromLatin1(APP_VERSION));
+  QApplication::setOrganizationName(u"Nick Korotysh"_s);
+  QApplication::setOrganizationDomain(u"kolcha.github.com"_s);
+  QApplication::setDesktopFileName(u"com.github.kolcha.DigitalClockNext"_s);
   QApplication::setWindowIcon(QIcon::fromTheme("clock"));
 
   a.init();
