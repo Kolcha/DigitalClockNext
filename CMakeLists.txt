@@ -85,6 +85,7 @@ set(PROJECT_SOURCES
         src/render/char_renderable.cpp
         src/skin/classic_skin.cpp
         src/skin/legacy_skin_loader.cpp
+        res/icons.qrc
 )
 
 qt_add_executable(digital_clock_next
