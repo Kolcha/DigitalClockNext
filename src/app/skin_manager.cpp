@@ -3,6 +3,7 @@
 #include <array>
 #include <optional>
 
+#include <QApplication>
 #include <QDir>
 
 #include "clock/legacy_skin_extension.hpp"
@@ -145,9 +146,20 @@ void SkinManagerImpl::findSkins()
   _skins.clear();
 
   using namespace Qt::Literals::StringLiterals;
-  // TODO: platform/distribution-specific search paths
   const auto search_paths = {
-    u"."_s,   // only current path for now
+#ifdef Q_OS_MACOS
+    qApp->applicationDirPath() + u"/../Resources/skins"_s,
+#else
+    qApp->applicationDirPath() + u"/skins"_s,
+#endif
+#ifdef Q_OS_LINUX
+    u"/usr/share/digitalclock4/skins"_s,
+    u"/usr/share/DigitalClockNext/skins"_s,
+    u"/usr/local/share/digitalclock4/skins"_s,
+    u"/usr/local/share/DigitalClockNext/skins"_s,
+    QDir::home().absoluteFilePath(u".local/share/digitalclock4/skins"_s),
+    QDir::home().absoluteFilePath(u".local/share/DigitalClockNext/skins"_s),
+#endif
   };
 
   constexpr std::pair<SkinType, std::optional<QString>(*)(const QString&)> validators[] = {
