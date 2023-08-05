@@ -86,6 +86,9 @@ set(PROJECT_SOURCES
         src/skin/classic_skin.cpp
         src/skin/legacy_skin_loader.cpp
         res/icons.qrc
+        src/app/about_dialog.cpp
+        src/app/about_dialog.hpp
+        src/app/about_dialog.ui
 )
 
 qt_add_executable(digital_clock_next
@@ -93,9 +96,12 @@ qt_add_executable(digital_clock_next
     ${PROJECT_SOURCES}
 )
 
+configure_file(src/version.hpp.in src/version.hpp @ONLY)
+
 add_subdirectory(dep)
 
 target_include_directories(digital_clock_next PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(digital_clock_next PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
 target_link_libraries(digital_clock_next PRIVATE gradient_dialog)
 target_link_libraries(digital_clock_next PRIVATE Qt6::Widgets Qt6::Svg)
 

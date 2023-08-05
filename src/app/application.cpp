@@ -1,6 +1,7 @@
 #include "application.hpp"
 #include "application_private.hpp"
 
+#include "about_dialog.hpp"
 #include "settings_dialog.hpp"
 
 using namespace Qt::Literals::StringLiterals;
@@ -13,7 +14,6 @@ Application::Application(int& argc, char** argv)
 {
   setApplicationName(u"DigitalClockNext"_s);
   setApplicationDisplayName(u"Digital Clock Next"_s);
-  setApplicationVersion(u"1.0.0"_s);
   setOrganizationName(u"Nick Korotysh"_s);
   setOrganizationDomain(u"kolcha.github.com"_s);
   setDesktopFileName(u"com.github.kolcha.DigitalClockNext"_s);
@@ -40,4 +40,9 @@ void Application::showSettingsDialog()
 
 void Application::showAboutDialog()
 {
+  auto w = qobject_cast<ClockWindow*>(sender());
+  // TODO: find window on current screen in case of tray icon clicked
+  auto dlg = new AboutDialog(w);
+  connect(dlg, &QDialog::finished, dlg, &QObject::deleteLater);
+  dlg->show();
 }
