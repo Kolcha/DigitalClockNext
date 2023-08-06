@@ -43,6 +43,9 @@ private slots:
 
   void onAlignmentButtonClicked(int id);
 
+  void on_is_stay_on_top_clicked(bool checked);
+  void on_is_transp_for_input_clicked(bool checked);
+
 private:
   void applySkin(std::shared_ptr<ClockSkin> skin);
   void applyFlashingSeparator(bool enable);

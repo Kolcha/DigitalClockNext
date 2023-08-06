@@ -398,6 +398,29 @@
            </property>
           </spacer>
          </item>
+         <item>
+          <widget class="QGroupBox" name="app_restart_group">
+           <property name="title">
+            <string>options requiring app restart</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QCheckBox" name="is_stay_on_top">
+              <property name="text">
+               <string>stay on top of other windows</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="is_transp_for_input">
+              <property name="text">
+               <string>transparent for mouse events</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>

@@ -88,6 +88,8 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->align_br_btn->setChecked(alignment == (Qt::AlignBottom | Qt::AlignRight));
   connect(alignment_group, &QButtonGroup::idClicked,
           this, &SettingsDialog::onAlignmentButtonClicked);
+  ui->is_stay_on_top->setChecked(impl->acfg->global().getStayOnTop());
+  ui->is_transp_for_input->setChecked(impl->acfg->global().getTransparentForMouse());
 
   updateSkinSettingsTab();
 }
@@ -99,12 +101,14 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::accept()
 {
+  impl->acfg->global().commit();
   impl->wcfg->commit();
   QDialog::accept();
 }
 
 void SettingsDialog::reject()
 {
+  impl->acfg->global().discard();
   impl->wcfg->discard();
   impl->wnd->setSkin(impl->last_skin);
   impl->app->skin_manager()->configureSkin(impl->last_skin, impl->idx);
@@ -195,6 +199,16 @@ void SettingsDialog::onAlignmentButtonClicked(int id)
   auto alignment = static_cast<Qt::Alignment>(id);
   impl->wnd->setAlignment(alignment);
   impl->wcfg->general().setAlignment(alignment);
+}
+
+void SettingsDialog::on_is_stay_on_top_clicked(bool checked)
+{
+  impl->acfg->global().setStayOnTop(checked);
+}
+
+void SettingsDialog::on_is_transp_for_input_clicked(bool checked)
+{
+  impl->acfg->global().setTransparentForMouse(checked);
 }
 
 void SettingsDialog::applySkin(std::shared_ptr<ClockSkin> skin)

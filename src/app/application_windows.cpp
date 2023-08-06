@@ -32,6 +32,13 @@ void ApplicationPrivate::createWindow(const QScreen* screen)
   auto skin = idx == 0 && !_windows.empty() ? _windows.front()->skin() : _skin_manager->loadSkin(idx);
   auto state = std::make_unique<ClockWindowState>(&cfg.state());
   auto wnd = std::make_unique<ClockWindow>(std::move(skin), _time_src->now().toLocalTime(), std::move(state));
+  if (_app_config->global().getStayOnTop()) {
+    wnd->setWindowFlag(Qt::WindowStaysOnTopHint);
+    wnd->setWindowFlag(Qt::BypassWindowManagerHint);
+  }
+  if (_app_config->global().getTransparentForMouse())
+    wnd->setWindowFlag(Qt::WindowTransparentForInput);
+  wnd->setWindowFlag(Qt::Tool);   // trick to hide app icon from taskbar (Win/Linux)
   if (!cfg.general().getShowLocalTime())
     wnd->setTimeZone(cfg.state().getTimeZone());
   wnd->setSeparatorFlashes(cfg.appearance().getFlashingSeparator());
