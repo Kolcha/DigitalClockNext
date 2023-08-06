@@ -210,8 +210,14 @@
             </property>
             <item row="0" column="0">
              <widget class="QToolButton" name="align_tl_btn">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string notr="true">🡴</string>
+               <string notr="true">↖</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -223,8 +229,14 @@
             </item>
             <item row="0" column="1">
              <widget class="QToolButton" name="align_tc_btn">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string notr="true">🡱</string>
+               <string notr="true">↑</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -236,8 +248,14 @@
             </item>
             <item row="0" column="2">
              <widget class="QToolButton" name="align_tr_btn">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string notr="true">🡵</string>
+               <string notr="true">↗</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -249,8 +267,14 @@
             </item>
             <item row="1" column="0">
              <widget class="QToolButton" name="align_cl_btn">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string notr="true">🡰</string>
+               <string notr="true">←</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -262,8 +286,14 @@
             </item>
             <item row="1" column="1">
              <widget class="QToolButton" name="align_cc_btn">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string notr="true">⬤</string>
+               <string notr="true">•</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -278,8 +308,14 @@
             </item>
             <item row="1" column="2">
              <widget class="QToolButton" name="align_cr_btn">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string notr="true">🡲</string>
+               <string notr="true">→</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -291,8 +327,14 @@
             </item>
             <item row="2" column="0">
              <widget class="QToolButton" name="align_bl_btn">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string notr="true">🡷</string>
+               <string notr="true">↙</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -304,8 +346,14 @@
             </item>
             <item row="2" column="1">
              <widget class="QToolButton" name="align_bc_btn">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string notr="true">🡳</string>
+               <string notr="true">↓</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -317,8 +365,14 @@
             </item>
             <item row="2" column="2">
              <widget class="QToolButton" name="align_br_btn">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string notr="true">🡶</string>
+               <string notr="true">↘</string>
               </property>
               <property name="checkable">
                <bool>true</bool>

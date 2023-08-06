@@ -18,8 +18,6 @@ public:
   void init();
 
 private slots:
-  // TODO: add optional 'screen' parameter
-  // not set (aka from tray menu) - show on default screen
   void showSettingsDialog();
   void showAboutDialog();
 

@@ -54,6 +54,8 @@ ClockWindow::ClockWindow(const SkinPtr& skin, const QDateTime& dt, StatePtr stat
   // even for debug purpose, window must be frameless,
   // at least on X11, see Qt documentation for details
   setWindowFlag(Qt::FramelessWindowHint);
+  setWindowFlag(Qt::NoDropShadowWindowHint);
+  setAttribute(Qt::WA_TranslucentBackground);
 
   // restore window state
   _impl->ref_point = _impl->state->getPos();
