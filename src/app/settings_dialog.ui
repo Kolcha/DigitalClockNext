@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>350</height>
+    <width>420</width>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,165 +25,188 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QGroupBox" name="skin_group">
+        <widget class="QGroupBox" name="appearance_group">
          <property name="title">
           <string>Appearance</string>
          </property>
-         <layout class="QHBoxLayout" name="skin_layout">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QRadioButton" name="font_rbtn">
-            <property name="text">
-             <string>font</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="skin_layout">
+            <item>
+             <widget class="QRadioButton" name="font_rbtn">
+              <property name="text">
+               <string>font</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="select_font_btn">
+              <property name="text">
+               <string notr="true">...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="skin_spacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="skin_rbtn">
+              <property name="text">
+               <string>skin</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="skin_cbox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="QToolButton" name="select_font_btn">
-            <property name="text">
-             <string notr="true">...</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QCheckBox" name="is_separator_flashes">
+              <property name="text">
+               <string>flashing separator</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="scaling_label">
+              <property name="text">
+               <string>Scaling:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="scaling_x_edit">
+              <property name="toolTip">
+               <string>horizontal scaling</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="suffix">
+               <string notr="true">%</string>
+              </property>
+              <property name="minimum">
+               <number>10</number>
+              </property>
+              <property name="maximum">
+               <number>800</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="scaling_same_btn">
+              <property name="toolTip">
+               <string>same scaling</string>
+              </property>
+              <property name="text">
+               <string notr="true">=</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="scaling_y_edit">
+              <property name="toolTip">
+               <string>vertical scaling</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="suffix">
+               <string notr="true">%</string>
+              </property>
+              <property name="minimum">
+               <number>10</number>
+              </property>
+              <property name="maximum">
+               <number>800</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-           <spacer name="skin_spacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="skin_rbtn">
-            <property name="text">
-             <string>skin</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="skin_cbox">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="opacity_layout">
+            <item>
+             <widget class="QLabel" name="opacity_label">
+              <property name="text">
+               <string>&amp;opacity</string>
+              </property>
+              <property name="buddy">
+               <cstring>opacity_slider</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="opacity_slider">
+              <property name="minimum">
+               <number>5</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="opacity_edit">
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="suffix">
+               <string notr="true">%</string>
+              </property>
+              <property name="minimum">
+               <number>5</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QCheckBox" name="is_separator_flashes">
-           <property name="text">
-            <string>flashing separator</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="scaling_label">
-           <property name="text">
-            <string>Scaling:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="scaling_x_edit">
-           <property name="toolTip">
-            <string>horizontal scaling</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="suffix">
-            <string notr="true">%</string>
-           </property>
-           <property name="minimum">
-            <number>10</number>
-           </property>
-           <property name="maximum">
-            <number>800</number>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="scaling_same_btn">
-           <property name="toolTip">
-            <string>same scaling</string>
-           </property>
-           <property name="text">
-            <string notr="true">=</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="autoRaise">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="scaling_y_edit">
-           <property name="toolTip">
-            <string>vertical scaling</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="suffix">
-            <string notr="true">%</string>
-           </property>
-           <property name="minimum">
-            <number>10</number>
-           </property>
-           <property name="maximum">
-            <number>800</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="time_zone_layout">
-         <item>
-          <widget class="QCheckBox" name="use_time_zone">
-           <property name="text">
-            <string>&amp;time zone</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="time_zone_edit">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -424,17 +447,28 @@
         </layout>
        </item>
        <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>6</height>
-          </size>
-         </property>
-        </spacer>
+        <layout class="QHBoxLayout" name="time_zone_layout">
+         <item>
+          <widget class="QCheckBox" name="use_time_zone">
+           <property name="text">
+            <string>&amp;time zone</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="time_zone_edit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -466,8 +500,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>257</x>
-     <y>290</y>
+     <x>266</x>
+     <y>360</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -482,8 +516,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>325</x>
-     <y>290</y>
+     <x>334</x>
+     <y>360</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -530,12 +564,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>94</x>
-     <y>161</y>
+     <x>105</x>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel">
-     <x>142</x>
-     <y>161</y>
+     <x>245</x>
+     <y>317</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>opacity_slider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>opacity_edit</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>310</x>
+     <y>146</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>337</x>
+     <y>146</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>opacity_edit</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>opacity_slider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>340</x>
+     <y>158</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>308</x>
+     <y>157</y>
     </hint>
    </hints>
   </connection>

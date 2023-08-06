@@ -7,6 +7,7 @@ class AppearanceConfig final : public ConfigBaseQVariant {
   CONFIG_OPTION_Q(bool, FlashingSeparator, true)
   CONFIG_OPTION_Q(int, ScaleFactorX, 100)
   CONFIG_OPTION_Q(int, ScaleFactorY, 100)
+  CONFIG_OPTION_Q(qreal, Opacity, 0.85)
 public:
   using ConfigBaseQVariant::ConfigBaseQVariant;
 };

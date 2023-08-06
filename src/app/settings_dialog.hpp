@@ -46,6 +46,8 @@ private slots:
   void on_is_stay_on_top_clicked(bool checked);
   void on_is_transp_for_input_clicked(bool checked);
 
+  void on_opacity_edit_valueChanged(int arg1);
+
 private:
   void applySkin(std::shared_ptr<ClockSkin> skin);
   void applyFlashingSeparator(bool enable);

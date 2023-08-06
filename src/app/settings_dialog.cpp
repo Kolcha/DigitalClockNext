@@ -62,6 +62,7 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->is_separator_flashes->setChecked(appearance_cfg.getFlashingSeparator());
   ui->scaling_x_edit->setValue(appearance_cfg.getScaleFactorX());
   ui->scaling_y_edit->setValue(appearance_cfg.getScaleFactorY());
+  ui->opacity_edit->setValue(qRound(appearance_cfg.getOpacity() * 100));
   const auto& general_cfg = impl->wcfg->general();
   ui->use_time_zone->setChecked(!general_cfg.getShowLocalTime());
   ui->time_zone_edit->setCurrentText(tz_name(impl->wcfg->state().getTimeZone()));
@@ -117,6 +118,7 @@ void SettingsDialog::reject()
   applyTimeZoneSettings();
   impl->wnd->scale(impl->wcfg->appearance().getScaleFactorX(), impl->wcfg->appearance().getScaleFactorY());
   impl->wnd->setAlignment(impl->wcfg->general().getAlignment());  // TODO: restore window state
+  impl->wnd->setWindowOpacity(impl->wcfg->appearance().getOpacity());
   QDialog::reject();
 }
 
@@ -209,6 +211,15 @@ void SettingsDialog::on_is_stay_on_top_clicked(bool checked)
 void SettingsDialog::on_is_transp_for_input_clicked(bool checked)
 {
   impl->acfg->global().setTransparentForMouse(checked);
+}
+
+void SettingsDialog::on_opacity_edit_valueChanged(int arg1)
+{
+  qreal opacity = arg1 / 100.;
+  if (qFuzzyCompare(opacity, impl->wcfg->appearance().getOpacity()))
+    return;
+  impl->wnd->setWindowOpacity(opacity);
+  impl->wcfg->appearance().setOpacity(opacity);
 }
 
 void SettingsDialog::applySkin(std::shared_ptr<ClockSkin> skin)
