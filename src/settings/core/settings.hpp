@@ -66,8 +66,14 @@ public:
 };
 
 
-// TODO: add concepts
-template<typename Map>
+template <typename T>
+concept MaplikeType = requires
+{
+  typename T::key_type;
+  typename T::mapped_type;
+};
+
+template<MaplikeType Map>
 void merge_with_override(Map& target, const Map& source)
 {
   for (const auto& [key, value] : source)
