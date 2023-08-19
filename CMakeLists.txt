@@ -71,8 +71,6 @@ set(PROJECT_SOURCES
         src/app/settings_dialog.hpp
         src/app/settings_dialog.ui
         src/render/effects/background.hpp
-        src/settings/sections/sample_values.cpp
-        src/settings/sections/sample_values.hpp
         src/app/window_state.hpp
         src/settings/sections/general.hpp
         src/app/window_positioning.cpp
@@ -96,6 +94,9 @@ set(PROJECT_SOURCES
         src/app/about_dialog.cpp
         src/app/about_dialog.hpp
         src/app/about_dialog.ui
+        res/skins.qrc
+        src/settings/sections/classic_skin.cpp
+        src/settings/sections/window_state.cpp
 )
 
 qt_add_executable(${PROJECT_NAME}
@@ -113,6 +114,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE gradient_dialog)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::Svg)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
+    MACOSX_BUNDLE_BUNDLE_NAME "Digital Clock Next"
     MACOSX_BUNDLE_GUI_IDENTIFIER "DigitalClockNext.kolcha.github.com"
     MACOSX_BUNDLE_COPYRIGHT "(c) 2013-2023 Nick Korotysh"
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

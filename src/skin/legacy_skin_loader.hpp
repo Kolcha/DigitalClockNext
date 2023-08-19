@@ -9,22 +9,9 @@
 
 class LegacyRenderableFactory final : public RenderableFactory {
 public:
-  explicit LegacyRenderableFactory(const QHash<QChar, QString>& files)
-  {
-    for (auto iter = files.begin(); iter != files.end(); ++iter)
-      _resources[iter.key()] = createRenderable(iter.value());
-    _has_2_seps = _resources.contains(':') && _resources.contains(' ');
-  }
+  explicit LegacyRenderableFactory(const QHash<QChar, QString>& files);
 
-  std::shared_ptr<SkinResource> item(QChar ch) const override
-  {
-    if (RenderableFactory::isSeparator(ch) && ch != ' ')
-      ch = ':';
-    if (!_has_2_seps && ch == ' ')
-      ch = ':';
-    auto iter = _resources.find(ch);
-    return iter != _resources.end() ? iter.value() : nullptr;
-  }
+  std::shared_ptr<SkinResource> item(QChar ch) const override;
 
   bool isSeparator(QChar ch) const override
   {

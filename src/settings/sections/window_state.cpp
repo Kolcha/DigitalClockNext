@@ -1,6 +1,8 @@
-#include "sample_values.hpp"
+#include "window_state.hpp"
 
-QGradient sample_conical_gradient()
+#include <QPainter>
+
+QGradient WindowState::sample_conical_gradient()
 {
   QConicalGradient g(0.5, 0.5, 45.0);
   g.setStops({
@@ -14,12 +16,22 @@ QGradient sample_conical_gradient()
   return g;
 }
 
-QGradient sample_linear_gradient()
+QGradient WindowState::sample_linear_gradient()
 {
   QLinearGradient g(0., 0., 0., 1.);
   g.setColorAt(0.0, Qt::transparent);
-  g.setColorAt(0.3, Qt::transparent);
-  g.setColorAt(1.0, Qt::magenta);
+  g.setColorAt(0.6, Qt::transparent);
+  g.setColorAt(1.0, QColor(85, 0, 255));
   g.setCoordinateMode(QGradient::ObjectMode);
   return g;
+}
+
+QPixmap WindowState::sample_pattern()
+{
+  QPixmap pxm(8, 8);
+  pxm.fill(QColor(160, 0, 160));
+  QPainter p(&pxm);
+  p.fillRect(0, 0, 4, 4, QColor(224, 0, 224));
+  p.fillRect(4, 4, 8, 8, QColor(224, 0, 224));
+  return pxm;
 }

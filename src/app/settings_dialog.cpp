@@ -69,6 +69,8 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->is_stay_on_top->setChecked(impl->acfg->global().getStayOnTop());
   ui->is_transp_for_input->setChecked(impl->acfg->global().getTransparentForMouse());
 
+  on_scaling_same_btn_clicked(ui->scaling_same_btn->isChecked());
+
   updateSkinSettingsTab();
 }
 

@@ -147,6 +147,7 @@ void SkinManagerImpl::findSkins()
 
   using namespace Qt::Literals::StringLiterals;
   const auto search_paths = {
+    u":/skins"_s,
 #ifdef Q_OS_MACOS
     qApp->applicationDirPath() + u"/../Resources/skins"_s,
 #else

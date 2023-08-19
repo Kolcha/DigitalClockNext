@@ -27,6 +27,25 @@ static constexpr const char* const skin_ini = "skin.ini";
 
 } // namespace
 
+LegacyRenderableFactory::LegacyRenderableFactory(const QHash<QChar, QString>& files)
+{
+  for (auto iter = files.begin(); iter != files.end(); ++iter)
+    _resources[iter.key()] = createRenderable(iter.value());
+  _has_2_seps = _resources.contains(':') && _resources.contains(' ');
+}
+
+std::shared_ptr<SkinResource> LegacyRenderableFactory::item(QChar ch) const
+{
+  if (ch.isSpace())
+    ch = ' ';
+  if (RenderableFactory::isSeparator(ch) && ch != ' ')
+    ch = ':';
+  if (!_has_2_seps && ch == ' ')
+    ch = ':';
+  auto iter = _resources.find(ch.toLower());
+  return iter != _resources.end() ? iter.value() : nullptr;
+}
+
 std::shared_ptr<SkinResource> LegacyRenderableFactory::createRenderable(const QString& path)
 {
   QFileInfo fi(path);
