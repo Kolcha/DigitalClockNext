@@ -1,7 +1,6 @@
 #include "settings_dialog.hpp"
 #include "ui_settings_dialog.h"
 
-#include <QButtonGroup>
 #include <QFontDialog>
 
 #include "app/application_private.hpp"
@@ -67,28 +66,6 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->use_time_zone->setChecked(!general_cfg.getShowLocalTime());
   ui->time_zone_edit->setCurrentText(tz_name(impl->wcfg->state().getTimeZone()));
 
-  auto alignment_group = new QButtonGroup(this);
-  alignment_group->addButton(ui->align_tl_btn, Qt::AlignTop | Qt::AlignLeft);
-  alignment_group->addButton(ui->align_tc_btn, Qt::AlignTop | Qt::AlignHCenter);
-  alignment_group->addButton(ui->align_tr_btn, Qt::AlignTop | Qt::AlignRight);
-  alignment_group->addButton(ui->align_cl_btn, Qt::AlignVCenter | Qt::AlignLeft);
-  alignment_group->addButton(ui->align_cc_btn, Qt::AlignVCenter | Qt::AlignHCenter);
-  alignment_group->addButton(ui->align_cr_btn, Qt::AlignVCenter | Qt::AlignRight);
-  alignment_group->addButton(ui->align_bl_btn, Qt::AlignBottom | Qt::AlignLeft);
-  alignment_group->addButton(ui->align_bc_btn, Qt::AlignBottom | Qt::AlignHCenter);
-  alignment_group->addButton(ui->align_br_btn, Qt::AlignBottom | Qt::AlignRight);
-  auto alignment = impl->wcfg->general().getAlignment();
-  ui->align_tl_btn->setChecked(alignment == (Qt::AlignTop | Qt::AlignLeft));
-  ui->align_tc_btn->setChecked(alignment == (Qt::AlignTop | Qt::AlignHCenter));
-  ui->align_tr_btn->setChecked(alignment == (Qt::AlignTop | Qt::AlignRight));
-  ui->align_cl_btn->setChecked(alignment == (Qt::AlignVCenter | Qt::AlignLeft));
-  ui->align_cc_btn->setChecked(alignment == (Qt::AlignVCenter | Qt::AlignHCenter));
-  ui->align_cr_btn->setChecked(alignment == (Qt::AlignVCenter | Qt::AlignRight));
-  ui->align_bl_btn->setChecked(alignment == (Qt::AlignBottom | Qt::AlignLeft));
-  ui->align_bc_btn->setChecked(alignment == (Qt::AlignBottom | Qt::AlignHCenter));
-  ui->align_br_btn->setChecked(alignment == (Qt::AlignBottom | Qt::AlignRight));
-  connect(alignment_group, &QButtonGroup::idClicked,
-          this, &SettingsDialog::onAlignmentButtonClicked);
   ui->is_stay_on_top->setChecked(impl->acfg->global().getStayOnTop());
   ui->is_transp_for_input->setChecked(impl->acfg->global().getTransparentForMouse());
 
@@ -117,7 +94,6 @@ void SettingsDialog::reject()
   applyFlashingSeparator(impl->wcfg->appearance().getFlashingSeparator());
   applyTimeZoneSettings();
   impl->wnd->scale(impl->wcfg->appearance().getScaleFactorX(), impl->wcfg->appearance().getScaleFactorY());
-  impl->wnd->setAlignment(impl->wcfg->general().getAlignment());  // TODO: restore window state
   impl->wnd->setWindowOpacity(impl->wcfg->appearance().getOpacity());
   QDialog::reject();
 }
@@ -194,13 +170,6 @@ void SettingsDialog::on_time_zone_edit_activated(int index)
 {
   impl->wcfg->state().setTimeZone(ui->time_zone_edit->itemData(index).value<QTimeZone>());
   applyTimeZoneSettings();
-}
-
-void SettingsDialog::onAlignmentButtonClicked(int id)
-{
-  auto alignment = static_cast<Qt::Alignment>(id);
-  impl->wnd->setAlignment(alignment);
-  impl->wcfg->general().setAlignment(alignment);
 }
 
 void SettingsDialog::on_is_stay_on_top_clicked(bool checked)

@@ -41,8 +41,6 @@ private slots:
   void on_use_time_zone_clicked(bool checked);
   void on_time_zone_edit_activated(int index);
 
-  void onAlignmentButtonClicked(int id);
-
   void on_is_stay_on_top_clicked(bool checked);
   void on_is_transp_for_input_clicked(bool checked);
 
