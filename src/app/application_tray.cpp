@@ -5,8 +5,9 @@ using namespace Qt::Literals::StringLiterals;
 
 void ApplicationPrivate::initTray()
 {
-  _tray_icon = std::make_unique<QSystemTrayIcon>();
-  _tray_icon->setIcon(QIcon::fromTheme(u"clock"_s));
+  QIcon icon = QIcon::fromTheme(u"clock"_s);
+  icon.setIsMask(true);
+  _tray_icon = std::make_unique<QSystemTrayIcon>(icon);
   _tray_icon->setVisible(true);
 
   _tray_menu = std::make_unique<QMenu>();

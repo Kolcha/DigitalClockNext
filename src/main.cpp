@@ -20,6 +20,9 @@ int main(int argc, char *argv[])
   QApplication::setOrganizationDomain(u"kolcha.github.com"_s);
   QApplication::setDesktopFileName(u"com.github.kolcha.DigitalClockNext"_s);
   QApplication::setWindowIcon(QIcon::fromTheme("clock"));
+#ifdef Q_OS_MACOS
+  QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
+#endif
   QApplication::setQuitOnLastWindowClosed(false);
 
   a.init();

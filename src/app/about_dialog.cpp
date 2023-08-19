@@ -68,6 +68,13 @@ AboutDialog::AboutDialog(QWidget* parent)
 
   ui->logo_lbl->setPixmap(QApplication::windowIcon().pixmap(192));
 
+  QFont fnt = font();
+  fnt.setBold(true);
+  fnt.setPointSizeF(fnt.pointSizeF() * 4/3);
+  ui->app_ver_lbl->setFont(fnt);
+  fnt.setPointSizeF(fnt.pointSizeF() * 4/3);
+  ui->app_name_lbl->setFont(fnt);
+
   ui->app_name_lbl->setText(QApplication::applicationDisplayName());
   ui->app_ver_lbl->setText(tr("version: %1").arg(QApplication::applicationVersion()));
   ui->build_qt_lbl->setText(buildCompatibilityString());
