@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Digital Clock Next
+GenericName=Digital Clock
+Comment=${PROJECT_DESCRIPTION}
+Type=Application
+Terminal=false
+Exec=${PROJECT_NAME}
+Icon=clock
+StartupNotify=false
+Categories=Utility;Clock;

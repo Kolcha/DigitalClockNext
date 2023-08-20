@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
   QApplication::setApplicationVersion(QString::fromLatin1(APP_VERSION));
   QApplication::setOrganizationName(u"Nick Korotysh"_s);
   QApplication::setOrganizationDomain(u"kolcha.github.com"_s);
-  QApplication::setDesktopFileName(u"com.github.kolcha.DigitalClockNext"_s);
+  QApplication::setDesktopFileName(APP_IDENTIFIER);
   QApplication::setWindowIcon(QIcon::fromTheme("clock"));
 #ifdef Q_OS_MACOS
   QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);

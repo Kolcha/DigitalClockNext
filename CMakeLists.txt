@@ -104,9 +104,11 @@ qt_add_executable(${PROJECT_NAME}
     ${PROJECT_SOURCES}
 )
 
+set(APP_IDENTIFIER "com.github.kolcha.DigitalClockNext")
 configure_file(src/version.hpp.in src/version.hpp @ONLY)
 
-add_subdirectory(dep)
+add_subdirectory(deps)
+add_subdirectory(dist)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
@@ -114,8 +116,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE gradient_dialog)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::Svg)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    MACOSX_BUNDLE_BUNDLE_NAME "Digital Clock Next"
-    MACOSX_BUNDLE_GUI_IDENTIFIER "DigitalClockNext.kolcha.github.com"
+    MACOSX_BUNDLE_BUNDLE_NAME "Digital Clock"
+    MACOSX_BUNDLE_GUI_IDENTIFIER ${APP_IDENTIFIER}
     MACOSX_BUNDLE_COPYRIGHT "(c) 2013-2023 Nick Korotysh"
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
