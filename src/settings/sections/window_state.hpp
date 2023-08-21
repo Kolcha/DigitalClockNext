@@ -13,7 +13,7 @@
 class WindowState final : public ConfigBaseQVariant {
   CONFIG_OPTION_Q(QPoint, Pos, QPoint(75, 50))
   CONFIG_OPTION_Q(Qt::Alignment, Alignment, Qt::AlignTop | Qt::AlignLeft)
-  CONFIG_OPTION_Q(QFont, TextSkinFont, QFont("Segoe Script", 48))
+  CONFIG_OPTION_Q(QFont, TextSkinFont, default_font())
   CONFIG_OPTION_Q(QString, LastUsedSkin, QString("Electronic (built-in)"))
   CONFIG_OPTION_Q(QColor, TextureColor, QColor(112, 96, 240))
   CONFIG_OPTION_Q(QGradient, TextureGradient, sample_conical_gradient())
@@ -25,6 +25,7 @@ class WindowState final : public ConfigBaseQVariant {
 public:
   using ConfigBaseQVariant::ConfigBaseQVariant;
 private:
+  static QFont default_font();
   static QGradient sample_conical_gradient();
   static QGradient sample_linear_gradient();
   static QPixmap sample_pattern();

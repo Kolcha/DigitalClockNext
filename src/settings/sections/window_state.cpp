@@ -2,6 +2,18 @@
 
 #include <QPainter>
 
+QFont WindowState::default_font()
+{
+  using namespace Qt::Literals::StringLiterals;
+  QFont fnt(u"Comic Sans MS"_s, 96);
+#if defined(Q_OS_MACOS)
+  fnt.setFamily(u"SignPainter"_s);
+#elif defined(Q_OS_WINDOWS)
+  fnt.setFamily(u"MV Boli"_s);
+#endif
+  return fnt;
+}
+
 QGradient WindowState::sample_conical_gradient()
 {
   QConicalGradient g(0.5, 0.5, 45.0);
