@@ -121,6 +121,10 @@ SkinManager::SkinPtr SkinManagerImpl::loadSkin(std::size_t i) const
   auto skin = cfg.appearance().getUseFontInsteadOfSkin()
               ? loadSkin(cfg.state().getTextSkinFont())
               : loadSkin(cfg.state().getLastUsedSkin());
+  if (!skin && !cfg.appearance().getUseFontInsteadOfSkin()) {
+    cfg.appearance().setUseFontInsteadOfSkin(true);
+    return loadSkin(i);
+  }
   configureSkin(skin, i);
   return skin;
 }
