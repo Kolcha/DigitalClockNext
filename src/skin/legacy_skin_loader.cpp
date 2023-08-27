@@ -139,11 +139,12 @@ void LegacySkinLoader::init(const QString& skin_root)
 
   QDir skin_dir(finfo.absoluteFilePath());
 
-  updateMeta(u"name"_s, finfo.fileName());
+  setTitle(finfo.fileName());
+
   loadMeta(skin_dir);
   loadFiles(skin_dir);
 
-  setValid(meta().contains("name") && _files.size() >= 11);
+  setValid(!title().isEmpty() && _files.size() >= 11);
 }
 
 void LegacySkinLoader::loadMeta(const QDir& skin_dir)
@@ -156,6 +157,9 @@ void LegacySkinLoader::loadMeta(const QDir& skin_dir)
   const auto meta_keys = s.childKeys();
   std::ranges::for_each(meta_keys, [&](const auto& k) { updateMeta(k, s.value(k)); });
   s.endGroup();
+
+  if (auto title = meta().value(u"name"_s).toString(); !title.isEmpty())
+    setTitle(title);  // update skin title from metadata
 }
 
 void LegacySkinLoader::loadFiles(const QDir& skin_dir)

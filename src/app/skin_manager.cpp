@@ -19,7 +19,7 @@ std::optional<QString> tryLegacySkin(const QString& path)
 {
   LegacySkinLoader loader(path);
   if (loader.valid())
-    return loader.meta()["name"].toString();
+    return loader.title();
   return std::nullopt;
 }
 
