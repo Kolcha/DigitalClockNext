@@ -5,7 +5,6 @@
 
 #include <QDir>
 #include <QHash>
-#include <QSettings>
 
 class LegacyRenderableFactory final : public RenderableFactory {
 public:
@@ -46,8 +45,8 @@ public:
 private:
   void init(const QString& skin_root);
 
-  void loadMeta(const QDir& skin_dir, QSettings& s);
-  void loadFiles(const QDir& skin_dir, QSettings& s);
+  void loadMeta(const QDir& skin_dir);
+  void loadFiles(const QDir& skin_dir);
 
 private:
   QHash<QChar, QString> _files;
