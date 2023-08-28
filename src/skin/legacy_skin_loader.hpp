@@ -6,9 +6,14 @@
 #include <QDir>
 #include <QHash>
 
+#include "render/glyph_geometry.hpp"
+
+using SkinFileInfo = QPair<QString, GlyphGeometryRaw>;
+using SkinFilesMap = QHash<QChar, SkinFileInfo>;
+
 class LegacyRenderableFactory final : public RenderableFactory {
 public:
-  explicit LegacyRenderableFactory(const QHash<QChar, QString>& files);
+  explicit LegacyRenderableFactory(const SkinFilesMap& files);
 
   std::shared_ptr<SkinResource> item(QChar ch) const override;
 
@@ -16,9 +21,6 @@ public:
   {
     return !_has_2_seps && RenderableFactory::isSeparator(ch);
   }
-
-private:
-  static std::shared_ptr<SkinResource> createRenderable(const QString& path);
 
 private:
   QHash<QChar, std::shared_ptr<SkinResource>> _resources;
@@ -49,5 +51,5 @@ private:
   void loadFiles(const QDir& skin_dir);
 
 private:
-  QHash<QChar, QString> _files;
+  SkinFilesMap _files;
 };

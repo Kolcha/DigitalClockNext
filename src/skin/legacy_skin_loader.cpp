@@ -25,8 +25,10 @@ constexpr std::array<QLatin1StringView, 3> optional_files = {
 };
 
 constexpr QLatin1StringView skin_ini = "skin.ini"_L1;
+constexpr QLatin1StringView geometry_ini = "geometry.ini"_L1;
 
-using FileList = QHash<QLatin1StringView, QString>;
+using FileList = QHash<QString, QString>;
+using GeometryMap = QHash<QString, GlyphGeometryRaw>;
 
 template<typename ReqFiller, typename OptFiller>
 FileList get_skin_files_impl(const QDir& skin_dir, ReqFiller req_filler, OptFiller opt_filler)
@@ -95,12 +97,63 @@ FileList get_skin_files(const QDir& skin_dir)
   return files;
 }
 
+GlyphGeometryRaw parse_glyph_geometry(const QSettings& s)
+{
+  GlyphGeometryRaw gargs;
+  const auto keys = s.childKeys();
+  for (const auto& k : keys) {
+    if (k == "x"_L1)
+      gargs.x = s.value(k).toReal();
+    if (k == "y"_L1)
+      gargs.y = s.value(k).toReal();
+    if (k == "w"_L1)
+      gargs.w = s.value(k).toReal();
+    if (k == "h"_L1)
+      gargs.h = s.value(k).toReal();
+    if (k == "ax"_L1)
+      gargs.ax = s.value(k).toReal();
+    if (k == "ay"_L1)
+      gargs.ay = s.value(k).toReal();
+  }
+  return gargs;
+}
+
+GeometryMap read_geometry_map(const QDir& skin_dir)
+{
+  GeometryMap geometry;
+  if (!skin_dir.exists(geometry_ini))
+    return geometry;
+
+  QSettings s(skin_dir.filePath(geometry_ini), QSettings::IniFormat);
+  const auto sections = s.childGroups();
+  for (const auto& section : sections) {
+    s.beginGroup(section);
+    geometry[section] = parse_glyph_geometry(s);
+    s.endGroup();
+  }
+  return geometry;
+}
+
+std::shared_ptr<SkinResource> createRenderable(const QString& path, const GlyphGeometryRaw& gargs)
+{
+  QFileInfo fi(path);
+  QString ext = fi.suffix().toLower();
+
+  if (ext == "svg")
+    return std::make_shared<SvgImageRenderable>(path, gargs);
+
+  if (ext == "png")
+    return std::make_shared<RasterImageRenderable>(path, gargs);
+
+  return nullptr;
+}
+
 } // namespace
 
-LegacyRenderableFactory::LegacyRenderableFactory(const QHash<QChar, QString>& files)
+LegacyRenderableFactory::LegacyRenderableFactory(const SkinFilesMap& files)
 {
   for (auto iter = files.begin(); iter != files.end(); ++iter)
-    _resources[iter.key()] = createRenderable(iter.value());
+    _resources[iter.key()] = createRenderable(iter.value().first, iter.value().second);
   _has_2_seps = _resources.contains(':') && _resources.contains(' ');
 }
 
@@ -114,20 +167,6 @@ std::shared_ptr<SkinResource> LegacyRenderableFactory::item(QChar ch) const
     ch = ':';
   auto iter = _resources.find(ch.toLower());
   return iter != _resources.end() ? iter.value() : nullptr;
-}
-
-std::shared_ptr<SkinResource> LegacyRenderableFactory::createRenderable(const QString& path)
-{
-  QFileInfo fi(path);
-  QString ext = fi.suffix().toLower();
-
-  if (ext == "svg")
-    return std::make_shared<SvgImageRenderable>(path);
-
-  if (ext == "png")
-    return std::make_shared<RasterImageRenderable>(path);
-
-  return nullptr;
 }
 
 
@@ -168,9 +207,11 @@ void LegacySkinLoader::loadFiles(const QDir& skin_dir)
   if (skin_files.isEmpty())
     return;
 
+  auto geometry = read_geometry_map(skin_dir);
+
   auto add_file = [&](QChar ch, QLatin1StringView key) {
     if (auto file = skin_files.value(key); !file.isEmpty())
-      _files[ch] = file;
+      _files[ch] = {file, geometry.value(key)};
   };
 
   for (char c = '0'; c <= '9'; c++) {
