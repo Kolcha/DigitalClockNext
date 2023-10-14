@@ -25,22 +25,17 @@ void Application::init()
 void Application::showSettingsDialog()
 {
   auto w = qobject_cast<ClockWindow*>(sender());
+  const auto widx = _impl->window_index(w);
   // TODO: find window on current screen in case of tray icon clicked
-  auto dlg = new SettingsDialog(_impl.get(), _impl->window_index(w), w);
   if (!w) w = _impl->window(_impl->window_index(w)).get();
   w->raise();
   w->activateWindow();
+  const auto tag = 0x73646c67 + widx;
+  auto dlg = _impl->maybeCreateAndShowDialog<SettingsDialog>(tag, _impl.get(), widx);
   connect(dlg, &QObject::destroyed, w, &QWidget::raise);
-  connect(dlg, &QDialog::finished, dlg, &QObject::deleteLater);
-  dlg->show();
 }
 
 void Application::showAboutDialog()
 {
-  auto w = qobject_cast<ClockWindow*>(sender());
-  // TODO: find window on current screen in case of tray icon clicked
-  auto dlg = new AboutDialog(w);
-  connect(dlg, &QDialog::finished, dlg, &QObject::deleteLater);
-  dlg->show();
-  dlg->raise();
+  _impl->maybeCreateAndShowDialog<AboutDialog>(0x41697269);
 }

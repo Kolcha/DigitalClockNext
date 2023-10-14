@@ -98,6 +98,7 @@ set(PROJECT_SOURCES
         src/settings/sections/classic_skin.cpp
         src/settings/sections/window_state.cpp
         src/render/glyph_geometry.hpp
+        src/app/dialog_manager.hpp
 )
 
 qt_add_executable(${PROJECT_NAME}

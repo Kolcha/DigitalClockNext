@@ -12,6 +12,7 @@
 #include <QtWidgets/QSystemTrayIcon>
 
 #include "app/clock_window.hpp"
+#include "app/dialog_manager.hpp"
 #include "clock/time_source.hpp"
 #include "settings/app_config.hpp"
 #include "settings/core/settings.hpp"
@@ -39,6 +40,8 @@ public slots:
 class ApplicationPrivate : public QObject
 {
   Q_OBJECT
+
+  using DialogTag = quint64;
 
 public:
   using QObject::QObject;
@@ -68,6 +71,12 @@ public:
 
   std::size_t window_index(const ClockWindow* w) const noexcept;
 
+  template<typename Dialog, typename... Args>
+  Dialog* maybeCreateAndShowDialog(DialogTag tag, Args&&... args)
+  {
+    return _dialog_manager.maybeCreateAndShowDialog<Dialog>(tag, std::forward<Args>(args)...);
+  }
+
 private:
   void createWindow(const QScreen* screen);
 
@@ -80,6 +89,7 @@ private:
   std::unique_ptr<QSystemTrayIcon> _tray_icon;
   std::unique_ptr<QMenu> _tray_menu;
   // clock-specific stuff
+  DialogManager<DialogTag> _dialog_manager;
   std::vector<std::unique_ptr<ClockWindow>> _windows;
   std::unique_ptr<TimeSource> _time_src;
   std::unique_ptr<SkinManager> _skin_manager;
