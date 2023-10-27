@@ -13,6 +13,7 @@
 
 #include "app/clock_window.hpp"
 #include "app/dialog_manager.hpp"
+#include "app/updater/updater.hpp"
 #include "clock/time_source.hpp"
 #include "settings/app_config.hpp"
 #include "settings/core/settings.hpp"
@@ -59,9 +60,11 @@ public:
 
   // core
   void initCore();
+  void initUpdater();
 
   inline const auto& time_source() const noexcept { return _time_src; }
   inline const auto& skin_manager() const noexcept { return _skin_manager; }
+  inline const auto& updater() const noexcept { return _updater; }
 
   // windows
   void initWindows(QScreen* primary_screen, QList<QScreen*> screens);
@@ -93,4 +96,7 @@ private:
   std::vector<std::unique_ptr<ClockWindow>> _windows;
   std::unique_ptr<TimeSource> _time_src;
   std::unique_ptr<SkinManager> _skin_manager;
+  // updater
+  using Updater = digital_clock::core::Updater;
+  std::unique_ptr<Updater> _updater;
 };

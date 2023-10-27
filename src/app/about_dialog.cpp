@@ -5,19 +5,12 @@
 #include <QLocale>
 #include <QSysInfo>
 
-using namespace Qt::Literals::StringLiterals;
-
-static QDate buildDate()
-{
-  QString build_date = QString::fromLatin1(__DATE__);
-  // date is space-padded instead of zero-padded
-  if (build_date[4].isSpace()) build_date[4] = QLatin1Char('0');
-  return QDate::fromString(build_date, "MMM dd yyyy"_L1);
-}
+#include "app/updater/build_date.hpp"
 
 static QString buildDateString()
 {
-  return QLocale::system().toString(buildDate(), QLocale::ShortFormat);
+  using digital_clock::core::build_date;
+  return QLocale::system().toString(build_date(), QLocale::ShortFormat);
 }
 
 // based on Qt Creator sources

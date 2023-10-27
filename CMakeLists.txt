@@ -17,7 +17,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET 11.0)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets Svg)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets Network Svg)
 
 set(PROJECT_SOURCES
         src/main.cpp
@@ -99,6 +99,12 @@ set(PROJECT_SOURCES
         src/settings/sections/window_state.cpp
         src/render/glyph_geometry.hpp
         src/app/dialog_manager.hpp
+        src/app/updater/build_date.cpp
+        src/app/updater/build_date.hpp
+        src/app/updater/http_client.cpp
+        src/app/updater/http_client.hpp
+        src/app/updater/updater.cpp
+        src/app/updater/updater.hpp
 )
 
 qt_add_executable(${PROJECT_NAME}
@@ -115,7 +121,7 @@ add_subdirectory(dist)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
 target_link_libraries(${PROJECT_NAME} PRIVATE gradient_dialog)
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::Svg)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::Network Qt6::Svg)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_BUNDLE_NAME "Digital Clock"

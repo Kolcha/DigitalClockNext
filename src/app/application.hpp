@@ -4,6 +4,10 @@
 
 #include <memory>
 
+#include <QDate>
+#include <QUrl>
+#include <QVersionNumber>
+
 class ApplicationPrivate;
 
 class Application final : public QApplication
@@ -21,10 +25,15 @@ private slots:
   void showSettingsDialog();
   void showAboutDialog();
 
+  void handleNewVersion(QVersionNumber version, QDate date, QUrl link);
+  void handleUpToDate();
+  void handleUpdateError(QString error_msg);
+
 private:
   void initConfig();
   void initTray();
   void initCore();
+  void initUpdater();
 
   void createWindows();
 
