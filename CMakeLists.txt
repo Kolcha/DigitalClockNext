@@ -105,6 +105,11 @@ set(PROJECT_SOURCES
         src/app/updater/http_client.hpp
         src/app/updater/updater.cpp
         src/app/updater/updater.hpp
+        src/settings/core/state_base.hpp
+        src/settings/conversion_qvariant.hpp
+        src/settings/state_base_qvariant.hpp
+        src/settings/app_state.hpp
+        src/settings/app_state.cpp
 )
 
 qt_add_executable(${PROJECT_NAME}

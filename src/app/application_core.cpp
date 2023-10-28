@@ -11,7 +11,7 @@ void ApplicationPrivate::initCore()
 
 void ApplicationPrivate::initUpdater()
 {
-  _updater = std::make_unique<Updater>(_app_config->global().getLastUpdateCheck());
+  _updater = std::make_unique<Updater>(_app_state->global().getLastUpdateCheck());
   _updater->SetAutoupdate(_app_config->global().getCheckForUpdates());
   _updater->SetUpdatePeriod(_app_config->global().getUpdatePeriodDays());
   _updater->SetCheckForBeta(_app_config->global().getCheckForBetaVersion());
@@ -19,8 +19,7 @@ void ApplicationPrivate::initUpdater()
   connect(_time_src.get(), &TimeSource::timeChanged, _updater.get(), &Updater::TimeoutHandler);
 
   connect(_updater.get(), &Updater::UpdateChecked, this, [this](QDateTime dt) {
-    _app_config->global().setLastUpdateCheck(dt);
-    _app_config->global().commit();
+    _app_state->global().setLastUpdateCheck(dt);
   });
 }
 

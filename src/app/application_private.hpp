@@ -16,6 +16,7 @@
 #include "app/updater/updater.hpp"
 #include "clock/time_source.hpp"
 #include "settings/app_config.hpp"
+#include "settings/app_state.hpp"
 #include "settings/core/settings.hpp"
 
 
@@ -51,6 +52,7 @@ public:
   void initConfig();
 
   inline const auto& app_config() const noexcept { return _app_config; }
+  inline const auto& app_state() const noexcept { return _app_state; }
 
   // tray
   void initTray();
@@ -88,6 +90,7 @@ private:
   using ConfigStorageType = ConfigStorage<QString, QString, QVariant>;
   std::shared_ptr<ConfigStorageType> _config_storage;
   std::unique_ptr<AppConfig> _app_config;
+  std::unique_ptr<AppState> _app_state;
   // tray
   std::unique_ptr<QSystemTrayIcon> _tray_icon;
   std::unique_ptr<QMenu> _tray_menu;

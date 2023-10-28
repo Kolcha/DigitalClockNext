@@ -11,8 +11,6 @@
 #include <QTimeZone>
 
 class WindowState final : public ConfigBaseQVariant {
-  CONFIG_OPTION_Q(QPoint, Pos, QPoint(75, 50))
-  CONFIG_OPTION_Q(Qt::Alignment, Alignment, Qt::AlignTop | Qt::AlignLeft)
   CONFIG_OPTION_Q(QFont, TextSkinFont, default_font())
   CONFIG_OPTION_Q(QString, LastUsedSkin, QString("Electronic (built-in)"))
   CONFIG_OPTION_Q(QColor, TextureColor, QColor(112, 96, 240))

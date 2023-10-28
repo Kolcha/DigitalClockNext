@@ -121,7 +121,7 @@ class ConfigStorage {
   using ConfigBackendType = ConfigBackend<Tag, Key, Value>;
 
 public:
-  explicit ConfigStorage(std::unique_ptr<ConfigBackendType> backend) noexcept
+  explicit ConfigStorage(std::shared_ptr<ConfigBackendType> backend) noexcept
     : _backend(std::move(backend))
   {}
 
@@ -229,7 +229,7 @@ private:
   }
 
 private:
-  std::unique_ptr<ConfigBackendType> _backend;
+  std::shared_ptr<ConfigBackendType> _backend;
   SettingsData _current_cache;
   SettingsData _import_cache;
 };

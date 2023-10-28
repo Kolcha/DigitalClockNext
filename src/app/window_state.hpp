@@ -1,19 +1,19 @@
 #pragma once
 
 #include "app/clock_window.hpp"
-#include "settings/sections/window_state.hpp"
+#include "settings/app_state.hpp"
 
 #define BIND_WINDOW_STATE_PROPERTY(Type, Name)  \
   void set##Name(const Type& value) override    \
   { \
-    _state.set##Name(value); _state.commit();   \
+    _state.set##Name(value);  \
   } \
   Type get##Name() const override { return _state.get##Name(); }
 
 class ClockWindowState final : public ClockWindow::State
 {
 public:
-  explicit ClockWindowState(WindowState* state)
+  explicit ClockWindowState(AppState::WindowState* state)
     : _state(*state)
   {}
 
@@ -21,5 +21,5 @@ public:
   BIND_WINDOW_STATE_PROPERTY(Qt::Alignment, Alignment)
 
 private:
-  WindowState& _state;
+  AppState::WindowState& _state;
 };
