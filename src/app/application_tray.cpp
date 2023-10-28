@@ -12,9 +12,6 @@ void ApplicationPrivate::initTray()
 
   _tray_menu = std::make_unique<QMenu>();
   _tray_icon->setContextMenu(_tray_menu.get());
-
-  auto on_msg_clicked = [this]() { disconnect(_tray_icon.get(), &QSystemTrayIcon::messageClicked, nullptr, nullptr); };
-  connect(_tray_icon.get(), &QSystemTrayIcon::messageClicked, this, on_msg_clicked);
 }
 
 void Application::initTray()

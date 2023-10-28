@@ -34,11 +34,6 @@ public:
   explicit HttpClient(QString user_agent, QObject* parent = nullptr);
   ~HttpClient();
 
-  HttpClient(const HttpClient&) = delete;
-  HttpClient(HttpClient&&) = default;
-  HttpClient& operator=(const HttpClient&) = delete;
-  HttpClient& operator=(HttpClient&&) = default;
-
   void startRequest(QUrl url);
   bool isRunning() const;
   void cancel();

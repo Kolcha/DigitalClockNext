@@ -50,12 +50,13 @@ void Application::handleNewVersion(QVersionNumber version, QDate date, QUrl link
   _impl->tray_icon()->showMessage(
         tr("%1 Update").arg(qApp->applicationDisplayName()),
         tr("Update available (%1, %2). Click this message to download.")
-            .arg(version.toString())
-            .arg(QLocale::system().toString(date, QLocale::ShortFormat)),
+            .arg(version.toString(), QLocale::system().toString(date, QLocale::ShortFormat)),
         QSystemTrayIcon::Warning);
   connect(_impl->tray_icon().get(), &QSystemTrayIcon::messageClicked,
           [=] () { QDesktopServices::openUrl(link); });
   // *INDENT-ON*
+  auto on_msg_clicked = [this]() { disconnect(_impl->tray_icon().get(), &QSystemTrayIcon::messageClicked, nullptr, nullptr); };
+  connect(_impl->tray_icon().get(), &QSystemTrayIcon::messageClicked, this, on_msg_clicked);
 }
 
 void Application::handleUpToDate()
