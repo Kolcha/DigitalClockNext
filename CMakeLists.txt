@@ -110,6 +110,9 @@ set(PROJECT_SOURCES
         src/settings/state_base_qvariant.hpp
         src/settings/app_state.hpp
         src/settings/app_state.cpp
+        src/app/settings/app_globalsettings.hpp
+        src/app/settings/app_globalsettings.cpp
+        src/app/settings/app_globalsettings.ui
 )
 
 qt_add_executable(${PROJECT_NAME}

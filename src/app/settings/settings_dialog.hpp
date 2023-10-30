@@ -41,9 +41,6 @@ private slots:
   void on_use_time_zone_clicked(bool checked);
   void on_time_zone_edit_activated(int index);
 
-  void on_is_stay_on_top_clicked(bool checked);
-  void on_is_transp_for_input_clicked(bool checked);
-
   void on_opacity_edit_valueChanged(int arg1);
 
 private:
@@ -51,6 +48,7 @@ private:
   void applyFlashingSeparator(bool enable);
   void applyTimeZoneSettings();
 
+  void insertGlobalSettingsTab();
   void updateSkinSettingsTab();
 
 private:

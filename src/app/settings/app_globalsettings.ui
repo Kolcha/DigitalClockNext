@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AppGlobalSettings</class>
+ <widget class="QWidget" name="AppGlobalSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="app_global_layout">
+   <item>
+    <widget class="QCheckBox" name="enable_autostart">
+     <property name="text">
+      <string>start on system startup</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="enable_stay_on_top">
+     <property name="text">
+      <string>stay on top of other windows</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="enable_transp_for_input">
+     <property name="text">
+      <string>transparent for mouse events</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="enable_snap_to_edge">
+     <property name="text">
+      <string>snap to screen edge</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="autoupdate_layout">
+     <item>
+      <widget class="QCheckBox" name="enable_autoupdate">
+       <property name="text">
+        <string>check for updates every</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="update_period_edit"/>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="check_for_beta">
+       <property name="text">
+        <string>include beta</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>135</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>enable_autoupdate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>update_period_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>130</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>202</x>
+     <y>130</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enable_autoupdate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>check_for_beta</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>166</x>
+     <y>140</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>314</x>
+     <y>139</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

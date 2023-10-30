@@ -212,33 +212,6 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QGroupBox" name="app_restart_group">
-           <property name="title">
-            <string>options requiring app restart</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-             <widget class="QCheckBox" name="is_stay_on_top">
-              <property name="text">
-               <string>stay on top of other windows</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="is_transp_for_input">
-              <property name="text">
-               <string>transparent for mouse events</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
         <layout class="QHBoxLayout" name="time_zone_layout">
          <item>
           <widget class="QCheckBox" name="use_time_zone">
@@ -261,6 +234,19 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -357,11 +343,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>105</x>
-     <y>316</y>
+     <y>311</y>
     </hint>
     <hint type="destinationlabel">
-     <x>245</x>
-     <y>317</y>
+     <x>348</x>
+     <y>312</y>
     </hint>
    </hints>
   </connection>

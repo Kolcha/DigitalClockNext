@@ -6,6 +6,7 @@
 #include "app/application_private.hpp"
 #include "skin/classic_skin.hpp"
 
+#include "app_globalsettings.hpp"
 #include "classic_skin_settings.hpp"
 
 namespace {
@@ -44,6 +45,8 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
 {
   ui->setupUi(this);
 
+  insertGlobalSettingsTab();
+
   auto now = QDateTime::currentDateTimeUtc();
   for (const auto& tz_id : QTimeZone::availableTimeZoneIds()) {
     QTimeZone tz(tz_id);
@@ -66,9 +69,6 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   const auto& general_cfg = impl->wcfg->general();
   ui->use_time_zone->setChecked(!general_cfg.getShowLocalTime());
   ui->time_zone_edit->setCurrentText(tz_name(impl->wcfg->state().getTimeZone()));
-
-  ui->is_stay_on_top->setChecked(impl->acfg->global().getStayOnTop());
-  ui->is_transp_for_input->setChecked(impl->acfg->global().getTransparentForMouse());
 
   ui->scaling_same_btn->setChecked(ui->scaling_x_edit->value() == ui->scaling_y_edit->value());
   on_scaling_same_btn_clicked(ui->scaling_same_btn->isChecked());
@@ -176,16 +176,6 @@ void SettingsDialog::on_time_zone_edit_activated(int index)
   applyTimeZoneSettings();
 }
 
-void SettingsDialog::on_is_stay_on_top_clicked(bool checked)
-{
-  impl->acfg->global().setStayOnTop(checked);
-}
-
-void SettingsDialog::on_is_transp_for_input_clicked(bool checked)
-{
-  impl->acfg->global().setTransparentForMouse(checked);
-}
-
 void SettingsDialog::on_opacity_edit_valueChanged(int arg1)
 {
   qreal opacity = arg1 / 100.;
@@ -218,6 +208,15 @@ void SettingsDialog::applyTimeZoneSettings()
     impl->wnd->setTimeZone(QDateTime::currentDateTime().timeZone());
   else
     impl->wnd->setTimeZone(impl->wcfg->state().getTimeZone());
+}
+
+void SettingsDialog::insertGlobalSettingsTab()
+{
+  // TODO: disable tab if more than one dialog is opened
+  auto w = new AppGlobalSettings(impl->app);
+  connect(this, &QDialog::accepted, w, &AppGlobalSettings::commit);
+  connect(this, &QDialog::rejected, w, &AppGlobalSettings::discard);
+  ui->tabWidget->insertTab(0, w, tr("&App Global"));
 }
 
 void SettingsDialog::updateSkinSettingsTab()
