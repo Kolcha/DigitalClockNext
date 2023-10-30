@@ -40,7 +40,7 @@ AppGlobalSettings::AppGlobalSettings(ApplicationPrivate* app, QWidget* parent)
   ui->enable_autostart->setVisible(false);  // not implemented
   ui->enable_stay_on_top->setChecked(impl->config.getStayOnTop());
   ui->enable_transp_for_input->setChecked(impl->config.getTransparentForMouse());
-  ui->enable_snap_to_edge->setVisible(false);   // implemented, but no config option
+  ui->enable_snap_to_edge->setChecked(impl->config.getSnapToEdge());
   ui->enable_autoupdate->setChecked(impl->config.getCheckForUpdates());
   ui->check_for_beta->setChecked(impl->config.getCheckForBetaVersion());
 
@@ -97,8 +97,8 @@ void AppGlobalSettings::on_enable_transp_for_input_clicked(bool checked)
 
 void AppGlobalSettings::on_enable_snap_to_edge_clicked(bool checked)
 {
-  Q_UNUSED(checked)
-  // TODO: implement config option
+  impl->config.setSnapToEdge(checked);
+  impl->makeDirty();
 }
 
 void AppGlobalSettings::on_enable_autoupdate_clicked(bool checked)
