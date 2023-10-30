@@ -76,6 +76,13 @@
      </property>
     </spacer>
    </item>
+   <item>
+    <widget class="QLabel" name="warning_label">
+     <property name="text">
+      <string>Most of options listed here require app restart to take effect.</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>

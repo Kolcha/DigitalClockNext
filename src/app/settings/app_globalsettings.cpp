@@ -26,7 +26,7 @@ struct AppGlobalSettings::Impl {
 
   bool dirty = false;
 
-  void makeDirty() noexcept { dirty = true; }
+  void markDirty() noexcept { dirty = true; }
   bool resetDirty() noexcept { return std::exchange(dirty, false); }
 };
 
@@ -86,26 +86,26 @@ void AppGlobalSettings::on_enable_autostart_clicked(bool checked)
 void AppGlobalSettings::on_enable_stay_on_top_clicked(bool checked)
 {
   impl->config.setStayOnTop(checked);
-  impl->makeDirty();
+  impl->markDirty();
 }
 
 void AppGlobalSettings::on_enable_transp_for_input_clicked(bool checked)
 {
   impl->config.setTransparentForMouse(checked);
-  impl->makeDirty();
+  impl->markDirty();
 }
 
 void AppGlobalSettings::on_enable_snap_to_edge_clicked(bool checked)
 {
   impl->config.setSnapToEdge(checked);
-  impl->makeDirty();
+  impl->markDirty();
 }
 
 void AppGlobalSettings::on_enable_autoupdate_clicked(bool checked)
 {
   impl->app->updater()->SetAutoupdate(checked);
   impl->config.setCheckForUpdates(checked);
-  impl->makeDirty();
+  impl->markDirty();
 }
 
 void AppGlobalSettings::on_update_period_edit_activated(int index)
@@ -113,12 +113,12 @@ void AppGlobalSettings::on_update_period_edit_activated(int index)
   int period = ui->update_period_edit->itemData(index).toInt();
   impl->app->updater()->SetUpdatePeriod(period);
   impl->config.setUpdatePeriodDays(period);
-  impl->makeDirty();
+  impl->markDirty();
 }
 
 void AppGlobalSettings::on_check_for_beta_clicked(bool checked)
 {
   impl->app->updater()->SetCheckForBeta(checked);
   impl->config.setCheckForBetaVersion(checked);
-  impl->makeDirty();
+  impl->markDirty();
 }
