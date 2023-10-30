@@ -4,8 +4,9 @@
 #include <QFontDialog>
 
 #include "app/application_private.hpp"
-#include "app/classic_skin_settings.hpp"
 #include "skin/classic_skin.hpp"
+
+#include "classic_skin_settings.hpp"
 
 namespace {
 using namespace Qt::Literals::StringLiterals;

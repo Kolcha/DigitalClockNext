@@ -5,7 +5,7 @@
 #include <QLocale>
 
 #include "about_dialog.hpp"
-#include "settings_dialog.hpp"
+#include "settings/settings_dialog.hpp"
 
 // constructor and destructor are required here to get
 // std::unique_ptr to work with forward declarations

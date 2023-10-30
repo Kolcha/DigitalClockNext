@@ -64,12 +64,12 @@ set(PROJECT_SOURCES
         src/app/skin_manager.cpp
         src/app/skin_manager.hpp
         src/settings/sections/app_global.hpp
-        src/app/classic_skin_settings.cpp
-        src/app/classic_skin_settings.hpp
-        src/app/classic_skin_settings.ui
-        src/app/settings_dialog.cpp
-        src/app/settings_dialog.hpp
-        src/app/settings_dialog.ui
+        src/app/settings/classic_skin_settings.cpp
+        src/app/settings/classic_skin_settings.hpp
+        src/app/settings/classic_skin_settings.ui
+        src/app/settings/settings_dialog.cpp
+        src/app/settings/settings_dialog.hpp
+        src/app/settings/settings_dialog.ui
         src/render/effects/background.hpp
         src/app/window_state.hpp
         src/settings/sections/general.hpp
