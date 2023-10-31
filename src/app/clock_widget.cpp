@@ -25,7 +25,7 @@ struct ClockWidgetWrap::impl {
 
   QSizeF scaledSize() const noexcept
   {
-    if (!n_impl) return {};
+    if (!n_impl) return {400., 150.};
     auto s = n_impl->geometry().size();
     return {kx * s.width(), ky * s.height()};
   }
@@ -61,7 +61,10 @@ bool ClockWidgetWrap::isSeparatorVisible() const
 
 void ClockWidgetWrap::setSkin(std::shared_ptr<ClockSkin> skin)
 {
-  _impl->n_impl = std::make_unique<ClockWidget>(_impl->dt.toTimeZone(_impl->tz), skin);
+  if (skin)
+    _impl->n_impl = std::make_unique<ClockWidget>(_impl->dt.toTimeZone(_impl->tz), skin);
+  else
+    _impl->n_impl.reset();
   _impl->skin = std::move(skin);
   updateGeometry();
   update();
@@ -115,9 +118,31 @@ void ClockWidgetWrap::skinConfigured()
 
 void ClockWidgetWrap::paintEvent(QPaintEvent* event)
 {
-  if (!_impl->n_impl) return;   // TODO: draw something
-  _impl->n_impl->setSeparatorVisible(_impl->seps_visible);
   QPainter p(this);
+  if (Q_UNLIKELY(!_impl->n_impl)) {
+    // draw nice error message instead of just ignoring paint event
+    using namespace Qt::Literals::StringLiterals;
+    p.fillRect(rect(), Qt::black);
+    auto fnt = font();
+    fnt.setPointSize(14);
+    p.setFont(fnt);
+    p.setPen(QColor(112, 96, 240));
+    auto r = QRectF(x(), y(), width(), height() / 4.);
+    p.drawText(r, Qt::AlignCenter, u"Digital Clock Next"_s);
+    if (_impl->seps_visible) {
+      p.setPen(Qt::red);
+      fnt.setPointSize(48);
+      p.setFont(fnt);
+      p.drawText(rect(), Qt::AlignCenter, u"ERROR"_s);
+    }
+    p.setPen(Qt::white);
+    fnt.setPointSize(12);
+    p.setFont(fnt);
+    r.translate(0, 3 * r.height());
+    p.drawText(r, Qt::AlignCenter, u"skin has not been loaded"_s);
+    return;
+  }
+  _impl->n_impl->setSeparatorVisible(_impl->seps_visible);
   auto s = _impl->n_impl->geometry().size();
   p.scale(width() / s.width(), height() / s.height());
   _impl->n_impl->render(&p);
