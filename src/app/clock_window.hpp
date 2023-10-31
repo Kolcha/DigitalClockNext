@@ -31,6 +31,8 @@ private:
   using SkinPtr = std::shared_ptr<ClockSkin>;
 
 public:
+  // TODO: remove state from constructor - app should assign required properties instead
+  explicit ClockWindow(StatePtr state, QWidget* parent = nullptr);
   // dt should be in desired time zone, no sense to pass 2 arguments for this
   ClockWindow(const SkinPtr& skin, const QDateTime& dt, StatePtr state, QWidget* parent = nullptr);
   ~ClockWindow();

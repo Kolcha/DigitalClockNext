@@ -70,6 +70,8 @@ public:
 
   // windows
   void initWindows(QScreen* primary_screen, QList<QScreen*> screens);
+  void configureWindow(ClockWindow* wnd);
+  inline void configureWindow(std::size_t i) { configureWindow(_windows[i].get()); }
 
   inline const auto& windows() const noexcept { return _windows; }
   inline const auto& window(std::size_t i) const noexcept { return _windows[i]; }

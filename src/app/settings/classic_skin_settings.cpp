@@ -75,17 +75,6 @@ ClassicSkinSettings::~ClassicSkinSettings()
   delete ui;
 }
 
-void ClassicSkinSettings::commitChanges()
-{
-  impl->scfg->commit();
-}
-
-void ClassicSkinSettings::discardChanges()
-{
-  impl->scfg->discard();
-  updateEffects();
-}
-
 void ClassicSkinSettings::on_orientation_cbox_activated(int index)
 {
   auto orientation = ui->orientation_cbox->itemData(index).value<Qt::Orientation>();

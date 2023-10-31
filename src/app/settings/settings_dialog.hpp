@@ -21,10 +21,6 @@ public:
                           QWidget* parent = nullptr);
   ~SettingsDialog();
 
-public slots:
-  void accept() override;
-  void reject() override;
-
 private slots:
   void on_font_rbtn_clicked();
   void on_skin_rbtn_clicked();

@@ -16,7 +16,8 @@ class ClockWidgetWrap : public QWidget
   using SkinPtr = std::shared_ptr<ClockSkin>;
 
 public:
-  explicit ClockWidgetWrap(const SkinPtr& skin, const QDateTime& dt, QWidget* parent = nullptr);
+  explicit ClockWidgetWrap(QWidget* parent = nullptr);
+  ClockWidgetWrap(const SkinPtr& skin, const QDateTime& dt, QWidget* parent = nullptr);
   ~ClockWidgetWrap();
 
   QSize sizeHint() const override;

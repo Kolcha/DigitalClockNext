@@ -25,6 +25,11 @@ struct ClockWindow::impl {
 
 ClockWindow::State::~State() = default;
 
+ClockWindow::ClockWindow(StatePtr state, QWidget* parent)
+  : ClockWindow(nullptr, QDateTime::currentDateTime(), std::move(state), parent)
+{
+}
+
 ClockWindow::ClockWindow(const SkinPtr& skin, const QDateTime& dt, StatePtr state, QWidget* parent)
   : QWidget(parent)
   , _impl(std::make_unique<impl>())

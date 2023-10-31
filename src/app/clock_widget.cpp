@@ -15,18 +15,26 @@ struct ClockWidgetWrap::impl {
   bool seps_visible = true;
 
   impl(const QDateTime& dt, const std::shared_ptr<ClockSkin>& skin)
-    : n_impl(std::make_unique<ClockWidget>(dt, skin))
-    , skin(skin)
+    : skin(skin)
     , dt(dt.toUTC())
     , tz(dt.timeZone())
-  {}
+  {
+    if (skin)
+      n_impl = std::make_unique<ClockWidget>(dt, skin);
+  }
 
   QSizeF scaledSize() const noexcept
   {
+    if (!n_impl) return {};
     auto s = n_impl->geometry().size();
     return {kx * s.width(), ky * s.height()};
   }
 };
+
+ClockWidgetWrap::ClockWidgetWrap(QWidget* parent)
+  : ClockWidgetWrap(nullptr, QDateTime::currentDateTime(), parent)
+{
+}
 
 ClockWidgetWrap::ClockWidgetWrap(const SkinPtr& skin, const QDateTime& dt, QWidget* parent)
   : QWidget(parent)
@@ -48,7 +56,7 @@ QSize ClockWidgetWrap::minimumSizeHint() const
 
 bool ClockWidgetWrap::isSeparatorVisible() const
 {
-  return _impl->n_impl->isSeparatorVisible();
+  return _impl->seps_visible;
 }
 
 void ClockWidgetWrap::setSkin(std::shared_ptr<ClockSkin> skin)
@@ -67,6 +75,7 @@ std::shared_ptr<ClockSkin> ClockWidgetWrap::skin() const
 void ClockWidgetWrap::setDateTime(const QDateTime& dt)
 {
   _impl->dt = dt.toUTC();
+  if (!_impl->n_impl) return;
   _impl->n_impl->setDateTime(dt.toTimeZone(_impl->tz));
   updateGeometry();
   update();
@@ -94,6 +103,7 @@ void ClockWidgetWrap::scale(qreal kx, qreal ky)
 
 void ClockWidgetWrap::skinConfigured()
 {
+  if (!_impl->n_impl) return;
   // skin properties may vary depending on skin type and
   // they are unknown here and may be modified outside
   // we should be notified about these changes to rebuild
@@ -105,6 +115,7 @@ void ClockWidgetWrap::skinConfigured()
 
 void ClockWidgetWrap::paintEvent(QPaintEvent* event)
 {
+  if (!_impl->n_impl) return;   // TODO: draw something
   _impl->n_impl->setSeparatorVisible(_impl->seps_visible);
   QPainter p(this);
   auto s = _impl->n_impl->geometry().size();

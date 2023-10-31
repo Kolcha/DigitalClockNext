@@ -81,27 +81,6 @@ SettingsDialog::~SettingsDialog()
   delete ui;
 }
 
-void SettingsDialog::accept()
-{
-  impl->acfg->global().commit();
-  impl->wcfg->commit();
-  QDialog::accept();
-}
-
-void SettingsDialog::reject()
-{
-  impl->acfg->global().discard();
-  impl->wcfg->discard();
-  impl->wnd->setSkin(impl->last_skin);
-  impl->app->skin_manager()->configureSkin(impl->last_skin, impl->idx);
-  impl->wnd->skinConfigured();
-  applyFlashingSeparator(impl->wcfg->appearance().getFlashingSeparator());
-  applyTimeZoneSettings();
-  impl->wnd->scale(impl->wcfg->appearance().getScaleFactorX(), impl->wcfg->appearance().getScaleFactorY());
-  impl->wnd->setWindowOpacity(impl->wcfg->appearance().getOpacity());
-  QDialog::reject();
-}
-
 void SettingsDialog::on_font_rbtn_clicked()
 {
   auto skin = impl->app->skin_manager()->loadSkin(impl->wcfg->state().getTextSkinFont());
@@ -232,8 +211,6 @@ void SettingsDialog::updateSkinSettingsTab()
 
   if (auto cskin = std::dynamic_pointer_cast<ClassicSkin>(impl->wnd->skin())) {
     auto w = new ClassicSkinSettings(impl->app, impl->idx);
-    connect(this, &QDialog::accepted, w, &ClassicSkinSettings::commitChanges);
-    connect(this, &QDialog::rejected, w, &ClassicSkinSettings::discardChanges);
     ui->tabWidget->insertTab(skin_tab_pos, w, skin_tab_text);
   }
 }
