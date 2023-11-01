@@ -113,6 +113,8 @@ set(PROJECT_SOURCES
         src/app/settings/app_globalsettings.hpp
         src/app/settings/app_globalsettings.cpp
         src/app/settings/app_globalsettings.ui
+        src/app/logo_label.cpp
+        src/app/logo_label.hpp
 )
 
 qt_add_executable(${PROJECT_NAME}

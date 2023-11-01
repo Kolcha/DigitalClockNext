@@ -67,7 +67,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="info_tab_layout">
        <item>
-        <widget class="QLabel" name="logo_lbl">
+        <widget class="LogoLabel" name="logo_lbl">
          <property name="text">
           <string notr="true">&lt;logo&gt;</string>
          </property>
@@ -287,6 +287,13 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>LogoLabel</class>
+   <extends>QLabel</extends>
+   <header>app/logo_label.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
