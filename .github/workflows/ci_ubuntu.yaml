@@ -1,0 +1,70 @@
+name: CI - Ubuntu
+
+on: [pull_request, push]
+
+permissions:
+  actions: write
+  security-events: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: ${{ github.head_ref != '' }}
+
+jobs:
+  ci:
+    name: Build
+    runs-on: ubuntu-20.04
+    env:
+      CC: gcc-10
+      CXX: g++-10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install ninja-build
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: "6.5.*"
+          archives: icu qtbase qtsvg
+
+      - name: Build application
+        run: |
+          cmake \
+            -B build \
+            -G Ninja \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D CMAKE_INSTALL_PREFIX=/usr
+          cmake --build build
+          DESTDIR=/tmp/clock-root cmake --install build
+
+      - name: 'AppImage: Prepare env'
+        run: |
+          sudo apt install libfuse2 libxcb-cursor0
+          wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          wget https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
+          chmod +x linuxdeploy-x86_64.AppImage
+          chmod +x linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy-plugin-appimage-x86_64.AppImage
+
+      - name: 'AppImage: Package'
+        run: |
+          mkdir upload
+          LDAI_NO_APPSTREAM=1 \
+          LDAI_OUTPUT=upload/DigitalClockNext-CI_Ubuntu_x86_64.AppImage \
+          ./linuxdeploy-x86_64.AppImage --appdir=/tmp/clock-root --plugin=qt --output=appimage
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: DigitalClockNext Linux Nightly
+          path: upload

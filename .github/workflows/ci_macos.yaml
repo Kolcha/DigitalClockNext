@@ -1,0 +1,63 @@
+name: CI - macOS
+
+on: [pull_request, push]
+
+permissions:
+  actions: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: ${{ github.head_ref != '' }}
+
+jobs:
+  ci:
+    name: Build
+    runs-on: macos-13
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+
+      - name: Install dependencies
+        uses: Wandalen/wretry.action@v1
+        env:
+           HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+           HOMEBREW_NO_INSTALL_CLEANUP: 1
+        with:
+          attempt_delay: 20000
+          attempt_limit: 6
+          command: |
+            brew update > /dev/null
+            brew install cmake ninja
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: "6.5.*"
+          archives: qtbase qtsvg
+
+      - name: Build application
+        run: |
+          cmake \
+            -B build \
+            -G Ninja \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D CMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+          cmake --build build
+
+      - name: Prepare build artifacts
+        run: |
+          pushd build
+          macdeployqt DigitalClockNext.app -dmg -codesign=-
+          popd
+          mkdir upload
+          mv build/DigitalClockNext.dmg upload/DigitalClockNext-CI_macOS.dmg
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: DigitalClockNext macOS Nightly
+          path: upload
