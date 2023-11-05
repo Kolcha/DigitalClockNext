@@ -28,4 +28,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE_NAME}
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications/
     )
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/digital_clock.svg
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps
+    )
 endif()

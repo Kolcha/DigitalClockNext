@@ -5,6 +5,6 @@ Comment=${PROJECT_DESCRIPTION}
 Type=Application
 Terminal=false
 Exec=${PROJECT_NAME}
-Icon=clock
+Icon=digital_clock
 StartupNotify=false
 Categories=Utility;Clock;
