@@ -1,10 +1,13 @@
 #include "skin_manager.hpp"
 
+#include <algorithm>
 #include <array>
+#include <iterator>
 #include <optional>
 
 #include <QApplication>
 #include <QDir>
+#include <QStandardPaths>
 
 #include "clock/legacy_skin_extension.hpp"
 #include "render/effects/background.hpp"
@@ -150,7 +153,7 @@ void SkinManagerImpl::findSkins()
   _skins.clear();
 
   using namespace Qt::Literals::StringLiterals;
-  const auto search_paths = {
+  QStringList search_paths = {
     u":/skins"_s,
 #ifdef Q_OS_MACOS
     qApp->applicationDirPath() + u"/../Resources/skins"_s,
@@ -167,12 +170,19 @@ void SkinManagerImpl::findSkins()
 #endif
   };
 
+  const auto standard_paths = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
+  std::transform(standard_paths.rbegin(), standard_paths.rend(),
+                 std::back_inserter(search_paths),
+                 [](const QString& path) { return QDir(path).absoluteFilePath(u"skins"_s); });
+
   constexpr std::pair<SkinType, std::optional<QString>(*)(const QString&)> validators[] = {
     {SkinType::Legacy, &tryLegacySkin},
   };
 
-  for (const auto& path : search_paths) {
+  for (const auto& path : std::as_const(search_paths)) {
     QDir dir(path);
+    if (!dir.exists())
+      continue;
     const auto items = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
     for (const auto& item : items) {
       auto skin_path = dir.absoluteFilePath(item);
