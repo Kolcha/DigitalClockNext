@@ -203,7 +203,6 @@ void SettingsDialog::on_colorization_strength_edit_valueChanged(int arg1)
 
 void SettingsDialog::applySkin(std::shared_ptr<ClockSkin> skin)
 {
-  if (!skin) return;
   impl->app->skin_manager()->configureSkin(skin, impl->idx);
   impl->wnd->setSkin(std::move(skin));
   updateSkinSettingsTab();
