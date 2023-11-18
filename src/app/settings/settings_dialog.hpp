@@ -39,6 +39,10 @@ private slots:
 
   void on_opacity_edit_valueChanged(int arg1);
 
+  void on_use_colorization_clicked(bool checked);
+  void on_select_colorization_color_clicked();
+  void on_colorization_strength_edit_valueChanged(int arg1);
+
 private:
   void applySkin(std::shared_ptr<ClockSkin> skin);
   void applyFlashingSeparator(bool enable);

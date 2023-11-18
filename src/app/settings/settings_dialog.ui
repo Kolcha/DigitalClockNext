@@ -208,6 +208,86 @@
             </item>
            </layout>
           </item>
+          <item>
+           <widget class="Line" name="line">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="colorization_layout_1">
+            <item>
+             <widget class="QCheckBox" name="use_colorization">
+              <property name="text">
+               <string>render the clock with a tint of selected color</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="select_colorization_color">
+              <property name="toolTip">
+               <string>colorization color</string>
+              </property>
+              <property name="text">
+               <string notr="true">...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="colorization_layout_2">
+            <item>
+             <widget class="QLabel" name="colorization_strength_label">
+              <property name="text">
+               <string>&amp;strength</string>
+              </property>
+              <property name="buddy">
+               <cstring>colorization_strength_slider</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="colorization_strength_slider">
+              <property name="minimum">
+               <number>5</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="colorization_strength_edit">
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="suffix">
+               <string notr="true">%</string>
+              </property>
+              <property name="minimum">
+               <number>5</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </item>
@@ -343,11 +423,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>105</x>
-     <y>311</y>
+     <y>269</y>
     </hint>
     <hint type="destinationlabel">
-     <x>348</x>
-     <y>312</y>
+     <x>398</x>
+     <y>270</y>
     </hint>
    </hints>
   </connection>
@@ -380,6 +460,102 @@
     <hint type="destinationlabel">
      <x>308</x>
      <y>157</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorization_strength_slider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>colorization_strength_edit</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>330</x>
+     <y>210</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>351</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorization_strength_edit</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>colorization_strength_slider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>348</x>
+     <y>221</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>320</x>
+     <y>219</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>use_colorization</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>select_colorization_color</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>178</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>371</x>
+     <y>183</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>use_colorization</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>colorization_strength_label</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>63</x>
+     <y>185</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>69</x>
+     <y>207</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>use_colorization</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>colorization_strength_slider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>166</x>
+     <y>187</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>171</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>use_colorization</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>colorization_strength_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>253</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>359</x>
+     <y>207</y>
     </hint>
    </hints>
   </connection>

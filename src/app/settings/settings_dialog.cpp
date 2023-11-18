@@ -1,7 +1,9 @@
 #include "settings_dialog.hpp"
 #include "ui_settings_dialog.h"
 
+#include <QColorDialog>
 #include <QFontDialog>
+#include <QGraphicsEffect>
 
 #include "app/application_private.hpp"
 #include "skin/classic_skin.hpp"
@@ -66,6 +68,8 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->scaling_x_edit->setValue(appearance_cfg.getScaleFactorX());
   ui->scaling_y_edit->setValue(appearance_cfg.getScaleFactorY());
   ui->opacity_edit->setValue(qRound(appearance_cfg.getOpacity() * 100));
+  ui->use_colorization->setChecked(appearance_cfg.getApplyColorization());
+  ui->colorization_strength_edit->setValue(qRound(appearance_cfg.getColorizationStrength() * 100));
   const auto& general_cfg = impl->wcfg->general();
   ui->use_time_zone->setChecked(!general_cfg.getShowLocalTime());
   ui->time_zone_edit->setCurrentText(tz_name(impl->wcfg->state().getTimeZone()));
@@ -162,6 +166,39 @@ void SettingsDialog::on_opacity_edit_valueChanged(int arg1)
     return;
   impl->wnd->setWindowOpacity(opacity);
   impl->wcfg->appearance().setOpacity(opacity);
+}
+
+void SettingsDialog::on_use_colorization_clicked(bool checked)
+{
+  if (checked) {
+    auto effect = new QGraphicsColorizeEffect;
+    effect->setColor(impl->wcfg->appearance().getColorizationColor());
+    effect->setStrength(impl->wcfg->appearance().getColorizationStrength());
+    impl->wnd->setGraphicsEffect(effect);
+  } else {
+    impl->wnd->setGraphicsEffect(nullptr);
+  }
+  impl->wcfg->appearance().setApplyColorization(checked);
+}
+
+void SettingsDialog::on_select_colorization_color_clicked()
+{
+  auto color = QColorDialog::getColor(impl->wcfg->appearance().getColorizationColor(),
+                                      this,
+                                      QString(),
+                                      QColorDialog::ShowAlphaChannel);
+  if (!color.isValid()) return;
+  qobject_cast<QGraphicsColorizeEffect*>(impl->wnd->graphicsEffect())->setColor(color);
+  impl->wcfg->appearance().setColorizationColor(color);
+}
+
+void SettingsDialog::on_colorization_strength_edit_valueChanged(int arg1)
+{
+  qreal strength = arg1 / 100.;
+  if (qFuzzyCompare(strength, impl->wcfg->appearance().getColorizationStrength()))
+    return;
+  qobject_cast<QGraphicsColorizeEffect*>(impl->wnd->graphicsEffect())->setStrength(strength);
+  impl->wcfg->appearance().setColorizationStrength(strength);
 }
 
 void SettingsDialog::applySkin(std::shared_ptr<ClockSkin> skin)

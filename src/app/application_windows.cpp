@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <utility>
 
+#include <QGraphicsEffect>
 #include <QPixmapCache>
 
 #include "window_state.hpp"
@@ -31,6 +32,15 @@ void ApplicationPrivate::configureWindow(ClockWindow* wnd)
   wnd->setWindowOpacity(cfg.appearance().getOpacity());
   wnd->setSeparatorFlashes(cfg.appearance().getFlashingSeparator());
   wnd->scale(cfg.appearance().getScaleFactorX(), cfg.appearance().getScaleFactorY());
+  if (cfg.appearance().getApplyColorization()) {
+    auto effect = new QGraphicsColorizeEffect;
+    effect->setColor(cfg.appearance().getColorizationColor());
+    effect->setStrength(cfg.appearance().getColorizationStrength());
+    wnd->setGraphicsEffect(effect);
+  } else {
+    // explicitly set effect to nullptr as this code is used for config reload
+    wnd->setGraphicsEffect(nullptr);
+  }
 }
 
 std::size_t ApplicationPrivate::window_index(const ClockWindow* w) const noexcept
