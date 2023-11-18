@@ -26,7 +26,7 @@ void CompositeEffect::apply(QPainter* p, const QRectF& r, RenderItemFn render_it
   buffer.fill(Qt::transparent);
   {
     QPainter pp(&buffer);
-    pp.setRenderHint(QPainter::Antialiasing);
+    pp.setRenderHints(p->renderHints());
     pp.setTransform(p->transform());
     for (const auto& effect : _effects)
       (*effect)(&pp, r, render_item);

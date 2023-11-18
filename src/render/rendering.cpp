@@ -29,7 +29,7 @@ void SkinElement::render(QPainter* p)
     pxm.fill(Qt::transparent);
     {
       QPainter pp(&pxm);
-      pp.setRenderHint(QPainter::Antialiasing);
+      pp.setRenderHints(p->renderHints());
       pp.translate(-br.topLeft());
       pp.setTransform(p->transform(), true);
       _effects.empty() ? renderImpl(&pp) : applyEffects(&pp);
