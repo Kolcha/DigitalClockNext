@@ -23,6 +23,38 @@ public:
 
   std::shared_ptr<ClockRenderable> process(const QDateTime& dt) override;
 
+  bool supportsCustomSeparator() const noexcept override
+  {
+    return _supports_custom_separator;
+  }
+
+  bool supportsSeparatorAnimation() const noexcept override
+  {
+    return _supports_separator_animation;
+  }
+
+  void setSeparatorAnimationEnabled(bool enabled) override
+  {
+    _animate_separator = enabled;
+    _separator_visible = _separator_visible || !enabled;
+  }
+
+  void animateSeparator() override
+  {
+    if (!_animate_separator) return;
+    _separator_visible = !_separator_visible;
+  }
+
+  void setSupportsCustomSeparator(bool supports) noexcept
+  {
+    _supports_custom_separator = supports;
+  }
+
+  void setSupportsSeparatorAnimation(bool supports) noexcept
+  {
+    _supports_separator_animation = supports;
+  }
+
   void setOrientation(Qt::Orientation orientation)
   {
     _layout_alg->setOrientation(orientation);
@@ -58,7 +90,7 @@ public:
 private:
   bool isSeparator(QChar ch) const
   {
-    return _formatter->isSeparator(ch) && _factory->isSeparator(ch);
+    return ch == ':';
   }
 
 private:
@@ -67,4 +99,10 @@ private:
   std::shared_ptr<CompositeEffect> _item_effects;
   std::shared_ptr<CompositeEffect> _layout_effects;
   std::unique_ptr<DateTimeFormatter> _formatter;
+  // public properties
+  bool _supports_custom_separator = false;
+  bool _supports_separator_animation = false;
+  // internal state
+  bool _animate_separator = true;
+  bool _separator_visible = true;
 };

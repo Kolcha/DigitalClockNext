@@ -5,7 +5,6 @@
 namespace {
 
 class ClassicSkinRenderable : public ClockRenderable {
-  friend class ::ClassicSkin;
 public:
   using ClockRenderable::ClockRenderable;
 };
@@ -15,11 +14,21 @@ public:
 std::shared_ptr<ClockRenderable> ClassicSkin::process(const QDateTime& dt)
 {
   auto layout = std::make_shared<ClassicSkinRenderable>();
-  std::vector<std::shared_ptr<SkinElement>> seps;
   layout->setAlgorithm(_layout_alg);
 
   const auto str = _formatter->process(dt);
-  for (const auto& c : str) {
+  for (auto c : str) {
+    // separator animation
+    bool separator_visible = true;
+    if (isSeparator(c) && _animate_separator) {
+      if (!_separator_visible) {
+        if (supportsSeparatorAnimation())
+          c = QLatin1Char(' ');
+        else
+          separator_visible = false;
+      }
+    }
+
     auto r = _factory->item(c);
     if (!r) {
       continue;
@@ -27,12 +36,11 @@ std::shared_ptr<ClockRenderable> ClassicSkin::process(const QDateTime& dt)
 
     auto item = std::make_shared<SimpleSkinElement>(std::move(r));
     if (isSeparator(c))
-      seps.push_back(item);
+      item->setVisible(separator_visible);
     item->addEffect(_item_effects);
     layout->addElement(std::move(item));
   }
 
-  layout->setSeparators(std::move(seps));
   layout->addEffect(_layout_effects);
   return layout;
 }

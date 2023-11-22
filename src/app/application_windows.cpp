@@ -66,7 +66,7 @@ void ApplicationPrivate::createWindow(const QScreen* screen)
   wnd->setWindowFlag(Qt::Tool);   // trick to hide app icon from taskbar (Win/Linux)
 #endif
   connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::setDateTime);
-  connect(_time_src.get(), &TimeSource::halfSecondUpdate, wnd.get(), &ClockWindow::flipSeparator);
+  connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::animateSeparator);
   _windows.emplace_back(std::move(wnd));
 }
 

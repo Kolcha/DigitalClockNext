@@ -9,7 +9,6 @@
 #include <QDir>
 #include <QStandardPaths>
 
-#include "clock/legacy_skin_extension.hpp"
 #include "render/effects/background.hpp"
 #include "render/effects/identity.hpp"
 #include "render/effects/texturing.hpp"
@@ -101,8 +100,8 @@ SkinManagerImpl::SkinManagerImpl(ApplicationPrivate* app, QObject* parent)
 SkinManager::SkinPtr SkinManagerImpl::loadSkin(const QFont& font) const
 {
   auto provider = std::make_shared<QCharRenderableFactory>(font);
-//  provider->setSeparators("o");
   auto skin = std::make_shared<ClassicSkin>(std::move(provider));
+  skin->setSupportsCustomSeparator(true);
   return skin;
 }
 
@@ -200,12 +199,6 @@ SkinManagerImpl::ClassicSkinPtr SkinManagerImpl::loadLegacySkin(const QString& s
 {
   LegacySkinLoader loader(skin_path);
   auto skin = loader.skin();
-
-  auto flashing_dots_ext = std::make_shared<LegacySkinExtension>();
-  connect(_app->time_source().get(), &TimeSource::halfSecondUpdate,
-          flashing_dots_ext.get(), &LegacySkinExtension::setSeparatorVisible);
-  skin->formatter()->addExtension(std::move(flashing_dots_ext));
-
   return skin;
 }
 
@@ -214,8 +207,6 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   using namespace Qt::Literals::StringLiterals;
 
   const auto& cfg = _app->app_config()->window(i);
-
-  skin->formatter()->setExtensionEnabled(u"legacy_skin"_s, cfg.appearance().getFlashingSeparator());
 
   skin->clearItemEffects();
   skin->clearLayoutEffects();

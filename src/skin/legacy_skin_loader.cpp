@@ -161,8 +161,6 @@ std::shared_ptr<SkinResource> LegacyRenderableFactory::item(QChar ch) const
 {
   if (ch.isSpace())
     ch = ' ';
-  if (RenderableFactory::isSeparator(ch) && ch != ' ')
-    ch = ':';
   if (!_has_2_seps && ch == ' ')
     ch = ':';
   auto iter = _resources.find(ch.toLower());

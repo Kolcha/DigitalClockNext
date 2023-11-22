@@ -22,15 +22,9 @@ public:
     _item = _skin->process(dt);
   }
 
-  // TODO: what about fade in/out or glow animations?
-  void setSeparatorVisible(bool visible)
+  void animateSeparator()
   {
-    _item->setSeparatorsVisible(visible);
-  }
-
-  bool isSeparatorVisible() const
-  {
-    return _item->separatorsVisible();
+    _skin->animateSeparator();
   }
 
   void render(QPainter* p) const

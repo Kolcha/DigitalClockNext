@@ -55,7 +55,6 @@ set(PROJECT_SOURCES
         src/app/clock_widget.hpp
         src/render/state_guard_qpainter.hpp
         src/clock/time_source.hpp
-        src/clock/legacy_skin_extension.hpp
         src/app/application_private.hpp
         src/app/application_tray.cpp
         src/app/application_config.cpp

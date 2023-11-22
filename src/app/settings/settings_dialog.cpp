@@ -210,11 +210,7 @@ void SettingsDialog::applySkin(std::shared_ptr<ClockSkin> skin)
 
 void SettingsDialog::applyFlashingSeparator(bool enable)
 {
-  if (auto cskin = std::dynamic_pointer_cast<ClassicSkin>(impl->wnd->skin()))
-    cskin->formatter()->setExtensionEnabled(u"legacy_skin"_s, enable);
   impl->wnd->setSeparatorFlashes(enable);
-  if (!enable)
-    impl->wnd->setSeparatorVisible(true);
 }
 
 void SettingsDialog::applyTimeZoneSettings()

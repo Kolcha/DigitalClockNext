@@ -28,19 +28,13 @@ public:
 signals:
   // provides current UTC time, interval is unspecified
   void timeChanged(const QDateTime& dt);
-  // provides stable flag changes every 0.5 second
-  void halfSecondUpdate(bool flag);
 
 private slots:
   void onTimeout()
   {
-    // this assumes 0.5s timer interval, reimplement on change
-    _flag = !_flag;
-    emit halfSecondUpdate(_flag);
     emit timeChanged(now());
   }
 
 private:
   QTimer _timer;
-  bool _flag = true;
 };

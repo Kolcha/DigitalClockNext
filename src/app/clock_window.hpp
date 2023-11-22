@@ -37,7 +37,6 @@ public:
   ClockWindow(const SkinPtr& skin, const QDateTime& dt, StatePtr state, QWidget* parent = nullptr);
   ~ClockWindow();
 
-  bool isSeparatorVisible() const;
   bool isSeparatorFlashes() const;
 
   void setSkin(std::shared_ptr<ClockSkin> skin);
@@ -51,10 +50,10 @@ signals:
 public slots:
   void setDateTime(const QDateTime& utc);
   void setTimeZone(const QTimeZone& tz);
-  void setSeparatorVisible(bool visible);
+
   void setSeparatorFlashes(bool flashes);
 
-  void flipSeparator();   // show/hide
+  void animateSeparator();
 
   void scale(int sx, int sy); // in percents
 

@@ -17,10 +17,7 @@ public:
 
   std::shared_ptr<SkinResource> item(QChar ch) const override;
 
-  bool isSeparator(QChar ch) const override
-  {
-    return !_has_2_seps && RenderableFactory::isSeparator(ch);
-  }
+  bool supportsSeparatorAnimation() const noexcept { return _has_2_seps; }
 
 private:
   QHash<QChar, std::shared_ptr<SkinResource>> _resources;
@@ -41,7 +38,10 @@ public:
       return nullptr;
 
     auto factory = std::make_unique<LegacyRenderableFactory>(_files);
-    return std::make_unique<ClassicSkin>(std::move(factory));
+    bool supports_separator_animation = factory->supportsSeparatorAnimation();
+    auto skin = std::make_unique<ClassicSkin>(std::move(factory));
+    skin->setSupportsSeparatorAnimation(supports_separator_animation);
+    return skin;
   }
 
 private:

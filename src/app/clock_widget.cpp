@@ -54,11 +54,6 @@ QSize ClockWidgetWrap::minimumSizeHint() const
   return _impl->scaledSize().toSize();
 }
 
-bool ClockWidgetWrap::isSeparatorVisible() const
-{
-  return _impl->seps_visible;
-}
-
 void ClockWidgetWrap::setSkin(std::shared_ptr<ClockSkin> skin)
 {
   if (skin)
@@ -90,9 +85,11 @@ void ClockWidgetWrap::setTimeZone(const QTimeZone& tz)
   setDateTime(_impl->dt);
 }
 
-void ClockWidgetWrap::setSeparatorVisible(bool visible)
+void ClockWidgetWrap::animateSeparator()
 {
-  _impl->seps_visible = visible;
+  _impl->seps_visible = !_impl->seps_visible; // for error animation
+  if (!_impl->n_impl) return;
+  _impl->n_impl->animateSeparator();
   update();
 }
 
@@ -142,7 +139,6 @@ void ClockWidgetWrap::paintEvent(QPaintEvent* event)
     p.drawText(r, Qt::AlignCenter, u"skin has not been loaded"_s);
     return;
   }
-  _impl->n_impl->setSeparatorVisible(_impl->seps_visible);
   auto s = _impl->n_impl->geometry().size();
   p.setRenderHint(QPainter::Antialiasing);
   p.setRenderHint(QPainter::SmoothPixmapTransform);

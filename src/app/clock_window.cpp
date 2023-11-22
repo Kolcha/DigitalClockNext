@@ -69,11 +69,6 @@ ClockWindow::ClockWindow(const SkinPtr& skin, const QDateTime& dt, StatePtr stat
 
 ClockWindow::~ClockWindow() = default;
 
-bool ClockWindow::isSeparatorVisible() const
-{
-  return _impl->clock_widget->isSeparatorVisible();
-}
-
 bool ClockWindow::isSeparatorFlashes() const
 {
   return _impl->separator_flashes;
@@ -81,6 +76,9 @@ bool ClockWindow::isSeparatorFlashes() const
 
 void ClockWindow::setSkin(std::shared_ptr<ClockSkin> skin)
 {
+  if (skin) {
+    skin->setSeparatorAnimationEnabled(_impl->separator_flashes);
+  }
   _impl->clock_widget->setSkin(std::move(skin));
 }
 
@@ -99,22 +97,16 @@ void ClockWindow::setTimeZone(const QTimeZone& tz)
   _impl->clock_widget->setTimeZone(tz);
 }
 
-void ClockWindow::setSeparatorVisible(bool visible)
-{
-  _impl->clock_widget->setSeparatorVisible(visible);
-}
-
 void ClockWindow::setSeparatorFlashes(bool flashes)
 {
   _impl->separator_flashes = flashes;
+  _impl->clock_widget->skin()->setSeparatorAnimationEnabled(flashes);
+  update();
 }
 
-void ClockWindow::flipSeparator()
+void ClockWindow::animateSeparator()
 {
-  if (!_impl->separator_flashes)
-    return;
-
-  setSeparatorVisible(!isSeparatorVisible());
+  _impl->clock_widget->animateSeparator();
 }
 
 void ClockWindow::scale(int sx, int sy)

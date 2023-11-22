@@ -23,15 +23,14 @@ public:
   QSize sizeHint() const override;
   QSize minimumSizeHint() const override;
 
-  bool isSeparatorVisible() const;
-
   void setSkin(std::shared_ptr<ClockSkin> skin);
   std::shared_ptr<ClockSkin> skin() const;
 
 public slots:
   void setDateTime(const QDateTime& dt);
   void setTimeZone(const QTimeZone& tz);
-  void setSeparatorVisible(bool visible);
+
+  void animateSeparator();
 
   void scale(qreal kx, qreal ky);
 
