@@ -114,6 +114,7 @@ set(PROJECT_SOURCES
         src/app/settings/app_globalsettings.ui
         src/app/logo_label.cpp
         src/app/logo_label.hpp
+        src/clock/datetime_formatter.cpp
 )
 
 qt_add_executable(${PROJECT_NAME}

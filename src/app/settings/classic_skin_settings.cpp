@@ -92,7 +92,7 @@ void ClassicSkinSettings::on_spacing_edit_valueChanged(int arg1)
 
 void ClassicSkinSettings::on_time_format_cbox_textActivated(const QString& arg1)
 {
-  impl->skin->formatter()->setFormat(arg1);
+  impl->skin->setFormat(arg1);
   impl->wnd->skinConfigured();
   impl->scfg->setTimeFormat(arg1);
 }

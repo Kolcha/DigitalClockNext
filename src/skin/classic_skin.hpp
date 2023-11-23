@@ -4,7 +4,8 @@
 
 #include <memory>
 
-#include "clock/datetime_formatter.hpp"
+#include <QString>
+
 #include "core/linear_layout.hpp"
 #include "render/effects/composite.hpp"
 #include "skin/renderable_factory.hpp"
@@ -18,7 +19,7 @@ public:
     , _layout_alg(std::make_shared<LinearLayout>())
     , _item_effects(std::make_shared<CompositeEffect>())
     , _layout_effects(std::make_shared<CompositeEffect>())
-    , _formatter(std::make_unique<DateTimeFormatter>("hh:mm a"))
+    , _format(QLatin1String("hh:mm a"))
   {}
 
   std::shared_ptr<ClockRenderable> process(const QDateTime& dt) override;
@@ -85,24 +86,25 @@ public:
     _layout_effects->clearEffects();
   }
 
-  const auto& formatter() const noexcept { return _formatter; }
-
-private:
-  bool isSeparator(QChar ch) const
+  void setFormat(QString format)
   {
-    return ch == ':';
+    if (format.isEmpty() || format == _format)
+      return;
+    _format = std::move(format);
   }
+
+  QString format() const { return _format; }
 
 private:
   std::shared_ptr<RenderableFactory> _factory;
   std::shared_ptr<LinearLayout> _layout_alg;
   std::shared_ptr<CompositeEffect> _item_effects;
   std::shared_ptr<CompositeEffect> _layout_effects;
-  std::unique_ptr<DateTimeFormatter> _formatter;
   // public properties
   bool _supports_custom_separator = false;
   bool _supports_separator_animation = false;
   // internal state
   bool _animate_separator = true;
   bool _separator_visible = true;
+  QString _format;
 };

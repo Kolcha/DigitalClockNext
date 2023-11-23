@@ -213,7 +213,7 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
 
   loadClassicSkinEffects(*skin, cfg);
 
-  skin->formatter()->setFormat(cfg.classicSkin().getTimeFormat());
+  skin->setFormat(cfg.classicSkin().getTimeFormat());
   skin->setOrientation(cfg.classicSkin().getOrientation());
   skin->setSpacing(cfg.classicSkin().getSpacing());
 }
