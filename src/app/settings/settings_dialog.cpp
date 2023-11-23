@@ -19,6 +19,17 @@ QString tz_name(const QTimeZone& tz)
   return QString::fromLatin1(tz.id());
 }
 
+QFont actual_font(const QFont& fnt)
+{
+  QFont res_font = fnt;
+  QFontInfo fi(fnt);
+  res_font.setFamily(fi.family());
+  res_font.setPointSizeF(fi.pointSizeF());
+  res_font.setStyle(fi.style());
+  res_font.setStyleHint(fi.styleHint());
+  return res_font;
+}
+
 } // namespace
 
 struct SettingsDialog::Impl {
@@ -102,7 +113,7 @@ void SettingsDialog::on_skin_rbtn_clicked()
 void SettingsDialog::on_select_font_btn_clicked()
 {
   bool ok = false;
-  QFont fnt = QFontDialog::getFont(&ok, impl->wcfg->state().getTextSkinFont(), this);
+  QFont fnt = QFontDialog::getFont(&ok, actual_font(impl->wcfg->state().getTextSkinFont()), this);
   if (!ok) return;
   auto skin = impl->app->skin_manager()->loadSkin(fnt);
   applySkin(std::move(skin));
