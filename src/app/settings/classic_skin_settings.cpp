@@ -68,6 +68,10 @@ ClassicSkinSettings::ClassicSkinSettings(ApplicationPrivate* app, std::size_t id
   ui->bg_gradient_rbtn->setChecked(bg.gradient() != nullptr);
   ui->bg_pattern_rbtn->setChecked(bg.style() == Qt::TexturePattern);
   ui->bg_per_element_cb->setChecked(impl->scfg->getBackgroundPerElement());
+
+  ui->custom_seps_label->setEnabled(impl->skin->supportsCustomSeparator());
+  ui->custom_seps_edit->setEnabled(impl->skin->supportsCustomSeparator());
+  ui->custom_seps_edit->setText(impl->scfg->getCustomSeparators());
 }
 
 ClassicSkinSettings::~ClassicSkinSettings()
@@ -266,6 +270,12 @@ void ClassicSkinSettings::on_bg_per_element_cb_clicked(bool checked)
 {
   impl->scfg->setBackgroundPerElement(checked);
   updateEffects();
+}
+
+void ClassicSkinSettings::on_custom_seps_edit_textEdited(const QString& arg1)
+{
+  impl->skin->setCustomSeparators(arg1);
+  impl->scfg->setCustomSeparators(arg1);
 }
 
 void ClassicSkinSettings::updateEffects()

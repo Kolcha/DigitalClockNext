@@ -24,6 +24,11 @@ public:
 
   void addSeparator(QChar c) override
   {
+    if (_supports_custom_separator && _separator_idx < _separators.size())
+      c = _separators[_separator_idx];
+
+    ++_separator_idx;
+
     // separator animation
     bool separator_visible = true;
     if (_animate_separator) {
@@ -56,6 +61,11 @@ public:
   void setSupportsSeparatorAnimation(bool supports) noexcept
   {
     _supports_separator_animation = supports;
+  }
+
+  void setCustomSeparators(QString separators) noexcept
+  {
+    _separators = std::move(separators);
   }
 
   void setSeparatorAnimationEnabled(bool enable) noexcept
@@ -96,6 +106,9 @@ private:
   bool _supports_separator_animation = false;
   bool _animate_separator = true;
   bool _separator_visible = true;
+
+  quint32 _separator_idx = 0;
+  QString _separators;
 };
 
 } // namespace
@@ -108,6 +121,7 @@ std::shared_ptr<ClockRenderable> ClassicSkin::process(const QDateTime& dt)
   builder.setLayoutEffects(_layout_effects);
   builder.setSupportsCustomSeparator(supportsCustomSeparator());
   builder.setSupportsSeparatorAnimation(supportsSeparatorAnimation());
+  builder.setCustomSeparators(_separators);
   builder.setSeparatorAnimationEnabled(_animate_separator);
   builder.setSeparatorVisible(_separator_visible);
   FormatDateTime(dt, _format, builder);

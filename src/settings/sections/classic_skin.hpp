@@ -13,6 +13,7 @@ class ClassicSkinConfig final : public ConfigBaseQVariant {
   CONFIG_OPTION_Q(QBrush, Background, QBrush(Qt::NoBrush))
   CONFIG_OPTION_Q(bool, TexturePerElement, true)
   CONFIG_OPTION_Q(bool, BackgroundPerElement, false)
+  CONFIG_OPTION_Q(QString, CustomSeparators, QString(":"))
 public:
   using ConfigBaseQVariant::ConfigBaseQVariant;
 private:

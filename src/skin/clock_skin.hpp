@@ -14,7 +14,6 @@ public:
 
   virtual std::shared_ptr<ClockRenderable> process(const QDateTime& dt) = 0;
 
-  virtual bool supportsCustomSeparator() const noexcept = 0;
   virtual bool supportsSeparatorAnimation() const noexcept = 0;
 
   virtual void setSeparatorAnimationEnabled(bool enabled) = 0;

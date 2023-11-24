@@ -212,4 +212,5 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   skin->setFormat(cfg.classicSkin().getTimeFormat());
   skin->setOrientation(cfg.classicSkin().getOrientation());
   skin->setSpacing(cfg.classicSkin().getSpacing());
+  skin->setCustomSeparators(cfg.classicSkin().getCustomSeparators());
 }

@@ -24,11 +24,6 @@ public:
 
   std::shared_ptr<ClockRenderable> process(const QDateTime& dt) override;
 
-  bool supportsCustomSeparator() const noexcept override
-  {
-    return _supports_custom_separator;
-  }
-
   bool supportsSeparatorAnimation() const noexcept override
   {
     return _supports_separator_animation;
@@ -54,6 +49,23 @@ public:
   void setSupportsSeparatorAnimation(bool supports) noexcept
   {
     _supports_separator_animation = supports;
+  }
+
+  /**
+   * Sets custom @a separators.
+   *
+   * Characters count should match ':' count in format string.
+   * ':' is used by default if there is not enough charaters for replacement.
+   * Set an empty string to restore the default behavior.
+   */
+  void setCustomSeparators(QString separators) noexcept
+  {
+    _separators = std::move(separators);
+  }
+
+  bool supportsCustomSeparator() const noexcept
+  {
+    return _supports_custom_separator;
   }
 
   void setOrientation(Qt::Orientation orientation)
@@ -107,4 +119,5 @@ private:
   bool _animate_separator = true;
   bool _separator_visible = true;
   QString _format;
+  QString _separators;
 };
