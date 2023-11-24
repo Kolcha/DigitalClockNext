@@ -191,17 +191,10 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QToolButton" name="tx_select_color_btn">
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="tx_pattern_rbtn">
         <property name="text">
-         <string notr="true">...</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QRadioButton" name="tx_gradient_rbtn">
-        <property name="text">
-         <string>gradient</string>
+         <string>pattern</string>
         </property>
        </widget>
       </item>
@@ -215,10 +208,20 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QRadioButton" name="tx_pattern_rbtn">
+      <item row="0" column="1">
+       <widget class="QToolButton" name="tx_select_color_btn">
         <property name="text">
-         <string>pattern</string>
+         <string notr="true">...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QCheckBox" name="tx_per_element_cb">
+        <property name="text">
+         <string>apply per element</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -232,13 +235,20 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QCheckBox" name="tx_per_element_cb">
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="tx_gradient_rbtn">
         <property name="text">
-         <string>apply per element</string>
+         <string>gradient</string>
         </property>
-        <property name="checked">
-         <bool>true</bool>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QCheckBox" name="tx_pattern_stretch">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>stretch instead of tile</string>
         </property>
        </widget>
       </item>
@@ -254,6 +264,13 @@
       <bool>true</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
+      <item row="4" column="0" colspan="2">
+       <widget class="QCheckBox" name="bg_per_element_cb">
+        <property name="text">
+         <string>apply per element</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QRadioButton" name="bg_solid_color_rbtn">
         <property name="text">
@@ -261,30 +278,6 @@
         </property>
         <property name="checked">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QToolButton" name="bg_select_color_btn">
-        <property name="text">
-         <string notr="true">...</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QRadioButton" name="bg_gradient_rbtn">
-        <property name="text">
-         <string>gradient</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QToolButton" name="bg_select_gradient_btn">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string notr="true">...</string>
         </property>
        </widget>
       </item>
@@ -305,10 +298,37 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QCheckBox" name="bg_per_element_cb">
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="bg_gradient_rbtn">
         <property name="text">
-         <string>apply per element</string>
+         <string>gradient</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QToolButton" name="bg_select_color_btn">
+        <property name="text">
+         <string notr="true">...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QToolButton" name="bg_select_gradient_btn">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string notr="true">...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QCheckBox" name="bg_pattern_stretch">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>stretch instead of tile</string>
         </property>
        </widget>
       </item>
@@ -443,6 +463,38 @@
     <hint type="destinationlabel">
      <x>365</x>
      <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tx_pattern_rbtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>tx_pattern_stretch</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>87</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>102</x>
+     <y>200</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bg_pattern_rbtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>bg_pattern_stretch</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>281</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>200</y>
     </hint>
    </hints>
   </connection>

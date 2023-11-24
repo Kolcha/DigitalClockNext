@@ -26,22 +26,24 @@ std::optional<QString> tryLegacySkin(const QString& path)
 }
 
 // item bg, texture + layout bg, texture
-std::array<QBrush, 4> classicSkinBrushes(const WindowConfig& cfg)
+auto classicSkinBrushes(const WindowConfig& cfg)
 {
-  std::array<QBrush, 4> brushes;
+  std::array<std::pair<QBrush, bool>, 4> brushes;
 
   if (auto brush = cfg.classicSkin().getBackground(); brush.style() != Qt::NoBrush) {
+    bool stretch = cfg.classicSkin().getBackgroundStretch();
     if (cfg.classicSkin().getBackgroundPerElement())
-      brushes[0] = brush; // item bg
+      brushes[0] = {std::move(brush), stretch}; // item bg
     else
-      brushes[2] = brush; // layout bg
+      brushes[2] = {std::move(brush), stretch}; // layout bg
   }
 
   if (auto brush = cfg.classicSkin().getTexture(); brush.style() != Qt::NoBrush) {
+    bool stretch = cfg.classicSkin().getTextureStretch();
     if (cfg.classicSkin().getTexturePerElement())
-      brushes[1] = brush; // item texture
+      brushes[1] = {std::move(brush), stretch}; // item texture
     else
-      brushes[3] = brush; // layout texture
+      brushes[3] = {std::move(brush), stretch}; // layout texture
   }
 
   return brushes;
@@ -59,24 +61,27 @@ constexpr EffectSurface kSurfaceLayout {
   &ClassicSkin::addLayoutEffect,
 };
 
-void configureEffects(QBrush bg, QBrush tx, ClassicSkin& skin, EffectSurface surface)
+void configureEffects(auto bg_cfg, auto tx_cfg, ClassicSkin& skin, EffectSurface surface)
 {
+  auto [bg, bg_stretch] = bg_cfg;
+  auto [tx, tx_stretch] = tx_cfg;
+
   if (bg.style() == Qt::NoBrush && tx.style() == Qt::NoBrush) {
     (skin.*surface.addEffect)(std::make_unique<IdentityEffect>());
   }
   if (bg.style() != Qt::NoBrush && tx.style() == Qt::NoBrush) {
-    (skin.*surface.addEffect)(std::make_unique<BackgroundEffect>(std::move(bg)));
+    (skin.*surface.addEffect)(std::make_unique<BackgroundEffect>(std::move(bg), bg_stretch));
     (skin.*surface.addEffect)(std::make_unique<IdentityEffect>());
   }
   if (bg.style() == Qt::NoBrush && tx.style() != Qt::NoBrush) {
     (skin.*surface.addEffect)(std::make_unique<IdentityEffect>());
-    (skin.*surface.addEffect)(std::make_unique<TexturingEffect>(std::move(tx)));
+    (skin.*surface.addEffect)(std::make_unique<TexturingEffect>(std::move(tx), tx_stretch));
   }
   if (bg.style() != Qt::NoBrush && tx.style() != Qt::NoBrush) {
-    (skin.*surface.addEffect)(std::make_unique<BackgroundEffect>(std::move(bg)));
+    (skin.*surface.addEffect)(std::make_unique<BackgroundEffect>(std::move(bg), bg_stretch));
     auto composite_effect = std::make_unique<CompositeEffect>();
     composite_effect->addEffect(std::make_unique<IdentityEffect>());
-    composite_effect->addEffect(std::make_unique<TexturingEffect>(std::move(tx)));
+    composite_effect->addEffect(std::make_unique<TexturingEffect>(std::move(tx), tx_stretch));
     (skin.*surface.addEffect)(std::move(composite_effect));
   }
 }

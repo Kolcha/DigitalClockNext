@@ -60,6 +60,7 @@ ClassicSkinSettings::ClassicSkinSettings(ApplicationPrivate* app, std::size_t id
   ui->tx_solid_color_rbtn->setChecked(tx.style() == Qt::SolidPattern);
   ui->tx_gradient_rbtn->setChecked(tx.gradient() != nullptr);
   ui->tx_pattern_rbtn->setChecked(tx.style() == Qt::TexturePattern);
+  ui->tx_pattern_stretch->setChecked(impl->scfg->getTextureStretch());
   ui->tx_per_element_cb->setChecked(impl->scfg->getTexturePerElement());
 
   auto bg = impl->scfg->getBackground();
@@ -67,6 +68,7 @@ ClassicSkinSettings::ClassicSkinSettings(ApplicationPrivate* app, std::size_t id
   ui->bg_solid_color_rbtn->setChecked(bg.style() == Qt::SolidPattern);
   ui->bg_gradient_rbtn->setChecked(bg.gradient() != nullptr);
   ui->bg_pattern_rbtn->setChecked(bg.style() == Qt::TexturePattern);
+  ui->bg_pattern_stretch->setChecked(impl->scfg->getBackgroundStretch());
   ui->bg_per_element_cb->setChecked(impl->scfg->getBackgroundPerElement());
 
   ui->custom_seps_label->setEnabled(impl->skin->supportsCustomSeparator());
@@ -186,6 +188,12 @@ void ClassicSkinSettings::on_tx_select_pattern_btn_clicked()
   updateEffects();
 }
 
+void ClassicSkinSettings::on_tx_pattern_stretch_clicked(bool checked)
+{
+  impl->scfg->setTextureStretch(checked);
+  updateEffects();
+}
+
 void ClassicSkinSettings::on_tx_per_element_cb_clicked(bool checked)
 {
   impl->scfg->setTexturePerElement(checked);
@@ -263,6 +271,12 @@ void ClassicSkinSettings::on_bg_select_pattern_btn_clicked()
   QPixmap pxm(file);
   impl->scfg->setBackground(pxm);
   impl->wcfg->state().setBackgroundPattern(pxm);
+  updateEffects();
+}
+
+void ClassicSkinSettings::on_bg_pattern_stretch_clicked(bool checked)
+{
+  impl->scfg->setBackgroundStretch(checked);
   updateEffects();
 }
 

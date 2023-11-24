@@ -34,6 +34,7 @@ private slots:
   void on_tx_select_gradient_btn_clicked();
   void on_tx_pattern_rbtn_clicked();
   void on_tx_select_pattern_btn_clicked();
+  void on_tx_pattern_stretch_clicked(bool checked);
   void on_tx_per_element_cb_clicked(bool checked);
 
   void on_background_group_clicked(bool checked);
@@ -43,6 +44,7 @@ private slots:
   void on_bg_select_gradient_btn_clicked();
   void on_bg_pattern_rbtn_clicked();
   void on_bg_select_pattern_btn_clicked();
+  void on_bg_pattern_stretch_clicked(bool checked);
   void on_bg_per_element_cb_clicked(bool checked);
 
   void on_custom_seps_edit_textEdited(const QString& arg1);
