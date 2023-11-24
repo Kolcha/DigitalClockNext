@@ -6,10 +6,7 @@
 
 #include "render/rendering.hpp"
 
-
-class ClockRenderable : public LayoutSkinElement {
-};
-
+using ClockRenderable = LayoutSkinElement;
 
 class ClockSkin {
 public:

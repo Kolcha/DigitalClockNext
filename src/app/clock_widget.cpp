@@ -88,6 +88,7 @@ void ClockWidgetWrap::setTimeZone(const QTimeZone& tz)
 void ClockWidgetWrap::animateSeparator()
 {
   _impl->seps_visible = !_impl->seps_visible; // for error animation
+  update();
   if (!_impl->n_impl) return;
   _impl->n_impl->animateSeparator();
   update();

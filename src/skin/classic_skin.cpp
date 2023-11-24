@@ -5,10 +5,7 @@
 
 namespace {
 
-class ClassicSkinRenderable : public ClockRenderable {
-public:
-  using ClockRenderable::ClockRenderable;
-};
+using ClassicSkinRenderable = ClockRenderable;
 
 class ClassicLayoutBuilder final : public DateTimeStringBuilder {
 public:

@@ -154,12 +154,8 @@ void SkinManagerImpl::findSkins()
   using namespace Qt::Literals::StringLiterals;
   QStringList search_paths = {
     u":/skins"_s,
-#ifdef Q_OS_MACOS
-    qApp->applicationDirPath() + u"/../Resources/skins"_s,
-#else
-    qApp->applicationDirPath() + u"/skins"_s,
-#endif
 #ifdef Q_OS_LINUX
+    qApp->applicationDirPath() + u"/skins"_s,
     u"/usr/share/digitalclock4/skins"_s,
     u"/usr/share/DigitalClockNext/skins"_s,
     u"/usr/local/share/digitalclock4/skins"_s,

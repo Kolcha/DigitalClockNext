@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
   QApplication::setApplicationName(QString::fromLatin1(APP_PROJECT_NAME));
   QApplication::setApplicationDisplayName(u"Digital Clock Next"_s);
   QApplication::setApplicationVersion(QString::fromLatin1(APP_VERSION));
-  QApplication::setOrganizationName(u"Nick Korotysh"_s);
+  QApplication::setOrganizationName(u"NickKorotysh"_s);
   QApplication::setOrganizationDomain(u"kolcha.github.com"_s);
   QApplication::setDesktopFileName(APP_IDENTIFIER);
   QApplication::setWindowIcon(QIcon::fromTheme("clock"));
