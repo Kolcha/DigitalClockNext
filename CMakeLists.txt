@@ -115,6 +115,10 @@ set(PROJECT_SOURCES
         src/app/logo_label.cpp
         src/app/logo_label.hpp
         src/clock/datetime_formatter.cpp
+        src/app/clock_icon_engine.cpp
+        src/app/clock_icon_engine.hpp
+        src/app/clock_tray_icon.cpp
+        src/app/clock_tray_icon.hpp
 )
 
 qt_add_executable(${PROJECT_NAME}

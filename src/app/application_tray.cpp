@@ -1,13 +1,13 @@
 #include "application.hpp"
 #include "application_private.hpp"
 
+#include "clock_tray_icon.hpp"
+
 using namespace Qt::Literals::StringLiterals;
 
 void ApplicationPrivate::initTray()
 {
-  QIcon icon = QIcon::fromTheme(u"clock"_s);
-  icon.setIsMask(true);
-  _tray_icon = std::make_unique<QSystemTrayIcon>(icon);
+  _tray_icon = std::make_unique<ClockTrayIcon>();
   _tray_icon->setVisible(true);
 
   _tray_menu = std::make_unique<QMenu>();
