@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
 #endif
   QApplication::setQuitOnLastWindowClosed(false);
 
+  a.setStyle(u"fusion"_s);
   a.init();
   return a.exec();
 }
