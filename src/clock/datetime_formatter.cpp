@@ -84,6 +84,12 @@ void FormatDateTime(const QDateTime& dt, QStringView fmt,
       case ':':
         str_builder.addSeparator(c);
         break;
+      case 'a':
+      case 'A':
+        repeat = qMin(repeat, 1);
+        if (i + 1 < fmt.size() && (fmt[i+1] == 'p' || fmt[i+1] == 'P'))
+          repeat += 1;  // AP should be handled as 'A' (case insensitive)
+        [[fallthrough]];
       default:
         add_characters(QLocale::system().toString(dt, fmt.mid(i, repeat)), str_builder);
     }
