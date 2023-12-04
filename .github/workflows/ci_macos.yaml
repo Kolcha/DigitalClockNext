@@ -54,7 +54,7 @@ jobs:
           macdeployqt DigitalClockNext.app -dmg -codesign=-
           popd
           mkdir upload
-          mv build/DigitalClockNext.dmg upload/DigitalClockNext-CI_macOS.dmg
+          mv build/DigitalClockNext.dmg upload/digital_clock_next-macos.dmg
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3

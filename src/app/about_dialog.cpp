@@ -60,6 +60,8 @@ AboutDialog::AboutDialog(QWidget* parent)
   ui->info_group->hide();
 
   ui->logo_lbl->setPixmap(QApplication::windowIcon().pixmap(192));
+  ui->logo_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  ui->info_tab_layout->setAlignment(ui->logo_lbl, Qt::AlignCenter);
 
   QFont fnt = font();
   fnt.setBold(true);

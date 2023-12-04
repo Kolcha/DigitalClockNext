@@ -3,18 +3,6 @@
 #include <QtCore/QTime>
 #include <QtGui/QPainter>
 
-struct ClockIconEngine::Impl {
-  QColor color = QColor(101, 99, 255);
-  bool f_hour = false;
-};
-
-ClockIconEngine::ClockIconEngine()
-  : impl(std::make_unique<Impl>())
-{
-}
-
-ClockIconEngine::~ClockIconEngine() = default;
-
 void ClockIconEngine::paint(QPainter* painter, const QRect& rect, QIcon::Mode mode, QIcon::State state)
 {
   Q_UNUSED(mode);
@@ -29,7 +17,7 @@ void ClockIconEngine::paint(QPainter* painter, const QRect& rect, QIcon::Mode mo
 
   painter->save();
   painter->setRenderHint(QPainter::Antialiasing);
-  painter->setPen(QPen(impl->color, pw));
+  painter->setPen(QPen(QColor(101, 99, 255), pw));
 
   painter->drawEllipse(QRectF(rect).adjusted(pw, pw, -pw, -pw));
   painter->translate(rect.center());
@@ -42,7 +30,7 @@ void ClockIconEngine::paint(QPainter* painter, const QRect& rect, QIcon::Mode mo
   {
     qreal h = now.hour();
     if (h > 12) h -= 12;
-    if (impl->f_hour) h += now.minute() / 60.;
+    h += now.minute() / 60.;
     painter->save();
     painter->rotate(360 / 12 * h);
     painter->drawLine(hl);
@@ -65,24 +53,4 @@ QPixmap ClockIconEngine::pixmap(const QSize& size, QIcon::Mode mode, QIcon::Stat
 QIconEngine* ClockIconEngine::clone() const
 {
   return new ClockIconEngine;
-}
-
-void ClockIconEngine::setColor(const QColor& color)
-{
-  impl->color = color;
-}
-
-void ClockIconEngine::setFractionalHours(bool enable)
-{
-  impl->f_hour = enable;
-}
-
-const QColor& ClockIconEngine::color() const noexcept
-{
-  return impl->color;
-}
-
-bool ClockIconEngine::fractionalHours() const noexcept
-{
-  return impl->f_hour;
 }
