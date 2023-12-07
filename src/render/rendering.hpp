@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/geometry.hpp"
+#include "core/layout.hpp"
 #include "core/hashable.hpp"
 #include "effect.hpp"
 #include "skin_resource.hpp"
@@ -50,11 +50,8 @@ public:
     : _res(std::move(res))
   {
     assert(_res);
-    setRect(_res->rect());
+    setInitialGeometry(_res->rect(), _res->advanceX(), _res->advanceY());
   }
-
-  qreal advanceX() const override { return _res->advanceX(); }
-  qreal advanceY() const override { return _res->advanceY(); }
 
   std::shared_ptr<LayoutItem> item() override { return shared_from_this(); }
 

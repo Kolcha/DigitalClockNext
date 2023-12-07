@@ -119,6 +119,7 @@ set(PROJECT_SOURCES
         src/app/clock_icon_engine.hpp
         src/app/clock_tray_icon.cpp
         src/app/clock_tray_icon.hpp
+        src/core/item_geometry.hpp
 )
 
 qt_add_executable(${PROJECT_NAME}
@@ -131,6 +132,12 @@ configure_file(src/version.hpp.in src/version.hpp @ONLY)
 
 add_subdirectory(deps)
 add_subdirectory(dist)
+
+find_package(Qt6 OPTIONAL_COMPONENTS Test)
+if (${Qt6Test_FOUND})
+    include(CTest)
+    add_subdirectory(test)
+endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)

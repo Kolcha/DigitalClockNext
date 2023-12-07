@@ -42,6 +42,10 @@ jobs:
             -D CMAKE_BUILD_TYPE=Release
           cmake --build build
 
+      - name: Run tests
+        working-directory: build
+        run: ctest --output-on-failure
+
       - name: Prepare build artifacts
         run: |
           mkdir upload

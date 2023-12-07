@@ -80,6 +80,8 @@ public:
 
   std::shared_ptr<ClockRenderable> getLayout()
   {
+    Q_ASSERT(_layout->rect().isNull());
+    _layout->updateGeometry();
     _layout->addEffect(_layout_effects);
     return std::move(_layout);
   }

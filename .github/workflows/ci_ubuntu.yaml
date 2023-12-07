@@ -46,6 +46,8 @@ jobs:
           cmake --build build
           DESTDIR=/tmp/clock-root cmake --install build
 
+      # do not run tests on Linux, Qt requires running X server, even no UI stuff is used
+
       - name: 'AppImage: Prepare env'
         run: |
           sudo apt install libfuse2 libxcb-cursor0
