@@ -20,23 +20,45 @@
 
 #include <memory>
 
-#include <QDateTime>
-
 #include "rendering.hpp"
+#include "state_guard_qpainter.hpp"
+#include "clock_skin.hpp"
 
-using ClockRenderable = LayoutSkinElement;
-
-class ClockSkin {
+// TODO: what about plugins' layouts? for now skin assumes only time
+// TODO: handle plugins' layouts using Qt' stuff - widgets may be clickable
+class ClockWidget final {
 public:
-  virtual ~ClockSkin() = default;
+  ClockWidget(const QDateTime& dt, std::shared_ptr<ClockSkin> skin)
+    : _skin(skin)
+  {
+    // initial value must be supplied to build layout
+    setDateTime(dt);
+  }
 
-  virtual std::shared_ptr<ClockRenderable> process(const QDateTime& dt) = 0;
+  void setDateTime(const QDateTime& dt)
+  {
+    _item = _skin->process(dt);
+  }
 
-  virtual bool supportsSeparatorAnimation() const noexcept = 0;
+  void animateSeparator()
+  {
+    _skin->animateSeparator();
+  }
 
-  virtual void setSeparatorAnimationEnabled(bool enabled) = 0;
-  inline void EnableSeparatorAnimation() { setSeparatorAnimationEnabled(true); }
-  inline void DisableSeparatorAnimation() { setSeparatorAnimationEnabled(false); }
+  void render(QPainter* p) const
+  {
+    if (!p) return;
+    StateGuard _(p);
+    p->translate(-_item->geometry().topLeft());
+    _item->render(p);
+  }
 
-  virtual void animateSeparator() = 0;
+  QRectF geometry() const
+  {
+    return _item->geometry();
+  }
+
+private:
+  std::shared_ptr<ClockSkin> _skin;
+  std::shared_ptr<ClockRenderable> _item;
 };

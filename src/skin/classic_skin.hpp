@@ -1,14 +1,32 @@
+/*
+    Digital Clock - beautiful customizable clock with plugins
+    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #pragma once
 
-#include "skin/clock_skin.hpp"
+#include "clock_skin.hpp"
 
 #include <memory>
 
 #include <QString>
 
-#include "core/linear_layout.hpp"
-#include "render/effects/composite.hpp"
-#include "skin/renderable_factory.hpp"
+#include "linear_layout.hpp"
+#include "effects/composite.hpp"
+#include "renderable_factory.hpp"
 
 // TODO: consider to add setter for factory object -
 // this will allow to change classic skins only with changing factory

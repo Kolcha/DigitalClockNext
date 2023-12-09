@@ -18,7 +18,7 @@
 
 #include <QTest>
 
-#include "core/layout_item.hpp"
+#include "layout_item.hpp"
 
 static_assert(!std::is_default_constructible_v<LayoutItem>, "is_default_constructible");
 static_assert(!std::is_copy_constructible_v<LayoutItem>, "is_copy_constructible");

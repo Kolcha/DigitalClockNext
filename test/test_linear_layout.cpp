@@ -18,7 +18,7 @@
 
 #include <QTest>
 
-#include "core/linear_layout.hpp"
+#include "linear_layout.hpp"
 
 class LinearLayoutTest : public QObject
 {

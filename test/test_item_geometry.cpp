@@ -18,7 +18,7 @@
 
 #include <QTest>
 
-#include "core/item_geometry.hpp"
+#include "item_geometry.hpp"
 
 static_assert(std::is_default_constructible_v<ItemGeometry>, "!is_default_constructible");
 static_assert(std::is_copy_constructible_v<ItemGeometry>, "!is_copy_constructible");
