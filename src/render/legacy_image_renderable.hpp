@@ -26,7 +26,7 @@
 #include <QPainter>
 #include <QSvgRenderer>
 
-#include "glyph_geometry.hpp"
+#include "item_geometry.hpp"
 
 class LegacyImageRenderable : public SkinResource {
 public:
@@ -41,11 +41,14 @@ public:
   qreal advanceX() const override { return m_gg.advanceX(); }
   qreal advanceY() const override { return m_gg.advanceY(); }
 
-protected:
-  void setGeometry(GlyphGeometry gg) noexcept { m_gg = std::move(gg); }
+  void setGeometry(const QRectF& r, qreal ax, qreal ay) noexcept
+  {
+    setGeometry(ItemGeometry(r, ax, ay));
+  }
+  void setGeometry(ItemGeometry gg) noexcept { m_gg = std::move(gg); }
 
 private:
-  GlyphGeometry m_gg;
+  ItemGeometry m_gg;
   std::size_t m_hash;   // do not calculate hash every time
 };
 
@@ -53,12 +56,12 @@ private:
 class RasterImageRenderable : public LegacyImageRenderable
 {
 public:
-  RasterImageRenderable(const QString& filename, const GlyphGeometryRaw& gargs)
+  explicit RasterImageRenderable(const QString& filename)
     : LegacyImageRenderable(filename)
     , m_icon(filename)
     , m_size(m_icon.availableSizes().constFirst())
   {
-    setGeometry({gargs, m_size});
+    setGeometry(ItemGeometry(m_size));
   }
 
   void render(QPainter* p) override
@@ -75,11 +78,11 @@ private:
 class SvgImageRenderable : public LegacyImageRenderable
 {
 public:
-  SvgImageRenderable(const QString& filename, const GlyphGeometryRaw& gargs)
+  explicit SvgImageRenderable(const QString& filename)
     : LegacyImageRenderable(filename)
     , m_renderer(std::make_unique<QSvgRenderer>(filename))
   {
-    setGeometry({gargs, m_renderer->viewBoxF().size()});
+    setGeometry(ItemGeometry(m_renderer->viewBoxF()));
   }
 
   void render(QPainter* p) override

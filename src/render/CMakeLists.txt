@@ -11,7 +11,6 @@ qt_add_library(render STATIC
     char_renderable.cpp
     char_renderable.hpp
     effect.hpp
-    glyph_geometry.hpp
     legacy_image_renderable.hpp
     rendering.cpp
     rendering.hpp

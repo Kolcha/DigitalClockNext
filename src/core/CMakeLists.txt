@@ -1,5 +1,4 @@
 qt_add_library(core STATIC
-    geometry.hpp
     hashable.hpp
     hasher.hpp
     item_geometry.hpp

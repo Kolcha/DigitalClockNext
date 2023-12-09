@@ -21,10 +21,19 @@
 #include "classic_skin_loader.hpp"
 #include "renderable_factory.hpp"
 
+#include <optional>
+
 #include <QDir>
 #include <QHash>
 
-#include "glyph_geometry.hpp"
+struct GlyphGeometryRaw {
+  std::optional<qreal> x;
+  std::optional<qreal> y;
+  std::optional<qreal> w;
+  std::optional<qreal> h;
+  std::optional<qreal> ax;
+  std::optional<qreal> ay;
+};
 
 using SkinFileInfo = QPair<QString, GlyphGeometryRaw>;
 using SkinFilesMap = QHash<QChar, SkinFileInfo>;
