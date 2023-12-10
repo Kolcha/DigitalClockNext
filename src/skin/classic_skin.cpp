@@ -23,7 +23,7 @@
 
 namespace {
 
-using ClassicSkinRenderable = ClockRenderable;
+using ClassicSkinRenderable = LayoutSkinElement;
 
 class ClassicLayoutBuilder final : public DateTimeStringBuilder {
 public:
@@ -140,7 +140,7 @@ std::shared_ptr<ClockRenderable> ClassicSkin::process(const QDateTime& dt)
   builder.setItemEffects(_item_effects);
   builder.setLayoutEffects(_layout_effects);
   builder.setSupportsCustomSeparator(supportsCustomSeparator());
-  builder.setSupportsSeparatorAnimation(supportsSeparatorAnimation());
+  builder.setSupportsSeparatorAnimation(_supports_separator_animation);
   builder.setCustomSeparators(_separators);
   builder.setSeparatorAnimationEnabled(_animate_separator);
   builder.setSeparatorVisible(_separator_visible);

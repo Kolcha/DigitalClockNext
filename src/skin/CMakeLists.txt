@@ -6,6 +6,8 @@ qt_add_library(skin STATIC
     clock_skin.hpp
     datetime_formatter.cpp
     datetime_formatter.hpp
+    error_skin.cpp
+    error_skin.hpp
     legacy_skin_loader.cpp
     legacy_skin_loader.hpp
     renderable_factory.hpp

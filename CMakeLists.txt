@@ -21,7 +21,6 @@ find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets Network Svg)
 
 set(PROJECT_SOURCES
         src/main.cpp
-        src/app/clock_widget_impl.hpp
         src/app/application.hpp
         src/app/application.cpp
         src/app/clock_window.cpp

@@ -42,11 +42,6 @@ public:
 
   std::shared_ptr<ClockRenderable> process(const QDateTime& dt) override;
 
-  bool supportsSeparatorAnimation() const noexcept override
-  {
-    return _supports_separator_animation;
-  }
-
   void setSeparatorAnimationEnabled(bool enabled) override
   {
     _animate_separator = enabled;

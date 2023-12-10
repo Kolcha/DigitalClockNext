@@ -31,6 +31,7 @@
 #include "effects/identity.hpp"
 #include "effects/texturing.hpp"
 #include "char_renderable_factory.hpp"
+#include "error_skin.hpp"
 #include "legacy_skin_loader.hpp"
 
 namespace {
@@ -137,7 +138,7 @@ SkinManager::SkinPtr SkinManagerImpl::loadSkin(const QString& skin_name) const
         return loadLegacySkin(iter.value().path);
     }
   }
-  return nullptr;
+  return std::make_unique<ErrorSkin>();
 }
 
 SkinManager::SkinPtr SkinManagerImpl::loadSkin(std::size_t i) const

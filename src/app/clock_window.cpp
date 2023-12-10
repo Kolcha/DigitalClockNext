@@ -44,17 +44,12 @@ struct ClockWindow::impl {
 ClockWindow::State::~State() = default;
 
 ClockWindow::ClockWindow(StatePtr state, QWidget* parent)
-  : ClockWindow(nullptr, QDateTime::currentDateTime(), std::move(state), parent)
-{
-}
-
-ClockWindow::ClockWindow(const SkinPtr& skin, const QDateTime& dt, StatePtr state, QWidget* parent)
   : QWidget(parent)
   , _impl(std::make_unique<impl>())
 {
   Q_ASSERT(state);
   _impl->state = std::move(state);
-  _impl->clock_widget = new ClockWidgetWrap(skin, dt, this);
+  _impl->clock_widget = new ClockWidgetWrap(this);
   // clock widget supports resize and fills all available space by default
   _impl->clock_widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   _impl->main_layout = new QGridLayout(this);
