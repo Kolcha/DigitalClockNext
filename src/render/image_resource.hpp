@@ -18,56 +18,50 @@
 
 #pragma once
 
-#include "skin_resource.hpp"
+#include "resource.hpp"
 
 #include <memory>
 
 #include <QIcon>
-#include <QPainter>
 #include <QSvgRenderer>
 
-#include "item_geometry.hpp"
+#include "geometry.hpp"
 
-class LegacyImageRenderable : public SkinResource {
+class ImageResource : public Resource {
 public:
-  explicit LegacyImageRenderable(const QString& filename)
+  explicit ImageResource(const QString& filename) noexcept
     : m_hash(qHash(filename))
   {}
 
-  std::size_t hash() const noexcept override { return m_hash; }
+  QRectF rect() const noexcept final { return m_gg.rect(); }
+  qreal advanceX() const noexcept final { return m_gg.advanceX(); }
+  qreal advanceY() const noexcept final { return m_gg.advanceY(); }
 
-  QRectF rect() const override { return m_gg.rect(); }
-
-  qreal advanceX() const override { return m_gg.advanceX(); }
-  qreal advanceY() const override { return m_gg.advanceY(); }
+  size_t cacheKey() const noexcept final { return m_hash; }
 
   void setGeometry(const QRectF& r, qreal ax, qreal ay) noexcept
   {
-    setGeometry(ItemGeometry(r, ax, ay));
+    setGeometry(Geometry(r, ax, ay));
   }
-  void setGeometry(ItemGeometry gg) noexcept { m_gg = std::move(gg); }
+  void setGeometry(Geometry gg) noexcept { m_gg = std::move(gg); }
 
 private:
-  ItemGeometry m_gg;
-  std::size_t m_hash;   // do not calculate hash every time
+  Geometry m_gg;
+  size_t m_hash;  // do not calculate hash every time
 };
 
 
-class RasterImageRenderable : public LegacyImageRenderable
-{
+class RasterImageResource : public ImageResource {
 public:
-  explicit RasterImageRenderable(const QString& filename)
-    : LegacyImageRenderable(filename)
+  explicit RasterImageResource(const QString& filename)
+    : ImageResource(filename)
     , m_icon(filename)
     , m_size(m_icon.availableSizes().constFirst())
   {
-    setGeometry(ItemGeometry(m_size));
+    setGeometry(Geometry(m_size));
   }
 
-  void render(QPainter* p) override
-  {
-    p->drawPixmap(rect().toRect(), m_icon.pixmap(m_size));
-  }
+  void draw(QPainter* p) override;
 
 private:
   QIcon m_icon;   // QIcon perfectly handles HighDPI
@@ -75,20 +69,16 @@ private:
 };
 
 
-class SvgImageRenderable : public LegacyImageRenderable
-{
+class SvgImageResource : public ImageResource {
 public:
-  explicit SvgImageRenderable(const QString& filename)
-    : LegacyImageRenderable(filename)
+  explicit SvgImageResource(const QString& filename)
+    : ImageResource(filename)
     , m_renderer(std::make_unique<QSvgRenderer>(filename))
   {
-    setGeometry(ItemGeometry(m_renderer->viewBoxF()));
+    setGeometry(Geometry(m_renderer->viewBoxF()));
   }
 
-  void render(QPainter* p) override
-  {
-    m_renderer->render(p, rect());
-  }
+  void draw(QPainter* p) override;
 
 private:
   std::unique_ptr<QSvgRenderer> m_renderer;

@@ -25,13 +25,13 @@
 #include <QDateTime>
 #include <QTimeZone>
 
-class ClockSkin;
+class Skin;
 
 class ClockWidgetWrap : public QWidget
 {
   Q_OBJECT
 
-  using SkinPtr = std::shared_ptr<ClockSkin>;
+  using SkinPtr = std::shared_ptr<Skin>;
 
 public:
   explicit ClockWidgetWrap(QWidget* parent = nullptr);
@@ -40,8 +40,8 @@ public:
   QSize sizeHint() const override;
   QSize minimumSizeHint() const override;
 
-  void setSkin(std::shared_ptr<ClockSkin> skin);
-  std::shared_ptr<ClockSkin> skin() const;
+  void setSkin(std::shared_ptr<Skin> skin);
+  std::shared_ptr<Skin> skin() const;
 
 public slots:
   void setDateTime(const QDateTime& dt);

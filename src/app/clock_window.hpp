@@ -29,7 +29,7 @@
 class QDateTime;
 class QTimeZone;
 
-class ClockSkin;
+class Skin;
 
 class ClockWindow : public QWidget
 {
@@ -46,7 +46,7 @@ public:
 
 private:
   using StatePtr = std::unique_ptr<State>;
-  using SkinPtr = std::shared_ptr<ClockSkin>;
+  using SkinPtr = std::shared_ptr<Skin>;
 
 public:
   // TODO: remove state from constructor - app should assign required properties instead
@@ -55,8 +55,8 @@ public:
 
   bool isSeparatorFlashes() const;
 
-  void setSkin(std::shared_ptr<ClockSkin> skin);
-  std::shared_ptr<ClockSkin> skin() const;
+  void setSkin(std::shared_ptr<Skin> skin);
+  std::shared_ptr<Skin> skin() const;
 
 signals:
   void settingsDialogRequested();
@@ -78,7 +78,7 @@ public slots:
   void setSnapToEdge(bool enable);
   void setSnapThreshold(int threshold);
 
-  // TODO: make ClockSkin QObject?
+  // TODO: make Skin QObject?
   void skinConfigured();
 
 protected:

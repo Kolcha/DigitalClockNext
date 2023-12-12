@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include "clock_skin.hpp"
-#include "rendering.hpp"
-#include "skin_resource.hpp"
+#include "skin.hpp"
+#include "layout.hpp"
+#include "resource.hpp"
 
 /**
  * @brief Error message implementation
@@ -30,14 +30,16 @@
  *
  * Message text is in English only, not translatable.
  */
-class ErrorMessage final : public SkinResource {
+class ErrorMessage final : public Resource {
 public:
-  QRectF rect() const override { return {0, 0, 400, 150}; }
+  QRectF rect() const noexcept override { return {0, 0, 400, 150}; }
 
-  qreal advanceX() const override { return rect().width(); }
-  qreal advanceY() const override { return rect().height(); }
+  qreal advanceX() const noexcept override { return rect().width(); }
+  qreal advanceY() const noexcept override { return rect().height(); }
 
-  void render(QPainter* p) override;
+  void draw(QPainter* p) override;
+
+  size_t cacheKey() const noexcept override { return qHash(_visible); }
 
   void setVisible(bool visible) noexcept { _visible = visible; }
   bool isVisible() const noexcept { return _visible; }
@@ -51,14 +53,14 @@ private:
  *
  * Can be used as "placeholder" in case of requested skin has not been loaded.
  */
-class ErrorSkin final : public ClockSkin {
+class ErrorSkin final : public Skin {
 public:
   ErrorSkin()
     : _msg(std::make_shared<ErrorMessage>())
-    , _renderable(std::make_shared<SimpleSkinElement>(_msg))
+    , _renderable(std::make_shared<SimpleGlyph>(_msg))
   {}
 
-  std::shared_ptr<ClockRenderable> process(const QDateTime& dt) override
+  std::shared_ptr<Glyph> process(const QDateTime& dt) noexcept override
   {
     Q_UNUSED(dt);
     return _renderable;
@@ -69,5 +71,5 @@ public:
 
 private:
   std::shared_ptr<ErrorMessage> _msg;
-  std::shared_ptr<ClockRenderable> _renderable;
+  std::shared_ptr<Glyph> _renderable;
 };

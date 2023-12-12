@@ -57,7 +57,7 @@ struct SettingsDialog::Impl {
   AppConfig* acfg;
   WindowConfig* wcfg;
 
-  std::shared_ptr<ClockSkin> last_skin;
+  std::shared_ptr<Skin> last_skin;
 
   Impl(ApplicationPrivate* a, std::size_t i) noexcept
     : app(a)
@@ -230,7 +230,7 @@ void SettingsDialog::on_colorization_strength_edit_valueChanged(int arg1)
   impl->wcfg->appearance().setColorizationStrength(strength);
 }
 
-void SettingsDialog::applySkin(std::shared_ptr<ClockSkin> skin)
+void SettingsDialog::applySkin(std::shared_ptr<Skin> skin)
 {
   impl->app->skin_manager()->configureSkin(skin, impl->idx);
   impl->wnd->setSkin(std::move(skin));

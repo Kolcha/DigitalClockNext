@@ -5,7 +5,7 @@
 #include <memory>
 
 class ApplicationPrivate;
-class ClockSkin;
+class Skin;
 
 namespace Ui {
 class SettingsDialog;
@@ -44,7 +44,7 @@ private slots:
   void on_colorization_strength_edit_valueChanged(int arg1);
 
 private:
-  void applySkin(std::shared_ptr<ClockSkin> skin);
+  void applySkin(std::shared_ptr<Skin> skin);
   void applyFlashingSeparator(bool enable);
   void applyTimeZoneSettings();
 

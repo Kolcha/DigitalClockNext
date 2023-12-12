@@ -25,7 +25,7 @@
 
 #include "app/clock_widget.hpp"
 #include "app/window_positioning.hpp"
-#include "clock_skin.hpp"
+#include "skin.hpp"
 
 struct ClockWindow::impl {
   StatePtr state;
@@ -87,7 +87,7 @@ bool ClockWindow::isSeparatorFlashes() const
   return _impl->separator_flashes;
 }
 
-void ClockWindow::setSkin(std::shared_ptr<ClockSkin> skin)
+void ClockWindow::setSkin(std::shared_ptr<Skin> skin)
 {
   if (skin) {
     skin->setSeparatorAnimationEnabled(_impl->separator_flashes);
@@ -95,7 +95,7 @@ void ClockWindow::setSkin(std::shared_ptr<ClockSkin> skin)
   _impl->clock_widget->setSkin(std::move(skin));
 }
 
-std::shared_ptr<ClockSkin> ClockWindow::skin() const
+std::shared_ptr<Skin> ClockWindow::skin() const
 {
   return _impl->clock_widget->skin();
 }

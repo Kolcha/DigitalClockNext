@@ -19,6 +19,8 @@
 #include <QTest>
 
 #include "linear_layout.hpp"
+#include "layout.hpp"
+#include "fake_resource.hpp"
 
 class LinearLayoutTest : public QObject
 {
@@ -37,7 +39,8 @@ private slots:
 private:
   void addItem(auto&&... args)
   {
-    _items.push_back(std::make_shared<LayoutItem>(args...));
+    auto res = std::make_shared<FakeResource>(args...);
+    _items.push_back(std::make_shared<SimpleGlyph>(res));
   }
 
 private:
@@ -62,7 +65,7 @@ void LinearLayoutTest::defaultConstruct()
   LinearLayout ll;
   QCOMPARE(ll.orientation(), Qt::Horizontal);
   QCOMPARE(ll.spacing(), 0.0);
-  ll(LayoutAlgorithm::ContainerType());
+  ll.apply(LayoutAlgorithm::ContainerType());
 }
 
 /*
@@ -82,7 +85,7 @@ void LinearLayoutTest::horizontal()
   LinearLayout ll(Qt::Horizontal, 0.0);
   QCOMPARE(ll.orientation(), Qt::Horizontal);
   QCOMPARE(ll.spacing(), 0.0);
-  ll(_items);
+  ll.apply(_items);
   QCOMPARE(_items.size(), 4);
   QCOMPARE(_items[0]->geometry(), QRectF( 0, -4, 5, 6));
   QCOMPARE(_items[1]->geometry(), QRectF( 4, -3, 4, 7));
@@ -120,7 +123,7 @@ void LinearLayoutTest::vertical()
   LinearLayout ll(Qt::Vertical, 0.0);
   QCOMPARE(ll.orientation(), Qt::Vertical);
   QCOMPARE(ll.spacing(), 0.0);
-  ll(_items);
+  ll.apply(_items);
   QCOMPARE(_items.size(), 4);
   QCOMPARE(_items[0]->geometry(), QRectF( 0, -4, 5, 6));
   QCOMPARE(_items[1]->geometry(), QRectF(-1,  1, 4, 7));
@@ -134,7 +137,7 @@ void LinearLayoutTest::changeSpacing()
   QCOMPARE(ll.spacing(), 0.0);
   ll.setSpacing(2.0);
   QCOMPARE(ll.spacing(), 2.0);
-  ll(_items);
+  ll.apply(_items);
   QCOMPARE(_items.size(), 4);
   QCOMPARE(_items[0]->geometry(), QRectF( 0, -4, 5, 6));
   QCOMPARE(_items[1]->geometry(), QRectF( 6, -3, 4, 7));
@@ -148,7 +151,7 @@ void LinearLayoutTest::changeOrientation()
   QCOMPARE(ll.orientation(), Qt::Horizontal);
   ll.setOrientation(Qt::Vertical);
   QCOMPARE(ll.orientation(), Qt::Vertical);
-  ll(_items);
+  ll.apply(_items);
   QCOMPARE(_items.size(), 4);
   QCOMPARE(_items[0]->geometry(), QRectF( 0, -4, 5, 6));
   QCOMPARE(_items[1]->geometry(), QRectF(-1,  1, 4, 7));

@@ -21,7 +21,6 @@
 
 #include <QFileDialog>
 #include <QColorDialog>
-#include <QPixmapCache>
 #include <QSignalBlocker>
 
 #include <gradient_dialog.h>
@@ -48,7 +47,14 @@ struct ClassicSkinSettings::Impl {
     , scfg(&wcfg->classicSkin())
     , skin(std::dynamic_pointer_cast<ClassicSkin>(wnd->skin()))
     , last_path(QDir::homePath())
-  {}
+  {
+    skin->disableCaching();
+  }
+
+  ~Impl()
+  {
+    skin->enableCaching();
+  }
 
   QString last_path;
 };
@@ -312,7 +318,6 @@ void ClassicSkinSettings::on_custom_seps_edit_textEdited(const QString& arg1)
 
 void ClassicSkinSettings::updateEffects()
 {
-  QPixmapCache::clear();
   impl->app->skin_manager()->configureSkin(impl->skin, impl->idx);
   impl->wnd->skinConfigured();
 }

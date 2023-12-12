@@ -20,7 +20,7 @@
 
 #include <QPainter>
 
-void ErrorMessage::render(QPainter* p)
+void ErrorMessage::draw(QPainter* p)
 {
   using namespace Qt::Literals::StringLiterals;
   p->fillRect(rect(), Qt::black);

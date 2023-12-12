@@ -18,37 +18,35 @@
 
 #pragma once
 
-#include "clock_skin.hpp"
+#include "skin.hpp"
 
 #include <memory>
 
+#include <QBrush>
 #include <QString>
 
 #include "linear_layout.hpp"
-#include "effects/composite.hpp"
-#include "renderable_factory.hpp"
+#include "resource.hpp"
 
 // TODO: consider to add setter for factory object -
 // this will allow to change classic skins only with changing factory
-class ClassicSkin : public ClockSkin {
+class ClassicSkin final : public Skin {
 public:
-  explicit ClassicSkin(std::shared_ptr<RenderableFactory> provider)
-    : _factory(std::move(provider))
+  explicit ClassicSkin(std::shared_ptr<ResourceFactory> factory)
+    : _factory(std::move(factory))
     , _layout_alg(std::make_shared<LinearLayout>())
-    , _item_effects(std::make_shared<CompositeEffect>())
-    , _layout_effects(std::make_shared<CompositeEffect>())
     , _format(QLatin1String("hh:mm a"))
   {}
 
-  std::shared_ptr<ClockRenderable> process(const QDateTime& dt) override;
+  std::shared_ptr<Glyph> process(const QDateTime& dt) override;
 
-  void setSeparatorAnimationEnabled(bool enabled) override
+  void setSeparatorAnimationEnabled(bool enabled) noexcept override
   {
     _animate_separator = enabled;
     _separator_visible = _separator_visible || !enabled;
   }
 
-  void animateSeparator() override
+  void animateSeparator() noexcept override
   {
     if (!_animate_separator) return;
     _separator_visible = !_separator_visible;
@@ -81,6 +79,12 @@ public:
     return _supports_custom_separator;
   }
 
+  bool supportsSeparatorAnimation() const noexcept
+  {
+    return _supports_separator_animation;
+  }
+
+
   void setOrientation(Qt::Orientation orientation)
   {
     _layout_alg->setOrientation(orientation);
@@ -91,25 +95,6 @@ public:
     _layout_alg->setSpacing(spacing);
   }
 
-  void addItemEffect(std::shared_ptr<Effect> effect)
-  {
-    _item_effects->addEffect(std::move(effect));
-  }
-
-  void addLayoutEffect(std::shared_ptr<Effect> effect)
-  {
-    _layout_effects->addEffect(std::move(effect));
-  }
-
-  void clearItemEffects()
-  {
-    _item_effects->clearEffects();
-  }
-
-  void clearLayoutEffects()
-  {
-    _layout_effects->clearEffects();
-  }
 
   void setFormat(QString format)
   {
@@ -118,19 +103,61 @@ public:
     _format = std::move(format);
   }
 
-  QString format() const { return _format; }
+  QString format() const noexcept { return _format; }
+
+
+  void setTexturePerElement(bool enable) noexcept
+  {
+    _texture_per_element = enable;
+  }
+  bool texturePerElement() const noexcept { return _texture_per_element; }
+
+  void setTextureStretch(bool enable) noexcept
+  {
+    _texture_stretch = enable;
+  }
+  bool textureStretch() const noexcept { return _texture_stretch; }
+
+  void setTexture(QBrush b) noexcept { _texture = std::move(b); }
+  const QBrush& texture() const noexcept { return _texture; }
+
+  void setBackgroundPerElement(bool enable) noexcept
+  {
+    _background_per_element = enable;
+  }
+  bool backgroundPerElement() const noexcept { return _background_per_element; }
+
+  void setBackgroundStretch(bool enable) noexcept
+  {
+    _background_stretch = enable;
+  }
+  bool backgroundStretch() const noexcept { return _background_stretch; }
+
+  void setBackground(QBrush b) noexcept { _background = std::move(b); }
+  const QBrush& background() const noexcept { return _background; }
+
+  void setCachingEnabled(bool enable) noexcept { _caching_enabled = enable; }
+  inline void enableCaching() noexcept { setCachingEnabled(true); }
+  inline void disableCaching() noexcept { setCachingEnabled(false); }
+  bool cachingEnabled() const noexcept { return _caching_enabled; }
 
 private:
-  std::shared_ptr<RenderableFactory> _factory;
+  std::shared_ptr<ResourceFactory> _factory;
   std::shared_ptr<LinearLayout> _layout_alg;
-  std::shared_ptr<CompositeEffect> _item_effects;
-  std::shared_ptr<CompositeEffect> _layout_effects;
   // public properties
   bool _supports_custom_separator = false;
   bool _supports_separator_animation = false;
+  // effects configuration
+  bool _texture_per_element = false;
+  bool _background_per_element = false;
+  bool _texture_stretch = false;
+  bool _background_stretch = false;
+  QBrush _texture = QColor(128, 64, 240);
+  QBrush _background = QColor(240, 224, 64);
   // internal state
   bool _animate_separator = true;
   bool _separator_visible = true;
+  bool _caching_enabled = true;
   QString _format;
   QString _separators;
 };

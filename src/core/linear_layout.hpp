@@ -71,7 +71,6 @@ public:
     _orientation = orientation == Qt::Vertical ? &vertical : &horizontal;
   }
 
-private:
   /// Reimplements LayoutAlgorithm::apply()
   void apply(const ContainerType& items) const override
   {
@@ -85,17 +84,17 @@ private:
 private:
   struct OrientationImpl {
     QTransform(*transform)(qreal);
-    qreal(LayoutItem::*advance)() const;
+    qreal(Glyph::*advance)() const;
   };
 
   static constexpr const OrientationImpl horizontal {
     [](qreal dx) { return QTransform::fromTranslate(dx, 0); },
-    &LayoutItem::advanceX
+    &Glyph::advanceX
   };
 
   static constexpr const OrientationImpl vertical {
     [](qreal dy) { return QTransform::fromTranslate(0, dy); },
-    &LayoutItem::advanceY
+    &Glyph::advanceY
   };
 
   const OrientationImpl* _orientation = &horizontal;

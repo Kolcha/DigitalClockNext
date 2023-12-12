@@ -18,26 +18,21 @@
 
 #pragma once
 
-#include "renderable_factory.hpp"
+#include <memory>
 
-#include <QFont>
+#include <QDateTime>
 
-#include "char_renderable.hpp"
+#include "glyph.hpp"
 
-class QCharRenderableFactory final : public RenderableFactory {
+class Skin {
 public:
-  explicit QCharRenderableFactory(const QFont& fnt)
-    : _fnt(fnt)
-  {}
+  virtual ~Skin() = default;
 
-public:
-  const QFont& font() const noexcept { return _fnt; }
+  virtual std::shared_ptr<Glyph> process(const QDateTime& dt) = 0;
 
-  std::shared_ptr<SkinResource> item(QChar ch) const override
-  {
-    return std::make_shared<QCharRenderable>(ch, _fnt);
-  }
+  virtual void setSeparatorAnimationEnabled(bool enabled) = 0;
+  inline void EnableSeparatorAnimation() { setSeparatorAnimationEnabled(true); }
+  inline void DisableSeparatorAnimation() { setSeparatorAnimationEnabled(false); }
 
-private:
-  QFont _fnt;
+  virtual void animateSeparator() = 0;
 };

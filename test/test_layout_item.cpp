@@ -18,19 +18,25 @@
 
 #include <QTest>
 
-#include "layout_item.hpp"
+#include "layout.hpp"
+#include "fake_resource.hpp"
 
-static_assert(!std::is_default_constructible_v<LayoutItem>, "is_default_constructible");
-static_assert(!std::is_copy_constructible_v<LayoutItem>, "is_copy_constructible");
-static_assert(std::is_move_constructible_v<LayoutItem>, "!is_move_constructible");
-static_assert(!std::is_copy_assignable_v<LayoutItem>, "is_copy_assignable");
-static_assert(std::is_move_assignable_v<LayoutItem>, "!is_move_assignable");
+static_assert(!std::is_default_constructible_v<SimpleGlyph>, "is_default_constructible");
+static_assert(!std::is_copy_constructible_v<SimpleGlyph>, "is_copy_constructible");
+static_assert(std::is_move_constructible_v<SimpleGlyph>, "!is_move_constructible");
+static_assert(!std::is_copy_assignable_v<SimpleGlyph>, "is_copy_assignable");
+static_assert(std::is_move_assignable_v<SimpleGlyph>, "!is_move_assignable");
 
 namespace {
 
-class FakeItem final : public LayoutItem {
+class FakeItem final : public GlyphBase {
 public:
-  FakeItem() : LayoutItem(QRectF(0, 0, 10, 10), 10, 10) {}
+  FakeItem() : GlyphBase()
+  {
+    setGeometry(QRectF(0, 0, 10, 10), 10, 10);
+  }
+
+  size_t cacheKey() const override { return 0; }
 
   int geometryUpdateCount() const noexcept { return _update_counter; }
 
@@ -39,6 +45,8 @@ protected:
   {
     ++_update_counter;
   }
+
+  void doDraw([[maybe_unused]] QPainter* p) override {}
 
 private:
   int _update_counter = 0;
@@ -60,7 +68,7 @@ private slots:
   void parentTracking();
 
 private:
-  std::shared_ptr<LayoutItem> _test_item;
+  std::shared_ptr<SimpleGlyph> _test_item;
   std::shared_ptr<FakeItem> _fake_item;
 
   static constexpr QRectF r = QRectF(-2.0, -15.0, 10.0, 20.0);
@@ -71,7 +79,9 @@ private:
 void LayoutItemTest::init()
 {
   _fake_item = std::make_shared<FakeItem>();
-  _test_item = std::make_shared<LayoutItem>(r, ax, ay, _fake_item);
+  auto res = std::make_shared<FakeResource>(r, ax, ay);
+  _test_item = std::make_shared<SimpleGlyph>(res);
+  _test_item->setParent(_fake_item);
 }
 
 void LayoutItemTest::cleanup()
@@ -121,7 +131,7 @@ void LayoutItemTest::updateGeometry()
   _test_item->updateGeometry();
   QCOMPARE(_fake_item->geometryUpdateCount(), 1);
   // should not crash without parent
-  _test_item->setParent(std::shared_ptr<LayoutItem>());
+  _test_item->setParent(std::shared_ptr<SimpleGlyph>());
   QVERIFY(!_test_item->parent());
   _test_item->updateGeometry();
   QCOMPARE(_fake_item->geometryUpdateCount(), 1);

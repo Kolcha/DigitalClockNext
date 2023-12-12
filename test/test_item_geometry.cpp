@@ -18,13 +18,13 @@
 
 #include <QTest>
 
-#include "item_geometry.hpp"
+#include "geometry.hpp"
 
-static_assert(std::is_default_constructible_v<ItemGeometry>, "!is_default_constructible");
-static_assert(std::is_copy_constructible_v<ItemGeometry>, "!is_copy_constructible");
-static_assert(std::is_move_constructible_v<ItemGeometry>, "!is_move_constructible");
-static_assert(std::is_copy_assignable_v<ItemGeometry>, "!is_copy_assignable");
-static_assert(std::is_move_assignable_v<ItemGeometry>, "!is_move_assignable");
+static_assert(std::is_default_constructible_v<Geometry>, "!is_default_constructible");
+static_assert(std::is_copy_constructible_v<Geometry>, "!is_copy_constructible");
+static_assert(std::is_move_constructible_v<Geometry>, "!is_move_constructible");
+static_assert(std::is_copy_assignable_v<Geometry>, "!is_copy_assignable");
+static_assert(std::is_move_assignable_v<Geometry>, "!is_move_assignable");
 
 class ItemGeometryTest : public QObject
 {
@@ -54,14 +54,14 @@ private:
 
 void ItemGeometryTest::defaultConstruct()
 {
-  constexpr ItemGeometry g;
+  constexpr Geometry g;
   QVERIFY(g.rect().isNull());
   QCOMPARE(g.rect(), QRectF());
 }
 
 void ItemGeometryTest::constructFromRectAndAxAy()
 {
-  constexpr ItemGeometry g(r, ax, ay);
+  constexpr Geometry g(r, ax, ay);
   QCOMPARE(g.rect(), r);
   QCOMPARE(g.advanceX(), ax);
   QCOMPARE(g.advanceY(), ay);
@@ -69,7 +69,7 @@ void ItemGeometryTest::constructFromRectAndAxAy()
 
 void ItemGeometryTest::constructFromAllParameters()
 {
-  constexpr ItemGeometry g(x, y, w, h, ax, ay);
+  constexpr Geometry g(x, y, w, h, ax, ay);
   QCOMPARE(g.rect(), r);
   QCOMPARE(g.advanceX(), ax);
   QCOMPARE(g.advanceY(), ay);
@@ -77,7 +77,7 @@ void ItemGeometryTest::constructFromAllParameters()
 
 void ItemGeometryTest::constructFromRectParameters()
 {
-  constexpr ItemGeometry g(x, y, w, h);
+  constexpr Geometry g(x, y, w, h);
   QCOMPARE(g.rect(), r);
   QCOMPARE(g.advanceX(), w);
   QCOMPARE(g.advanceY(), h);
@@ -85,7 +85,7 @@ void ItemGeometryTest::constructFromRectParameters()
 
 void ItemGeometryTest::constructFromRect()
 {
-  constexpr ItemGeometry g(r);
+  constexpr Geometry g(r);
   QCOMPARE(g.rect(), r);
   QCOMPARE(g.advanceX(), r.width());
   QCOMPARE(g.advanceY(), r.height());
@@ -93,7 +93,7 @@ void ItemGeometryTest::constructFromRect()
 
 void ItemGeometryTest::constructFromSize()
 {
-  constexpr ItemGeometry g(QSizeF(w, h));
+  constexpr Geometry g(QSizeF(w, h));
   QCOMPARE(g.rect(), QRectF(0, 0, w, h));
   QCOMPARE(g.advanceX(), w);
   QCOMPARE(g.advanceY(), h);
@@ -101,7 +101,7 @@ void ItemGeometryTest::constructFromSize()
 
 void ItemGeometryTest::setRect()
 {
-  ItemGeometry g(r, ax, ay);
+  Geometry g(r, ax, ay);
 
   QRectF new_rect(-5, -18, 12, 24);
   const QRectF c_new_rect = new_rect;
@@ -118,7 +118,7 @@ void ItemGeometryTest::setRect()
 
 void ItemGeometryTest::setAdvance()
 {
-  ItemGeometry g(r, ax, ay);
+  Geometry g(r, ax, ay);
 
   constexpr qreal new_ax = 12.0;
   constexpr qreal new_ay = 24.0;
@@ -141,16 +141,16 @@ void ItemGeometryTest::setAdvance()
 
 void ItemGeometryTest::comparison()
 {
-  ItemGeometry g1(-2, -11, 12, 18, 10, 16);
-  ItemGeometry g2(-3, -10, 10, 12, 11, 13);
+  Geometry g1(-2, -11, 12, 18, 10, 16);
+  Geometry g2(-3, -10, 10, 12, 11, 13);
 
-  QCOMPARE_NE(g1, ItemGeometry());
-  QCOMPARE_NE(g2, ItemGeometry());
+  QCOMPARE_NE(g1, Geometry());
+  QCOMPARE_NE(g2, Geometry());
   QCOMPARE_NE(g1, g2);
 
   g1 = g2;
   QCOMPARE_EQ(g1, g2);
-  QCOMPARE_EQ(ItemGeometry(), ItemGeometry());
+  QCOMPARE_EQ(Geometry(), Geometry());
 }
 
 QTEST_MAIN(ItemGeometryTest)

@@ -21,17 +21,17 @@
 #include <QPainter>
 #include <QPaintEvent>
 
-#include "clock_skin.hpp"
+#include "skin.hpp"
 
 struct ClockWidgetWrap::impl {
-  std::shared_ptr<ClockSkin> skin;
-  std::shared_ptr<ClockRenderable> item;
+  std::shared_ptr<Skin> skin;
+  std::shared_ptr<Glyph> item;
   QDateTime dt;
   QTimeZone tz;
   qreal kx = 1;
   qreal ky = 1;
 
-  impl(const QDateTime& dt, const std::shared_ptr<ClockSkin>& skin)
+  impl(const QDateTime& dt, const std::shared_ptr<Skin>& skin)
     : skin(skin)
     , dt(dt.toUTC())
     , tz(dt.timeZone())
@@ -41,7 +41,7 @@ struct ClockWidgetWrap::impl {
   QSizeF scaledSize() const noexcept
   {
     if (!item) return {400., 150.};
-    auto s = item->item()->geometry().size();
+    auto s = item->geometry().size();
     return {kx * s.width(), ky * s.height()};
   }
 };
@@ -64,14 +64,14 @@ QSize ClockWidgetWrap::minimumSizeHint() const
   return _impl->scaledSize().toSize();
 }
 
-void ClockWidgetWrap::setSkin(std::shared_ptr<ClockSkin> skin)
+void ClockWidgetWrap::setSkin(std::shared_ptr<Skin> skin)
 {
   _impl->skin = std::move(skin);
   _impl->item.reset();
   skinConfigured();
 }
 
-std::shared_ptr<ClockSkin> ClockWidgetWrap::skin() const
+std::shared_ptr<Skin> ClockWidgetWrap::skin() const
 {
   return _impl->skin;
 }
@@ -122,11 +122,11 @@ void ClockWidgetWrap::paintEvent(QPaintEvent* event)
 {
   if (!_impl->item) return;
   QPainter p(this);
-  auto s = _impl->item->item()->geometry().size();
+  auto s = _impl->item->geometry().size();
   p.setRenderHint(QPainter::Antialiasing);
   p.setRenderHint(QPainter::SmoothPixmapTransform);
   p.scale(width() / s.width(), height() / s.height());
-  p.translate(-_impl->item->item()->geometry().topLeft());
-  _impl->item->render(&p);
+  p.translate(-_impl->item->geometry().topLeft());
+  _impl->item->draw(&p);
   event->accept();
 }

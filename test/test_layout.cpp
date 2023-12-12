@@ -19,17 +19,26 @@
 #include <QTest>
 
 #include "layout.hpp"
+#include "fake_resource.hpp"
 
-static_assert(std::is_default_constructible_v<Layout>, "!is_default_constructible");
-static_assert(!std::is_copy_constructible_v<LayoutItem>, "is_copy_constructible");
-static_assert(std::is_move_constructible_v<LayoutItem>, "!is_move_constructible");
-static_assert(!std::is_copy_assignable_v<LayoutItem>, "is_copy_assignable");
-static_assert(std::is_move_assignable_v<LayoutItem>, "!is_move_assignable");
+static_assert(std::is_default_constructible_v<CompositeGlyph>, "!is_default_constructible");
+static_assert(!std::is_copy_constructible_v<CompositeGlyph>, "is_copy_constructible");
+static_assert(std::is_move_constructible_v<CompositeGlyph>, "!is_move_constructible");
+static_assert(!std::is_copy_assignable_v<CompositeGlyph>, "is_copy_assignable");
+static_assert(std::is_move_assignable_v<CompositeGlyph>, "!is_move_assignable");
 
 namespace {
 
+class TestGlyph : public SimpleGlyph {
+public:
+  TestGlyph(QRectF r, qreal ax, qreal ay)
+      : SimpleGlyph(std::make_shared<FakeResource>(std::move(r), ax, ay))
+  {}
+};
+
+
 template<typename L>
-  requires std::is_base_of_v<LayoutItem, L>
+  requires std::is_base_of_v<GlyphBase, L>
 class UpdateCounter final : public L {
 public:
   using L::L;
@@ -82,7 +91,7 @@ private slots:
   void init();
   void cleanup();
 
-  void addItems();
+  void addGlyphs();
   void algorithmChange();
   void itemsGeometryReset();
   void nestedLayouts();
@@ -91,16 +100,16 @@ private slots:
   void assignParent();
 
 private:
-  std::shared_ptr<UpdateCounter<Layout>> _test_layout;
-  std::shared_ptr<UpdateCounter<Layout>> _parent_layout;
+  std::shared_ptr<UpdateCounter<CompositeGlyph>> _test_layout;
+  std::shared_ptr<UpdateCounter<CompositeGlyph>> _parent_layout;
 
   static constexpr QRectF r = QRectF(0, 0, 4, 4);
 };
 
 void LayoutTest::init()
 {
-  _parent_layout = std::make_shared<UpdateCounter<Layout>>();
-  _test_layout = std::make_shared<UpdateCounter<Layout>>();
+  _parent_layout = std::make_shared<UpdateCounter<CompositeGlyph>>();
+  _test_layout = std::make_shared<UpdateCounter<CompositeGlyph>>();
   _test_layout->setParent(_parent_layout);
 }
 
@@ -110,11 +119,11 @@ void LayoutTest::cleanup()
   _parent_layout.reset();
 }
 
-void LayoutTest::addItems()
+void LayoutTest::addGlyphs()
 {
-  // addItem() should not cause geometry update
-  auto new_item = std::make_shared<UpdateCounter<LayoutItem>>(r, r.width(), r.height());
-  _test_layout->addItem(new_item);
+  // addGlyph() should not cause geometry update
+  auto new_item = std::make_shared<UpdateCounter<TestGlyph>>(r, r.width(), r.height());
+  _test_layout->addGlyph(new_item);
   QVERIFY(_test_layout->rect().isNull());
   QVERIFY(_test_layout->geometry().isNull());
   QCOMPARE(new_item->geometryUpdateCount(), 0);
@@ -132,8 +141,8 @@ void LayoutTest::addItems()
 void LayoutTest::algorithmChange()
 {
   // setAlgorithm() should not cause geometry update
-  _test_layout->addItem(std::make_shared<LayoutItem>(r, r.width(), r.height()));
-  _test_layout->addItem(std::make_shared<LayoutItem>(r, r.width(), r.height()));
+  _test_layout->addGlyph(std::make_shared<TestGlyph>(r, r.width(), r.height()));
+  _test_layout->addGlyph(std::make_shared<TestGlyph>(r, r.width(), r.height()));
   _test_layout->updateGeometry();
   QCOMPARE(_test_layout->rect(), r);
   QCOMPARE(_test_layout->geometryUpdateCount(), 1);
@@ -153,8 +162,8 @@ void LayoutTest::itemsGeometryReset()
 {
   // should reset items' geometry before applying algorithm
   _test_layout->setAlgorithm(std::make_shared<TestAlgorithm>(r.width()));
-  _test_layout->addItem(std::make_shared<LayoutItem>(r, r.width(), r.height()));
-  _test_layout->addItem(std::make_shared<LayoutItem>(r, r.width(), r.height()));
+  _test_layout->addGlyph(std::make_shared<TestGlyph>(r, r.width(), r.height()));
+  _test_layout->addGlyph(std::make_shared<TestGlyph>(r, r.width(), r.height()));
   // call updateGeometry() twice, verification is done in TestAlgorithm
   _test_layout->updateGeometry();
   _test_layout->updateGeometry();
@@ -165,10 +174,10 @@ void LayoutTest::nestedLayouts()
 {
   // should propagate geometry changes through nested layouts
   auto build_layout = [](auto algo) {
-    auto l = std::make_shared<Layout>(std::move(algo));
-    l->addItem(std::make_shared<LayoutItem>(r, r.width(), r.height()));
-    l->addItem(std::make_shared<LayoutItem>(r, r.width(), r.height()));
-    l->addItem(std::make_shared<LayoutItem>(r, r.width(), r.height()));
+    auto l = std::make_shared<CompositeGlyph>(std::move(algo));
+    l->addGlyph(std::make_shared<TestGlyph>(r, r.width(), r.height()));
+    l->addGlyph(std::make_shared<TestGlyph>(r, r.width(), r.height()));
+    l->addGlyph(std::make_shared<TestGlyph>(r, r.width(), r.height()));
     l->updateGeometry();
     return l;
   };
@@ -177,15 +186,15 @@ void LayoutTest::nestedLayouts()
 
   auto l1 = build_layout(algo);
   QCOMPARE(l1->rect(), QRectF(0, 0, 3*r.width(), r.height()));
-  _test_layout->addItem(l1);
+  _test_layout->addGlyph(l1);
 
   auto l2 = build_layout(algo);
   QCOMPARE(l2->rect(), QRectF(0, 0, 3*r.width(), r.height()));
-  _test_layout->addItem(l2);
+  _test_layout->addGlyph(l2);
 
   auto l3 = build_layout(algo);
   QCOMPARE(l3->rect(), QRectF(0, 0, 3*r.width(), r.height()));
-  _test_layout->addItem(l3);
+  _test_layout->addGlyph(l3);
 
   _test_layout->setAlgorithm(std::make_unique<TestAlgorithm>(3*r.width()));
   _test_layout->updateGeometry();
@@ -212,8 +221,8 @@ void LayoutTest::algorithmOwnership()
 void LayoutTest::itemsOwnership()
 {
   // should take ownership of items
-  auto item = std::make_shared<Layout>();
-  _test_layout->addItem(item);
+  auto item = std::make_shared<CompositeGlyph>();
+  _test_layout->addGlyph(item);
   QCOMPARE(item.use_count(), 2);
   QCOMPARE(_test_layout->items().size(), 1);
   item.reset();
@@ -225,9 +234,9 @@ void LayoutTest::itemsOwnership()
 void LayoutTest::assignParent()
 {
   // should set self as parent for added item
-  auto item = std::make_shared<Layout>();
+  auto item = std::make_shared<CompositeGlyph>();
   QVERIFY(!item->parent());
-  _test_layout->addItem(item);
+  _test_layout->addGlyph(item);
   QVERIFY(item->parent());
   QCOMPARE(item->parent().get(), _test_layout.get());
 }

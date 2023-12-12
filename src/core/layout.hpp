@@ -1,153 +1,128 @@
-/*
-    Digital Clock - beautiful customizable clock with plugins
-    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 #pragma once
 
-#include "layout_item.hpp"
+#include "glyph.hpp"
 
-#include <algorithm>
-#include <iterator>
-#include <memory>
-#include <numeric>
-
+#include "geometry.hpp"
 #include "layout_algorithm.hpp"
+#include "resource.hpp"
 
-/**
- * @brief Layout representation
- *
- * Default-constructed object has invalid geometry and should not be used
- * in such state. At least one item must be added to the Layout.
- *
- * Layout's behavior can be customized by providing LayoutAlgorithm object.
- * By default no algorithm is set, and layout will not adjust its items'
- * geometry, just calculate bounding rect containing all of them.
- *
- * @warning Even items of this type are not supposed to be shared,
- * they must be created using `std::make_shared()`.
- *
- * @see LayoutItem
- */
-class Layout : public LayoutItem {
+// common logic for "resource-based" glyphs
+// implements geometry changes propagation,
+// geometry caching, and other common tasks
+class GlyphBase : public Glyph {
 public:
-  /**
-   * @brief Constructor
-   *
-   * Constructs Layout with given @a algorithm preset. @a algorithm can be null,
-   * in such case it is equal to default constructor.
-   *
-   * Created object has invalid geometry in any case, as it has no items.
-   *
-   * @param algorithm - desired layout algorithm
-   *
-   * @see setAlgorithm(), addItem()
-   */
-  explicit Layout(std::shared_ptr<LayoutAlgorithm> algorithm = nullptr) noexcept
-      : LayoutItem()
-      , _algorithm(std::move(algorithm))
-  {}
+  GlyphBase() noexcept = default;
+  GlyphBase& operator=(GlyphBase &&other) noexcept = default;
+  GlyphBase& operator=(const GlyphBase &) noexcept = delete;
+  GlyphBase(GlyphBase&& other) noexcept = default;
+  GlyphBase(const GlyphBase& other) noexcept = delete;
 
-  /**
-   * @brief Add item to layout
-   *
-   * Newly added item also may be a Layout, nested layouts are supported.
-   *
-   * @note For efficiency reasons, no geometry update happens after adding
-   * the item, any geometry updates must be requested explicitly.
-   *
-   * @param item - item to add
-   *
-   * @see LayoutItem::updateGeometry()
-   */
-  void addItem(std::shared_ptr<LayoutItem> item)
+  QRectF geometry() const noexcept final { return _curr_geom.rect(); }
+  qreal advanceX() const noexcept final { return _curr_geom.advanceX(); }
+  qreal advanceY() const noexcept final { return _curr_geom.advanceY(); }
+
+  QRectF rect() const noexcept final { return _init_geom.rect(); }
+  QTransform transform() const noexcept final { return _transform; }
+
+  void draw(QPainter* p) final;
+
+  bool isVisible() const noexcept final { return _visible; }
+  void setVisible(bool visible) noexcept final { _visible = visible; }
+
+  void setGeometry(QRectF r, qreal ax, qreal ay) final
   {
-    if (!item) return;
-    item->setParent(shared_from_this());
-    _items.push_back(std::move(item));
+    _init_geom.setRect(std::move(r));
+    _init_geom.setAdvance(ax, ay);
+    updateCachedGeometry();
   }
 
-  /**
-   * @brief Change current layout algorithm
-   *
-   * Sets Layout's algorithm to given one.
-   *
-   * Null is acceptable, in such case all child items will have their
-   * initial geometry after updateGeometry() call and layout's geometry
-   * will be set to corresponding bounding rect.
-   *
-   * @note For efficiency reasons, no geometry update happens after algorithm
-   * change, any geometry updates must be requested explicitly.
-   *
-   * @param algorithm - desired algorithm
-   *
-   * @see LayoutItem::updateGeometry()
-   */
-  void setAlgorithm(std::shared_ptr<LayoutAlgorithm> algorithm) noexcept
+  void setTransform(QTransform t) final
   {
-    _algorithm = std::move(algorithm);
+    _transform = std::move(t);
+    updateCachedGeometry();
   }
 
-  /**
-   * @brief Current layout items
-   *
-   * Returned container contains items in the same order as they were added.
-   *
-   * @return container with all layout items
-   *
-   * @see addItem()
-   */
-  const auto& items() const noexcept { return _items; }
+  void updateGeometry() final;
 
-  /**
-   * @brief Currently used algorithm
-   *
-   * Provided for convenience. May be null, test before use.
-   *
-   * @return current LayoutAlgorithm object as shared pointer
-   *
-   * @see setAlgorithm()
-   */
-  const auto& algorithm() const noexcept { return _algorithm; }
+  void resetGeometry() noexcept override
+  {
+    _curr_geom = _init_geom;
+    _transform = QTransform();
+  }
+
+  std::shared_ptr<Glyph> parent() const noexcept final { return _parent.lock(); }
+  void setParent(std::weak_ptr<Glyph> p) noexcept final { _parent = std::move(p); }
 
 protected:
-  /**
-   * @brief Reimplements LayoutItem::doUpdateGeometry()
-   *
-   * Updates/recalculates layout's geometry.
-   * Does nothing if no items have been added.
-   */
-  void doUpdateGeometry() override
+  virtual void doUpdateGeometry() { updateCachedGeometry(); }
+
+  virtual void doDraw(QPainter* p) = 0;
+
+private:
+  void updateCachedGeometry();
+
+private:
+  QTransform _transform;
+  Geometry _init_geom;
+  Geometry _curr_geom;
+  bool _visible = true;
+  std::weak_ptr<Glyph> _parent;
+};
+
+
+// implements geometry using "skin resource"
+class SimpleGlyph : public GlyphBase {
+public:
+  explicit SimpleGlyph(std::shared_ptr<Resource> r)
+      : _res(std::move(r))
   {
-    std::ranges::for_each(_items, [](auto&& i) noexcept { i->resetGeometry(); });
+    Q_ASSERT(_res);
+    setGeometry(_res->rect(), _res->advanceX(), _res->advanceY());
+  }
 
-    if (_items.empty()) return;
+  size_t cacheKey() const override { return _res->cacheKey(); }
 
-    if (_algorithm) (*_algorithm)(_items);
-    // calculate bounding rect
-    QRectF r = std::accumulate(
-        std::next(_items.begin()), _items.end(),
-        _items.front()->geometry(),
-        [](const auto& r, const auto& i) { return r | i->geometry(); }
-    );
-    // set it as original rect
-    setInitialGeometry(r, r.width(), r.height());
+protected:
+  void doDraw(QPainter* p) override { _res->draw(p); }
+
+private:
+  std::shared_ptr<Resource> _res;
+};
+
+
+// "layout"
+class CompositeGlyph : public GlyphBase {
+public:
+  explicit CompositeGlyph(std::shared_ptr<LayoutAlgorithm> a = nullptr) noexcept
+      : GlyphBase()
+      , _algorithm(std::move(a))
+  {}
+
+  void addGlyph(std::shared_ptr<Glyph> g)
+  {
+    g->setParent(weak_from_this());
+    _items.push_back(std::move(g));
+  }
+
+  void setAlgorithm(std::shared_ptr<LayoutAlgorithm> a) noexcept
+  {
+    _algorithm = std::move(a);
+  }
+
+  const auto& algorithm() const noexcept { return _algorithm; }
+  const auto& items() const noexcept { return _items; }
+
+  size_t cacheKey() const override;
+
+protected:
+  void doUpdateGeometry() override;
+
+  void doDraw(QPainter* p) override
+  {
+    for (const auto& i : _items) i->draw(p);
   }
 
 private:
   std::shared_ptr<LayoutAlgorithm> _algorithm;
-  LayoutAlgorithm::ContainerType _items;
+  std::vector<std::shared_ptr<Glyph>> _items;
 };

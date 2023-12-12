@@ -26,7 +26,7 @@
 #include <QFileInfo>
 #include <QSettings>
 
-#include "legacy_image_renderable.hpp"
+#include "image_resource.hpp"
 
 namespace {
 
@@ -152,7 +152,7 @@ GeometryMap read_geometry_map(const QDir& skin_dir)
   return geometry;
 }
 
-std::shared_ptr<LegacyImageRenderable> createRenderable(const QString& path)
+std::shared_ptr<ImageResource> createResource(const QString& path)
 {
   QFileInfo fi(path);
 
@@ -162,15 +162,15 @@ std::shared_ptr<LegacyImageRenderable> createRenderable(const QString& path)
   QString ext = fi.suffix().toLower();
 
   if (ext == "svg")
-    return std::make_shared<SvgImageRenderable>(path);
+    return std::make_shared<SvgImageResource>(path);
 
   if (ext == "png")
-    return std::make_shared<RasterImageRenderable>(path);
+    return std::make_shared<RasterImageResource>(path);
 
   return nullptr;
 }
 
-void updateGeometry(LegacyImageRenderable& item, const GlyphGeometryRaw& gargs)
+void updateGeometry(ImageResource& item, const GlyphGeometryRaw& gargs)
 {
   const auto& r = item.rect();
   qreal x = gargs.x.value_or(r.x());
@@ -184,19 +184,19 @@ void updateGeometry(LegacyImageRenderable& item, const GlyphGeometryRaw& gargs)
 
 } // namespace
 
-LegacyRenderableFactory::LegacyRenderableFactory(const SkinFilesMap& files)
+ImageResourceFactory::ImageResourceFactory(const SkinFilesMap& files)
 {
   for (auto iter = files.begin(); iter != files.end(); ++iter) {
     const auto& [file, gargs] = iter.value();
-    auto renderable = createRenderable(file);
-    if (renderable)
-      updateGeometry(*renderable, gargs);
-    _resources[iter.key()] = renderable;
+    auto resource = createResource(file);
+    if (resource)
+      updateGeometry(*resource, gargs);
+    _resources[iter.key()] = resource;
   }
   _has_2_seps = _resources.contains(':') && _resources.contains(' ');
 }
 
-std::shared_ptr<SkinResource> LegacyRenderableFactory::item(QChar ch) const
+std::shared_ptr<Resource> ImageResourceFactory::create(QChar ch) const
 {
   if (ch.isSpace())
     ch = ' ';

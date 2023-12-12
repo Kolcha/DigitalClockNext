@@ -19,18 +19,53 @@
 #include "classic_skin.hpp"
 
 #include "datetime_formatter.hpp"
-#include "rendering.hpp"
+#include "effects.hpp"
+#include "layout.hpp"
 
 namespace {
 
-using ClassicSkinRenderable = LayoutSkinElement;
+template<class Effect>
+std::shared_ptr<Glyph> createEffect(std::shared_ptr<Glyph> inner, QBrush b, bool stretch)
+{
+  auto effect = std::make_shared<Effect>(std::move(inner));
+  effect->setBrush(std::move(b));
+  effect->setStretch(stretch);
+  return effect;
+}
+
+std::shared_ptr<Glyph> buildEffectsStack(std::shared_ptr<Glyph> g, auto tx_cfg, auto bg_cfg)
+{
+  auto [bg, bg_stretch] = bg_cfg;
+  auto [tx, tx_stretch] = tx_cfg;
+
+  if (bg.style() == Qt::NoBrush && tx.style() == Qt::NoBrush) {
+    // do nothing
+  }
+  if (bg.style() != Qt::NoBrush && tx.style() == Qt::NoBrush) {
+    g = createEffect<BackgroundEffect>(std::move(g), std::move(bg), bg_stretch);
+  }
+  if (bg.style() == Qt::NoBrush && tx.style() != Qt::NoBrush) {
+    g = createEffect<TexturingEffect>(std::move(g), std::move(tx), tx_stretch);
+    g = std::make_shared<NewSurfaceEffect>(std::move(g));
+  }
+  if (bg.style() != Qt::NoBrush && tx.style() != Qt::NoBrush) {
+    g = createEffect<TexturingEffect>(std::move(g), std::move(tx), tx_stretch);
+    g = std::make_shared<NewSurfaceEffect>(std::move(g));
+    g = createEffect<BackgroundEffect>(std::move(g), std::move(bg), bg_stretch);
+  }
+
+  return g;
+}
+
 
 class ClassicLayoutBuilder final : public DateTimeStringBuilder {
 public:
-  ClassicLayoutBuilder(std::shared_ptr<RenderableFactory> provider,
-                       std::shared_ptr<LayoutAlgorithm> layout_alg)
-    : _layout(std::make_shared<ClassicSkinRenderable>())
-    , _factory(std::move(provider))
+  ClassicLayoutBuilder(std::shared_ptr<ResourceFactory> factory,
+                       std::shared_ptr<LayoutAlgorithm> layout_alg,
+                       const ClassicSkin& skin)
+    : _layout(std::make_shared<CompositeGlyph>())
+    , _factory(std::move(factory))
+    , _skin(skin)
   {
     _layout->setAlgorithm(std::move(layout_alg));
   }
@@ -61,16 +96,6 @@ public:
     addItem(c)->setVisible(separator_visible);
   }
 
-  void setItemEffects(std::shared_ptr<CompositeEffect> effects) noexcept
-  {
-    _item_effects = std::move(effects);
-  }
-
-  void setLayoutEffects(std::shared_ptr<CompositeEffect> effects) noexcept
-  {
-    _layout_effects = std::move(effects);
-  }
-
   void setSupportsCustomSeparator(bool supports) noexcept
   {
     _supports_custom_separator = supports;
@@ -96,31 +121,52 @@ public:
     _separator_visible = visible;
   }
 
-  std::shared_ptr<ClockRenderable> getLayout()
+  std::shared_ptr<Glyph> getLayout()
   {
     Q_ASSERT(_layout->rect().isNull());
     _layout->updateGeometry();
-    _layout->addEffect(_layout_effects);
-    return std::move(_layout);
+    return buildLayoutStack(std::move(_layout));
   }
 
 private:
-  std::shared_ptr<SkinElement> addItem(QChar c)
+  std::shared_ptr<Glyph> addItem(QChar c)
   {
     auto r = _factory->item(c);
     if (!r)
       return nullptr;
-    auto item = std::make_shared<SimpleSkinElement>(std::move(r));
-    item->addEffect(_item_effects);
-    _layout->addElement(item);
+    auto item = buildItemStack(std::make_shared<SimpleGlyph>(std::move(r)));
+    _layout->addGlyph(item);
     return item;
   }
 
+  std::shared_ptr<Glyph> buildItemStack(std::shared_ptr<Glyph> item) const
+  {
+    std::pair<QBrush, bool> tx;
+    std::pair<QBrush, bool> bg;
+    if (_skin.texturePerElement()) tx.first = _skin.texture();
+    if (_skin.backgroundPerElement()) bg.first = _skin.background();
+    tx.second = _skin.textureStretch();
+    bg.second = _skin.backgroundStretch();
+    item = buildEffectsStack(std::move(item), std::move(tx), std::move(bg));
+    if (_skin.cachingEnabled()) item = std::make_shared<CachedGlyph>(item);
+    return item;
+  }
+
+  std::shared_ptr<Glyph> buildLayoutStack(std::shared_ptr<Glyph> item) const
+  {
+    std::pair<QBrush, bool> tx;
+    std::pair<QBrush, bool> bg;
+    if (!_skin.texturePerElement()) tx.first = _skin.texture();
+    if (!_skin.backgroundPerElement()) bg.first = _skin.background();
+    tx.second = _skin.textureStretch();
+    bg.second = _skin.backgroundStretch();
+    return buildEffectsStack(std::move(item), std::move(tx), std::move(bg));
+  }
+
 private:
-  std::shared_ptr<ClassicSkinRenderable> _layout;
-  std::shared_ptr<RenderableFactory> _factory;
-  std::shared_ptr<CompositeEffect> _item_effects;
-  std::shared_ptr<CompositeEffect> _layout_effects;
+  std::shared_ptr<CompositeGlyph> _layout;
+  std::shared_ptr<ResourceFactory> _factory;
+  const ClassicSkin& _skin;
 
   bool _supports_custom_separator = false;
   bool _supports_separator_animation = false;
@@ -133,14 +179,12 @@ private:
 
 } // namespace
 
-std::shared_ptr<ClockRenderable> ClassicSkin::process(const QDateTime& dt)
+std::shared_ptr<Glyph> ClassicSkin::process(const QDateTime& dt)
 {
   // TODO: consider to make it class member instead
-  ClassicLayoutBuilder builder(_factory, _layout_alg);
-  builder.setItemEffects(_item_effects);
-  builder.setLayoutEffects(_layout_effects);
+  ClassicLayoutBuilder builder(_factory, _layout_alg, *this);
   builder.setSupportsCustomSeparator(supportsCustomSeparator());
-  builder.setSupportsSeparatorAnimation(_supports_separator_animation);
+  builder.setSupportsSeparatorAnimation(supportsSeparatorAnimation());
   builder.setCustomSeparators(_separators);
   builder.setSeparatorAnimationEnabled(_animate_separator);
   builder.setSeparatorVisible(_separator_visible);

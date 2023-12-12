@@ -29,43 +29,43 @@
  * No any sanity checks or values validation is implemeted here, consider this class
  * as just a C struct only with a lot of convenient constructors.
  */
-class ItemGeometry final {
+class Geometry final {
 public:
   /// Constructs invalid geometry
   /// @see setRect(), setAdvance()
-  constexpr ItemGeometry() noexcept = default;
+  constexpr Geometry() noexcept = default;
 
   /// Constructs geometry based on rect @a r and advance values @a ax and @a ay
-  constexpr ItemGeometry(const QRectF& r, qreal ax, qreal ay) noexcept
+  constexpr Geometry(const QRectF& r, qreal ax, qreal ay) noexcept
       : _rect(r), _a_sz(ax, ay) {}
   /**
    * @overload
    * First 4 arguments (@a x, @a y, @a w, @a h) are used to build the rect, @a ax and @a ay
    * are used to initialize corresponding advance values.
    */
-  constexpr ItemGeometry(qreal x, qreal y, qreal w, qreal h, qreal ax, qreal ay) noexcept
+  constexpr Geometry(qreal x, qreal y, qreal w, qreal h, qreal ax, qreal ay) noexcept
       : _rect(x, y, w, h), _a_sz(ax, ay) {}
   /**
    * @overload
    * All arguments (@a x, @a y, @a w, @a h) are used to build rect, @a w and @a h
    * initialize horizontal and vertical advance correspondingly.
    */
-  constexpr ItemGeometry(qreal x, qreal y, qreal w, qreal h) noexcept
-      : ItemGeometry(x, y, w, h, w, h) {}
+  constexpr Geometry(qreal x, qreal y, qreal w, qreal h) noexcept
+      : Geometry(x, y, w, h, w, h) {}
   /**
    * @overload
    * Creates geometry based on given rect @a r. Rect's width and height are used to
    * initialize horizontal and vertical advance correspondingly.
    */
-  explicit constexpr ItemGeometry(const QRectF& r) noexcept
-      : ItemGeometry(r, r.width(), r.height()) {}
+  explicit constexpr Geometry(const QRectF& r) noexcept
+      : Geometry(r, r.width(), r.height()) {}
   /**
    * @overload
    * Creates geometry based only on size @a sz. Sets rect's top-left to (0,0),
    * horizontal advance to @a sz.width(), vertical advance to @a sz.height()
    */
-  explicit constexpr ItemGeometry(const QSizeF& sz) noexcept
-      : ItemGeometry(0.0, 0.0, sz.width(), sz.height()) {}
+  explicit constexpr Geometry(const QSizeF& sz) noexcept
+      : Geometry(0.0, 0.0, sz.width(), sz.height()) {}
 
   /// Bounding rect
   constexpr const QRectF& rect() const noexcept { return _rect; }
@@ -87,11 +87,11 @@ public:
   /// Changes both advance values to @a ax and @a ay
   constexpr void setAdvance(qreal ax, qreal ay) noexcept { _a_sz = QSizeF(ax, ay); }
 
-  friend constexpr inline bool operator==(const ItemGeometry& lhs, const ItemGeometry& rhs) noexcept
+  friend constexpr inline bool operator==(const Geometry& lhs, const Geometry& rhs) noexcept
   {
     return lhs._rect == rhs._rect && lhs._a_sz == rhs._a_sz;
   }
-  friend constexpr inline bool operator!=(const ItemGeometry& lhs, const ItemGeometry& rhs) noexcept
+  friend constexpr inline bool operator!=(const Geometry& lhs, const Geometry& rhs) noexcept
   {
     return !(lhs == rhs);
   }

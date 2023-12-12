@@ -19,7 +19,7 @@
 #pragma once
 
 #include "classic_skin_loader.hpp"
-#include "renderable_factory.hpp"
+#include "resource.hpp"
 
 #include <optional>
 
@@ -38,16 +38,16 @@ struct GlyphGeometryRaw {
 using SkinFileInfo = QPair<QString, GlyphGeometryRaw>;
 using SkinFilesMap = QHash<QChar, SkinFileInfo>;
 
-class LegacyRenderableFactory final : public RenderableFactory {
+class ImageResourceFactory final : public ResourceFactory {
 public:
-  explicit LegacyRenderableFactory(const SkinFilesMap& files);
+  explicit ImageResourceFactory(const SkinFilesMap& files);
 
-  std::shared_ptr<SkinResource> item(QChar ch) const override;
+  std::shared_ptr<Resource> create(QChar ch) const override;
 
   bool supportsSeparatorAnimation() const noexcept { return _has_2_seps; }
 
 private:
-  QHash<QChar, std::shared_ptr<SkinResource>> _resources;
+  QHash<QChar, std::shared_ptr<Resource>> _resources;
   bool _has_2_seps = false;
 };
 
@@ -64,7 +64,7 @@ public:
     if (!valid())
       return nullptr;
 
-    auto factory = std::make_unique<LegacyRenderableFactory>(_files);
+    auto factory = std::make_unique<ImageResourceFactory>(_files);
     bool supports_separator_animation = factory->supportsSeparatorAnimation();
     auto skin = std::make_unique<ClassicSkin>(std::move(factory));
     skin->setSupportsSeparatorAnimation(supports_separator_animation);

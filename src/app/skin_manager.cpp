@@ -19,7 +19,6 @@
 #include "skin_manager.hpp"
 
 #include <algorithm>
-#include <array>
 #include <iterator>
 #include <optional>
 
@@ -27,10 +26,7 @@
 #include <QDir>
 #include <QStandardPaths>
 
-#include "effects/background.hpp"
-#include "effects/identity.hpp"
-#include "effects/texturing.hpp"
-#include "char_renderable_factory.hpp"
+#include "font_resource.hpp"
 #include "error_skin.hpp"
 #include "legacy_skin_loader.hpp"
 
@@ -44,74 +40,6 @@ std::optional<QString> tryLegacySkin(const QString& path)
   return std::nullopt;
 }
 
-// item bg, texture + layout bg, texture
-auto classicSkinBrushes(const WindowConfig& cfg)
-{
-  std::array<std::pair<QBrush, bool>, 4> brushes;
-
-  if (auto brush = cfg.classicSkin().getBackground(); brush.style() != Qt::NoBrush) {
-    bool stretch = cfg.classicSkin().getBackgroundStretch();
-    if (cfg.classicSkin().getBackgroundPerElement())
-      brushes[0] = {std::move(brush), stretch}; // item bg
-    else
-      brushes[2] = {std::move(brush), stretch}; // layout bg
-  }
-
-  if (auto brush = cfg.classicSkin().getTexture(); brush.style() != Qt::NoBrush) {
-    bool stretch = cfg.classicSkin().getTextureStretch();
-    if (cfg.classicSkin().getTexturePerElement())
-      brushes[1] = {std::move(brush), stretch}; // item texture
-    else
-      brushes[3] = {std::move(brush), stretch}; // layout texture
-  }
-
-  return brushes;
-}
-
-struct EffectSurface {
-  void(ClassicSkin::*addEffect)(std::shared_ptr<Effect>);
-};
-
-constexpr EffectSurface kSurfaceItem {
-  &ClassicSkin::addItemEffect,
-};
-
-constexpr EffectSurface kSurfaceLayout {
-  &ClassicSkin::addLayoutEffect,
-};
-
-void configureEffects(auto bg_cfg, auto tx_cfg, ClassicSkin& skin, EffectSurface surface)
-{
-  auto [bg, bg_stretch] = bg_cfg;
-  auto [tx, tx_stretch] = tx_cfg;
-
-  if (bg.style() == Qt::NoBrush && tx.style() == Qt::NoBrush) {
-    (skin.*surface.addEffect)(std::make_unique<IdentityEffect>());
-  }
-  if (bg.style() != Qt::NoBrush && tx.style() == Qt::NoBrush) {
-    (skin.*surface.addEffect)(std::make_unique<BackgroundEffect>(std::move(bg), bg_stretch));
-    (skin.*surface.addEffect)(std::make_unique<IdentityEffect>());
-  }
-  if (bg.style() == Qt::NoBrush && tx.style() != Qt::NoBrush) {
-    (skin.*surface.addEffect)(std::make_unique<IdentityEffect>());
-    (skin.*surface.addEffect)(std::make_unique<TexturingEffect>(std::move(tx), tx_stretch));
-  }
-  if (bg.style() != Qt::NoBrush && tx.style() != Qt::NoBrush) {
-    (skin.*surface.addEffect)(std::make_unique<BackgroundEffect>(std::move(bg), bg_stretch));
-    auto composite_effect = std::make_unique<CompositeEffect>();
-    composite_effect->addEffect(std::make_unique<IdentityEffect>());
-    composite_effect->addEffect(std::make_unique<TexturingEffect>(std::move(tx), tx_stretch));
-    (skin.*surface.addEffect)(std::move(composite_effect));
-  }
-}
-
-void loadClassicSkinEffects(ClassicSkin& skin, const WindowConfig& cfg)
-{
-  auto [item_bg, item_tx, layout_bg, layout_tx] = classicSkinBrushes(cfg);
-  configureEffects(std::move(item_bg), std::move(item_tx), skin, kSurfaceItem);
-  configureEffects(std::move(layout_bg), std::move(layout_tx), skin, kSurfaceLayout);
-}
-
 } // namespace
 
 SkinManagerImpl::SkinManagerImpl(ApplicationPrivate* app, QObject* parent)
@@ -123,7 +51,7 @@ SkinManagerImpl::SkinManagerImpl(ApplicationPrivate* app, QObject* parent)
 
 SkinManager::SkinPtr SkinManagerImpl::loadSkin(const QFont& font) const
 {
-  auto provider = std::make_shared<QCharRenderableFactory>(font);
+  auto provider = std::make_shared<FontResourceFactory>(font);
   auto skin = std::make_shared<ClassicSkin>(std::move(provider));
   skin->setSupportsCustomSeparator(true);
   return skin;
@@ -228,10 +156,12 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
 
   const auto& cfg = _app->app_config()->window(i);
 
-  skin->clearItemEffects();
-  skin->clearLayoutEffects();
-
-  loadClassicSkinEffects(*skin, cfg);
+  skin->setTexturePerElement(cfg.classicSkin().getTexturePerElement());
+  skin->setTextureStretch(cfg.classicSkin().getTextureStretch());
+  skin->setTexture(cfg.classicSkin().getTexture());
+  skin->setBackgroundPerElement(cfg.classicSkin().getBackgroundPerElement());
+  skin->setBackgroundStretch(cfg.classicSkin().getBackgroundStretch());
+  skin->setBackground(cfg.classicSkin().getBackground());
 
   skin->setFormat(cfg.classicSkin().getTimeFormat());
   skin->setOrientation(cfg.classicSkin().getOrientation());
