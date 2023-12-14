@@ -39,10 +39,20 @@ public:
   };
 
   class WindowState final : public StateBaseQVariant {
-    STATE_OPTION_Q(QPoint, Pos, QPoint(75, 50))
+    STATE_OPTION_Q(QPoint, Pos, default_pos())
     STATE_OPTION_Q(Qt::Alignment, Alignment, Qt::AlignTop | Qt::AlignLeft)
   public:
-    using StateBaseQVariant::StateBaseQVariant;
+    WindowState(auto backend, std::size_t i)
+      : StateBaseQVariant(std::move(backend), QString("State/Window%1").arg(i))
+      , _index(i)
+    {}
+  private:
+    inline QPoint default_pos() const noexcept
+    {
+      return QPoint(75, 50) + QPoint(25, 20) * static_cast<int>(_index);
+    }
+  private:
+    std::size_t _index;
   };
 
   explicit AppState(std::shared_ptr<BackendType> backend)
@@ -59,7 +69,7 @@ public:
 
     auto& wnd_state = _wnd_states[i];
     if (!wnd_state)
-      wnd_state = std::make_unique<WindowState>(_backend, QString("State/Window%1").arg(i));
+      wnd_state = std::make_unique<WindowState>(_backend, i);
 
     return *wnd_state;
   }

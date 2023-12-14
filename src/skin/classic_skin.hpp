@@ -36,7 +36,9 @@ public:
     : _factory(std::move(factory))
     , _layout_alg(std::make_shared<LinearLayout>())
     , _format(QLatin1String("hh:mm a"))
-  {}
+  {
+    updateConfigHash();   // to set default value
+  }
 
   std::shared_ptr<Glyph> process(const QDateTime& dt) override;
 
@@ -44,7 +46,7 @@ public:
   {
     _animate_separator = enabled;
     _separator_visible = _separator_visible || !enabled;
-    configurationChanged();
+    handleConfigChange();
   }
 
   void animateSeparator() noexcept override
@@ -73,7 +75,7 @@ public:
   void setCustomSeparators(QString separators)
   {
     _separators = std::move(separators);
-    configurationChanged();
+    handleConfigChange();
   }
 
   bool supportsCustomSeparator() const noexcept
@@ -90,13 +92,13 @@ public:
   void setOrientation(Qt::Orientation orientation)
   {
     _layout_alg->setOrientation(orientation);
-    configurationChanged();
+    handleConfigChange();
   }
 
   void setSpacing(qreal spacing)
   {
     _layout_alg->setSpacing(spacing);
-    configurationChanged();
+    handleConfigChange();
   }
 
 
@@ -105,7 +107,7 @@ public:
     if (format.isEmpty() || format == _format)
       return;
     _format = std::move(format);
-    configurationChanged();
+    handleConfigChange();
   }
 
   QString format() const noexcept { return _format; }
@@ -114,42 +116,42 @@ public:
   void setTexturePerElement(bool enable)
   {
     _texture_per_element = enable;
-    configurationChanged();
+    handleConfigChange();
   }
   bool texturePerElement() const noexcept { return _texture_per_element; }
 
   void setTextureStretch(bool enable)
   {
     _texture_stretch = enable;
-    configurationChanged();
+    handleConfigChange();
   }
   bool textureStretch() const noexcept { return _texture_stretch; }
 
   void setTexture(QBrush b)
   {
     _texture = std::move(b);
-    configurationChanged();
+    handleConfigChange();
   }
   const QBrush& texture() const noexcept { return _texture; }
 
   void setBackgroundPerElement(bool enable)
   {
     _background_per_element = enable;
-    configurationChanged();
+    handleConfigChange();
   }
   bool backgroundPerElement() const noexcept { return _background_per_element; }
 
   void setBackgroundStretch(bool enable)
   {
     _background_stretch = enable;
-    configurationChanged();
+    handleConfigChange();
   }
   bool backgroundStretch() const noexcept { return _background_stretch; }
 
   void setBackground(QBrush b)
   {
     _background = std::move(b);
-    configurationChanged();
+    handleConfigChange();
   }
   const QBrush& background() const noexcept { return _background; }
 
@@ -157,6 +159,10 @@ public:
   inline void enableCaching() noexcept { setCachingEnabled(true); }
   inline void disableCaching() noexcept { setCachingEnabled(false); }
   bool cachingEnabled() const noexcept { return _caching_enabled; }
+
+private:
+  void handleConfigChange();
+  void updateConfigHash();
 
 private:
   std::shared_ptr<ResourceFactory> _factory;
@@ -177,4 +183,5 @@ private:
   bool _caching_enabled = true;
   QString _format;
   QString _separators;
+  size_t _skin_cfg_hash = 0;
 };

@@ -2,6 +2,7 @@ qt_add_library(core STATIC
     geometry.hpp
     glyph.cpp
     glyph.hpp
+    hasher.hpp
     layout.cpp
     layout.hpp
     layout_algorithm.hpp

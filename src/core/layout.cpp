@@ -5,6 +5,8 @@
 
 #include <QPainter>
 
+#include "hasher.hpp"
+
 void GlyphBase::draw(QPainter* p)
 {
   if (!isVisible()) return;
@@ -32,12 +34,7 @@ void GlyphBase::updateCachedGeometry()
 
 size_t CompositeGlyph::cacheKey() const
 {
-  return std::transform_reduce(
-      _items.begin(), _items.end(),
-      static_cast<size_t>(0),
-      std::bit_xor{},
-      [](const auto& i) { return i->cacheKey(); }
-      );
+  return hasher(_items);
 }
 
 void CompositeGlyph::doUpdateGeometry()

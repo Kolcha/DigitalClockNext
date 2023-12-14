@@ -20,6 +20,7 @@
 
 #include "datetime_formatter.hpp"
 #include "effects.hpp"
+#include "hasher.hpp"
 #include "layout.hpp"
 
 namespace {
@@ -56,6 +57,25 @@ std::shared_ptr<Glyph> buildEffectsStack(std::shared_ptr<Glyph> g, auto tx_cfg, 
 
   return g;
 }
+
+
+class CacheKeyUpdater final : public GlyphDecorator {
+public:
+  CacheKeyUpdater(std::shared_ptr<Glyph> inner, size_t hash) noexcept
+    : GlyphDecorator(std::move(inner))
+    , _skin_cfg_hash(hash)
+  {}
+
+  size_t cacheKey() const override
+  {
+    return GlyphDecorator::cacheKey() ^ _skin_cfg_hash;
+  }
+
+  void setSkinConfigHash(size_t hash) noexcept { _skin_cfg_hash = hash; }
+
+private:
+  size_t _skin_cfg_hash = 0;
+};
 
 
 class ClassicLayoutBuilder final : public DateTimeStringBuilder {
@@ -121,6 +141,8 @@ public:
     _separator_visible = visible;
   }
 
+  void setSkinConfigHash(size_t hash) noexcept { _skin_cfg_hash = hash; }
+
   std::shared_ptr<Glyph> getLayout()
   {
     Q_ASSERT(_layout->rect().isNull());
@@ -148,6 +170,7 @@ private:
     tx.second = _skin.textureStretch();
     bg.second = _skin.backgroundStretch();
     item = buildEffectsStack(std::move(item), std::move(tx), std::move(bg));
+    item = std::make_shared<CacheKeyUpdater>(std::move(item), _skin_cfg_hash);
     if (_skin.cachingEnabled()) item = std::make_shared<CachedGlyph>(item);
     return item;
   }
@@ -175,6 +198,8 @@ private:
 
   quint32 _separator_idx = 0;
   QString _separators;
+
+  size_t _skin_cfg_hash = 0;
 };
 
 } // namespace
@@ -188,6 +213,20 @@ std::shared_ptr<Glyph> ClassicSkin::process(const QDateTime& dt)
   builder.setCustomSeparators(_separators);
   builder.setSeparatorAnimationEnabled(_animate_separator);
   builder.setSeparatorVisible(_separator_visible);
+  builder.setSkinConfigHash(_skin_cfg_hash);
   FormatDateTime(dt, _format, builder);
   return builder.getLayout();
+}
+
+void ClassicSkin::handleConfigChange()
+{
+  configurationChanged();
+  updateConfigHash();
+}
+
+void ClassicSkin::updateConfigHash()
+{
+  _skin_cfg_hash = hasher(
+      _texture, _texture_stretch, _texture_per_element,
+      _background, _background_stretch, _background_per_element);
 }

@@ -11,11 +11,8 @@
 
 void ApplicationPrivate::initWindows(QScreen* primary_screen, QList<QScreen*> screens)
 {
-  // TODO: what about multiple windows on the same screen, e.g. per time zone?
-  if (_app_config->global().getWindowPerScreen())
-    std::ranges::for_each(std::as_const(screens), [this](auto s) { createWindow(s); });
-  else
-    createWindow(primary_screen);
+  int windows_count = std::clamp(_app_config->global().getWindowsCount(), 1 , 8);
+  for (int i = 0; i < windows_count; i++) createWindow(nullptr);
   std::ranges::for_each(_windows, [this](auto&& wnd) { configureWindow(wnd.get()); });
 }
 
@@ -23,7 +20,7 @@ void ApplicationPrivate::configureWindow(ClockWindow* wnd)
 {
   std::size_t idx = _app_config->global().getConfigPerWindow() ? window_index(wnd) : 0;
   const auto& cfg = _app_config->window(idx);
-  auto skin = _skin_manager->loadSkin(idx);
+  auto skin = idx != window_index(wnd) ? window(0)->skin() : _skin_manager->loadSkin(idx);
   wnd->setSkin(std::move(skin));
   wnd->setSnapToEdge(_app_config->global().getSnapToEdge());
   wnd->setSnapThreshold(_app_config->global().getSnapThreshold());
