@@ -23,8 +23,16 @@
 #include <QDateTime>
 
 #include "glyph.hpp"
+#include "observable.hpp"
 
-class Skin {
+class SkinObserver {
+public:
+  virtual ~SkinObserver() = default;
+
+  virtual void onConfigurationChanged() = 0;
+};
+
+class Skin : public Observable<SkinObserver> {
 public:
   virtual ~Skin() = default;
 
@@ -35,4 +43,9 @@ public:
   inline void DisableSeparatorAnimation() { setSeparatorAnimationEnabled(false); }
 
   virtual void animateSeparator() = 0;
+
+protected:
+  // implementations should call this to notify about its configuration change
+  // it also should be called when geometry is changed too
+  void configurationChanged() const { notify(&SkinObserver::onConfigurationChanged); }
 };

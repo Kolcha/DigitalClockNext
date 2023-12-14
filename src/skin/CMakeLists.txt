@@ -8,6 +8,7 @@ qt_add_library(skin STATIC
     error_skin.hpp
     legacy_skin_loader.cpp
     legacy_skin_loader.hpp
+    observable.hpp
     skin.hpp
 )
 target_link_libraries(skin PUBLIC render core)

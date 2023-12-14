@@ -51,12 +51,11 @@ public slots:
 
   void scale(qreal kx, qreal ky);
 
-  void skinConfigured();
-
 protected:
   void paintEvent(QPaintEvent* event) override;
 
 private:
   struct impl;
   std::unique_ptr<impl> _impl;
+  friend class SkinEventsListener;
 };

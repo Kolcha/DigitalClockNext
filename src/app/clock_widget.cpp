@@ -23,9 +23,12 @@
 
 #include "skin.hpp"
 
+class SkinEventsListener;
+
 struct ClockWidgetWrap::impl {
   std::shared_ptr<Skin> skin;
   std::shared_ptr<Glyph> item;
+  std::shared_ptr<SkinEventsListener> listener;
   QDateTime dt;
   QTimeZone tz;
   qreal kx = 1;
@@ -38,6 +41,12 @@ struct ClockWidgetWrap::impl {
   {
   }
 
+  void updateItem(const QDateTime& dt)
+  {
+    if (!skin) return;
+    item = skin->process(dt.toTimeZone(tz));
+  }
+
   QSizeF scaledSize() const noexcept
   {
     if (!item) return {400., 150.};
@@ -46,10 +55,32 @@ struct ClockWidgetWrap::impl {
   }
 };
 
+
+class SkinEventsListener final : public SkinObserver {
+public:
+  explicit SkinEventsListener(ClockWidgetWrap* w) noexcept
+      : _widget(w)
+  {
+    Q_ASSERT(_widget);
+  }
+
+  void onConfigurationChanged() override
+  {
+    _widget->_impl->updateItem(_widget->_impl->dt);
+    _widget->updateGeometry();
+    _widget->update();
+  }
+
+private:
+  ClockWidgetWrap* _widget;
+};
+
+
 ClockWidgetWrap::ClockWidgetWrap(QWidget* parent)
   : QWidget(parent)
   , _impl(std::make_unique<impl>(QDateTime::currentDateTime(), nullptr))
 {
+  _impl->listener = std::make_shared<SkinEventsListener>(this);
 }
 
 ClockWidgetWrap::~ClockWidgetWrap() = default;
@@ -66,9 +97,12 @@ QSize ClockWidgetWrap::minimumSizeHint() const
 
 void ClockWidgetWrap::setSkin(std::shared_ptr<Skin> skin)
 {
+  if (skin) skin->addObserver(_impl->listener);
   _impl->skin = std::move(skin);
   _impl->item.reset();
-  skinConfigured();
+  _impl->updateItem(_impl->dt);
+  updateGeometry();
+  update();
 }
 
 std::shared_ptr<Skin> ClockWidgetWrap::skin() const
@@ -80,7 +114,7 @@ void ClockWidgetWrap::setDateTime(const QDateTime& dt)
 {
   _impl->dt = dt.toUTC();
   if (!_impl->skin) return;
-  _impl->item = _impl->skin->process(dt.toTimeZone(_impl->tz));
+  _impl->updateItem(dt);
   updateGeometry();
   update();
 }
@@ -102,18 +136,6 @@ void ClockWidgetWrap::scale(qreal kx, qreal ky)
 {
   _impl->kx = kx;
   _impl->ky = ky;
-  updateGeometry();
-  update();
-}
-
-void ClockWidgetWrap::skinConfigured()
-{
-  if (!_impl->skin) return;
-  // skin properties may vary depending on skin type and
-  // they are unknown here and may be modified outside
-  // we should be notified about these changes to rebuild
-  // widget's geometry after skin properties modification
-  _impl->item = _impl->skin->process(_impl->dt.toTimeZone(_impl->tz));
   updateGeometry();
   update();
 }

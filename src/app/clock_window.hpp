@@ -78,9 +78,6 @@ public slots:
   void setSnapToEdge(bool enable);
   void setSnapThreshold(int threshold);
 
-  // TODO: make Skin QObject?
-  void skinConfigured();
-
 protected:
   void contextMenuEvent(QContextMenuEvent* event) override;
   void mousePressEvent(QMouseEvent* event) override;

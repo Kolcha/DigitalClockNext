@@ -40,10 +40,11 @@ public:
 
   std::shared_ptr<Glyph> process(const QDateTime& dt) override;
 
-  void setSeparatorAnimationEnabled(bool enabled) noexcept override
+  void setSeparatorAnimationEnabled(bool enabled) override
   {
     _animate_separator = enabled;
     _separator_visible = _separator_visible || !enabled;
+    configurationChanged();
   }
 
   void animateSeparator() noexcept override
@@ -69,9 +70,10 @@ public:
    * ':' is used by default if there is not enough charaters for replacement.
    * Set an empty string to restore the default behavior.
    */
-  void setCustomSeparators(QString separators) noexcept
+  void setCustomSeparators(QString separators)
   {
     _separators = std::move(separators);
+    configurationChanged();
   }
 
   bool supportsCustomSeparator() const noexcept
@@ -88,11 +90,13 @@ public:
   void setOrientation(Qt::Orientation orientation)
   {
     _layout_alg->setOrientation(orientation);
+    configurationChanged();
   }
 
   void setSpacing(qreal spacing)
   {
     _layout_alg->setSpacing(spacing);
+    configurationChanged();
   }
 
 
@@ -101,39 +105,52 @@ public:
     if (format.isEmpty() || format == _format)
       return;
     _format = std::move(format);
+    configurationChanged();
   }
 
   QString format() const noexcept { return _format; }
 
 
-  void setTexturePerElement(bool enable) noexcept
+  void setTexturePerElement(bool enable)
   {
     _texture_per_element = enable;
+    configurationChanged();
   }
   bool texturePerElement() const noexcept { return _texture_per_element; }
 
-  void setTextureStretch(bool enable) noexcept
+  void setTextureStretch(bool enable)
   {
     _texture_stretch = enable;
+    configurationChanged();
   }
   bool textureStretch() const noexcept { return _texture_stretch; }
 
-  void setTexture(QBrush b) noexcept { _texture = std::move(b); }
+  void setTexture(QBrush b)
+  {
+    _texture = std::move(b);
+    configurationChanged();
+  }
   const QBrush& texture() const noexcept { return _texture; }
 
-  void setBackgroundPerElement(bool enable) noexcept
+  void setBackgroundPerElement(bool enable)
   {
     _background_per_element = enable;
+    configurationChanged();
   }
   bool backgroundPerElement() const noexcept { return _background_per_element; }
 
-  void setBackgroundStretch(bool enable) noexcept
+  void setBackgroundStretch(bool enable)
   {
     _background_stretch = enable;
+    configurationChanged();
   }
   bool backgroundStretch() const noexcept { return _background_stretch; }
 
-  void setBackground(QBrush b) noexcept { _background = std::move(b); }
+  void setBackground(QBrush b)
+  {
+    _background = std::move(b);
+    configurationChanged();
+  }
   const QBrush& background() const noexcept { return _background; }
 
   void setCachingEnabled(bool enable) noexcept { _caching_enabled = enable; }

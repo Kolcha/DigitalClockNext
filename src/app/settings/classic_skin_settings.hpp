@@ -50,9 +50,6 @@ private slots:
   void on_custom_seps_edit_textEdited(const QString& arg1);
 
 private:
-  void updateEffects();
-
-private:
   Ui::ClassicSkinSettings* ui;
   struct Impl;
   std::unique_ptr<Impl> impl;

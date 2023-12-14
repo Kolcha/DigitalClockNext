@@ -109,21 +109,18 @@ void ClassicSkinSettings::on_orientation_cbox_activated(int index)
 {
   auto orientation = ui->orientation_cbox->itemData(index).value<Qt::Orientation>();
   impl->skin->setOrientation(orientation);
-  impl->wnd->skinConfigured();
   impl->scfg->setOrientation(orientation);
 }
 
 void ClassicSkinSettings::on_spacing_edit_valueChanged(int arg1)
 {
   impl->skin->setSpacing(arg1);
-  impl->wnd->skinConfigured();
   impl->scfg->setSpacing(arg1);
 }
 
 void ClassicSkinSettings::on_time_format_cbox_textActivated(const QString& arg1)
 {
   impl->skin->setFormat(arg1);
-  impl->wnd->skinConfigured();
   impl->scfg->setTimeFormat(arg1);
 }
 
@@ -152,13 +149,13 @@ void ClassicSkinSettings::on_texture_group_clicked(bool checked)
       brush = QBrush(impl->wcfg->state().getTexturePattern());
   }
   impl->scfg->setTexture(brush);
-  updateEffects();
+  impl->skin->setTexture(std::move(brush));
 }
 
 void ClassicSkinSettings::on_tx_solid_color_rbtn_clicked()
 {
   impl->scfg->setTexture(impl->wcfg->state().getTextureColor());
-  updateEffects();
+  impl->skin->setTexture(impl->wcfg->state().getTextureColor());
 }
 
 void ClassicSkinSettings::on_tx_select_color_btn_clicked()
@@ -170,13 +167,13 @@ void ClassicSkinSettings::on_tx_select_color_btn_clicked()
   if (!color.isValid()) return;
   impl->scfg->setTexture(color);
   impl->wcfg->state().setTextureColor(color);
-  updateEffects();
+  impl->skin->setTexture(std::move(color));
 }
 
 void ClassicSkinSettings::on_tx_gradient_rbtn_clicked()
 {
   impl->scfg->setTexture(impl->wcfg->state().getTextureGradient());
-  updateEffects();
+  impl->skin->setTexture(impl->wcfg->state().getTextureGradient());
 }
 
 void ClassicSkinSettings::on_tx_select_gradient_btn_clicked()
@@ -189,13 +186,13 @@ void ClassicSkinSettings::on_tx_select_gradient_btn_clicked()
   gradient.setCoordinateMode(QGradient::ObjectMode);
   impl->scfg->setTexture(gradient);
   impl->wcfg->state().setTextureGradient(gradient);
-  updateEffects();
+  impl->skin->setTexture(std::move(gradient));
 }
 
 void ClassicSkinSettings::on_tx_pattern_rbtn_clicked()
 {
   impl->scfg->setTexture(impl->wcfg->state().getTexturePattern());
-  updateEffects();
+  impl->skin->setTexture(impl->wcfg->state().getTexturePattern());
 }
 
 void ClassicSkinSettings::on_tx_select_pattern_btn_clicked()
@@ -209,19 +206,19 @@ void ClassicSkinSettings::on_tx_select_pattern_btn_clicked()
   QPixmap pxm(file);
   impl->scfg->setTexture(pxm);
   impl->wcfg->state().setTexturePattern(pxm);
-  updateEffects();
+  impl->skin->setTexture(std::move(pxm));
 }
 
 void ClassicSkinSettings::on_tx_pattern_stretch_clicked(bool checked)
 {
   impl->scfg->setTextureStretch(checked);
-  updateEffects();
+  impl->skin->setTextureStretch(checked);
 }
 
 void ClassicSkinSettings::on_tx_per_element_cb_clicked(bool checked)
 {
   impl->scfg->setTexturePerElement(checked);
-  updateEffects();
+  impl->skin->setTexturePerElement(checked);
 }
 
 void ClassicSkinSettings::on_background_group_clicked(bool checked)
@@ -238,13 +235,13 @@ void ClassicSkinSettings::on_background_group_clicked(bool checked)
       brush = QBrush(impl->wcfg->state().getBackgroundPattern());
   }
   impl->scfg->setBackground(brush);
-  updateEffects();
+  impl->skin->setBackground(std::move(brush));
 }
 
 void ClassicSkinSettings::on_bg_solid_color_rbtn_clicked()
 {
   impl->scfg->setBackground(impl->wcfg->state().getBackgroundColor());
-  updateEffects();
+  impl->skin->setBackground(impl->wcfg->state().getBackgroundColor());
 }
 
 void ClassicSkinSettings::on_bg_select_color_btn_clicked()
@@ -256,13 +253,13 @@ void ClassicSkinSettings::on_bg_select_color_btn_clicked()
   if (!color.isValid()) return;
   impl->scfg->setBackground(color);
   impl->wcfg->state().setBackgroundColor(color);
-  updateEffects();
+  impl->skin->setBackground(std::move(color));
 }
 
 void ClassicSkinSettings::on_bg_gradient_rbtn_clicked()
 {
   impl->scfg->setBackground(impl->wcfg->state().getBackgroundGradient());
-  updateEffects();
+  impl->skin->setBackground(impl->wcfg->state().getBackgroundGradient());
 }
 
 void ClassicSkinSettings::on_bg_select_gradient_btn_clicked()
@@ -275,13 +272,13 @@ void ClassicSkinSettings::on_bg_select_gradient_btn_clicked()
   gradient.setCoordinateMode(QGradient::ObjectMode);
   impl->scfg->setBackground(gradient);
   impl->wcfg->state().setBackgroundGradient(gradient);
-  updateEffects();
+  impl->skin->setBackground(std::move(gradient));
 }
 
 void ClassicSkinSettings::on_bg_pattern_rbtn_clicked()
 {
   impl->scfg->setBackground(impl->wcfg->state().getBackgroundPattern());
-  updateEffects();
+  impl->skin->setBackground(impl->wcfg->state().getBackgroundPattern());
 }
 
 void ClassicSkinSettings::on_bg_select_pattern_btn_clicked()
@@ -295,29 +292,23 @@ void ClassicSkinSettings::on_bg_select_pattern_btn_clicked()
   QPixmap pxm(file);
   impl->scfg->setBackground(pxm);
   impl->wcfg->state().setBackgroundPattern(pxm);
-  updateEffects();
+  impl->skin->setBackground(std::move(pxm));
 }
 
 void ClassicSkinSettings::on_bg_pattern_stretch_clicked(bool checked)
 {
   impl->scfg->setBackgroundStretch(checked);
-  updateEffects();
+  impl->skin->setBackgroundStretch(checked);
 }
 
 void ClassicSkinSettings::on_bg_per_element_cb_clicked(bool checked)
 {
   impl->scfg->setBackgroundPerElement(checked);
-  updateEffects();
+  impl->skin->setBackgroundPerElement(checked);
 }
 
 void ClassicSkinSettings::on_custom_seps_edit_textEdited(const QString& arg1)
 {
   impl->skin->setCustomSeparators(arg1);
   impl->scfg->setCustomSeparators(arg1);
-}
-
-void ClassicSkinSettings::updateEffects()
-{
-  impl->app->skin_manager()->configureSkin(impl->skin, impl->idx);
-  impl->wnd->skinConfigured();
 }
