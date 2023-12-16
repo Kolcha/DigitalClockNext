@@ -43,6 +43,9 @@ AppGlobalSettings::AppGlobalSettings(ApplicationPrivate* app, QWidget* parent)
   ui->enable_snap_to_edge->setChecked(impl->config.getSnapToEdge());
   ui->enable_autoupdate->setChecked(impl->config.getCheckForUpdates());
   ui->check_for_beta->setChecked(impl->config.getCheckForBetaVersion());
+  ui->enable_multiwindow->setChecked(impl->config.getWindowsCount() > 1);
+  ui->wnd_count_edit->setValue(impl->config.getWindowsCount());
+  ui->use_same_appearance->setChecked(!impl->config.getConfigPerWindow());
 
   QSignalBlocker _(ui->update_period_edit);
   ui->update_period_edit->addItem(tr("1 day"), 1);
@@ -120,5 +123,23 @@ void AppGlobalSettings::on_check_for_beta_clicked(bool checked)
 {
   impl->app->updater()->SetCheckForBeta(checked);
   impl->config.setCheckForBetaVersion(checked);
+  impl->markDirty();
+}
+
+void AppGlobalSettings::on_enable_multiwindow_clicked(bool checked)
+{
+  impl->config.setWindowsCount(checked ? ui->wnd_count_edit->value() : 1);
+  impl->markDirty();
+}
+
+void AppGlobalSettings::on_wnd_count_edit_valueChanged(int arg1)
+{
+  impl->config.setWindowsCount(arg1);
+  impl->markDirty();
+}
+
+void AppGlobalSettings::on_use_same_appearance_clicked(bool checked)
+{
+  impl->config.setConfigPerWindow(!checked);
   impl->markDirty();
 }

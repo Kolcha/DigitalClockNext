@@ -30,6 +30,10 @@ private slots:
   void on_update_period_edit_activated(int index);
   void on_check_for_beta_clicked(bool checked);
 
+  void on_enable_multiwindow_clicked(bool checked);
+  void on_wnd_count_edit_valueChanged(int arg1);
+  void on_use_same_appearance_clicked(bool checked);
+
 private:
   Ui::AppGlobalSettings* ui;
   struct Impl;

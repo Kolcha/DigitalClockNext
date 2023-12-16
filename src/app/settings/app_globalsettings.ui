@@ -64,6 +64,37 @@
     </layout>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="multiwindow_layout">
+     <item>
+      <widget class="QCheckBox" name="enable_multiwindow">
+       <property name="text">
+        <string>enable multiple clocks</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="wnd_count_edit">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>8</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="use_same_appearance">
+       <property name="text">
+        <string>same appearance</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -95,8 +126,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>170</x>
-     <y>130</y>
+     <x>180</x>
+     <y>123</y>
     </hint>
     <hint type="destinationlabel">
      <x>202</x>
@@ -111,12 +142,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>166</x>
-     <y>140</y>
+     <x>178</x>
+     <y>123</y>
     </hint>
     <hint type="destinationlabel">
-     <x>314</x>
-     <y>139</y>
+     <x>387</x>
+     <y>123</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enable_multiwindow</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wnd_count_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>158</x>
+     <y>151</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>198</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enable_multiwindow</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>use_same_appearance</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>126</x>
+     <y>160</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>294</x>
+     <y>160</y>
     </hint>
    </hints>
   </connection>

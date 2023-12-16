@@ -18,14 +18,15 @@ void ApplicationPrivate::initWindows(QScreen* primary_screen, QList<QScreen*> sc
 
 void ApplicationPrivate::configureWindow(ClockWindow* wnd)
 {
+  const std::size_t widx = window_index(wnd);
   std::size_t idx = _app_config->global().getConfigPerWindow() ? window_index(wnd) : 0;
   const auto& cfg = _app_config->window(idx);
-  auto skin = idx != window_index(wnd) ? window(0)->skin() : _skin_manager->loadSkin(idx);
+  auto skin = idx != widx ? window(idx)->skin() : _skin_manager->loadSkin(idx);
   wnd->setSkin(std::move(skin));
   wnd->setSnapToEdge(_app_config->global().getSnapToEdge());
   wnd->setSnapThreshold(_app_config->global().getSnapThreshold());
-  if (!cfg.general().getShowLocalTime())
-    wnd->setTimeZone(cfg.state().getTimeZone());
+  if (!_app_config->window(widx).general().getShowLocalTime())
+    wnd->setTimeZone(_app_config->window(widx).state().getTimeZone());
   wnd->setWindowOpacity(cfg.appearance().getOpacity());
   wnd->setSeparatorFlashes(cfg.appearance().getFlashingSeparator());
   wnd->scale(cfg.appearance().getScaleFactorX(), cfg.appearance().getScaleFactorY());
@@ -63,7 +64,8 @@ void ApplicationPrivate::createWindow(const QScreen* screen)
   wnd->setWindowFlag(Qt::Tool);   // trick to hide app icon from taskbar (Win/Linux)
 #endif
   connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::setDateTime);
-  connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::animateSeparator);
+  if (_windows.empty() || _app_config->global().getConfigPerWindow())
+    connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::animateSeparator);
   _windows.emplace_back(std::move(wnd));
 }
 

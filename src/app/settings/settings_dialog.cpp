@@ -57,16 +57,51 @@ struct SettingsDialog::Impl {
   AppConfig* acfg;
   WindowConfig* wcfg;
 
-  std::shared_ptr<Skin> last_skin;
-
   Impl(ApplicationPrivate* a, std::size_t i) noexcept
     : app(a)
     , idx(i)
     , wnd(a->window(i).get())
     , acfg(a->app_config().get())
-    , wcfg(&a->app_config()->window(i))
-    , last_skin(wnd->skin())
+    , wcfg(&a->app_config()->window(acfg->global().getConfigPerWindow() ? i : 0))
   {}
+
+  template<typename Method, typename... Args>
+  void window(Method method, const Args&... args)
+  {
+    if (acfg->global().getConfigPerWindow()) {
+      (*wnd.*method)(args...);
+    } else {
+      for (const auto& wnd : app->windows())
+        (*wnd.*method)(args...);
+    }
+  }
+
+  void applyEffect()
+  {
+    auto create_effect = [this]() {
+      auto effect = new QGraphicsColorizeEffect;
+      effect->setColor(wcfg->appearance().getColorizationColor());
+      effect->setStrength(wcfg->appearance().getColorizationStrength());
+      return effect;
+    };
+    if (acfg->global().getConfigPerWindow()) {
+      wnd->setGraphicsEffect(create_effect());
+    } else {
+      for (const auto& wnd : app->windows())
+        wnd->setGraphicsEffect(create_effect());
+    }
+  }
+
+  template<typename Method, typename... Args>
+  void updateEffect(Method modifier, const Args&... args)
+  {
+    if (acfg->global().getConfigPerWindow()) {
+      (qobject_cast<QGraphicsColorizeEffect*>(wnd->graphicsEffect())->*modifier)(args...);
+    } else {
+      for (const auto& wnd : app->windows())
+        (qobject_cast<QGraphicsColorizeEffect*>(wnd->graphicsEffect())->*modifier)(args...);
+    }
+  }
 };
 
 SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget* parent)
@@ -99,14 +134,22 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->opacity_edit->setValue(qRound(appearance_cfg.getOpacity() * 100));
   ui->use_colorization->setChecked(appearance_cfg.getApplyColorization());
   ui->colorization_strength_edit->setValue(qRound(appearance_cfg.getColorizationStrength() * 100));
-  const auto& general_cfg = impl->wcfg->general();
+  const auto& general_cfg = impl->acfg->window(impl->idx).general();
   ui->use_time_zone->setChecked(!general_cfg.getShowLocalTime());
-  ui->time_zone_edit->setCurrentText(tz_name(impl->wcfg->state().getTimeZone()));
+  ui->time_zone_edit->setCurrentText(tz_name(impl->acfg->window(impl->idx).state().getTimeZone()));
 
   ui->scaling_same_btn->setChecked(ui->scaling_x_edit->value() == ui->scaling_y_edit->value());
   on_scaling_same_btn_clicked(ui->scaling_same_btn->isChecked());
 
   updateSkinSettingsTab();
+
+  if (!impl->acfg->global().getConfigPerWindow()) {
+    auto wcfg = &impl->acfg->window(impl->idx);
+    connect(this, &QDialog::accepted, wcfg, &WindowConfig::commit);
+    connect(this, &QDialog::rejected, wcfg, &WindowConfig::discard);
+  }
+  connect(this, &QDialog::accepted, impl->wcfg, &WindowConfig::commit);
+  connect(this, &QDialog::rejected, impl->wcfg, &WindowConfig::discard);
 }
 
 SettingsDialog::~SettingsDialog()
@@ -154,13 +197,13 @@ void SettingsDialog::on_is_separator_flashes_clicked(bool checked)
 
 void SettingsDialog::on_scaling_x_edit_valueChanged(int arg1)
 {
-  impl->wnd->scale(arg1, impl->wcfg->appearance().getScaleFactorY());
+  impl->window(&ClockWindow::scale, arg1, impl->wcfg->appearance().getScaleFactorY());
   impl->wcfg->appearance().setScaleFactorX(arg1);
 }
 
 void SettingsDialog::on_scaling_y_edit_valueChanged(int arg1)
 {
-  impl->wnd->scale(impl->wcfg->appearance().getScaleFactorX(), arg1);
+  impl->window(&ClockWindow::scale, impl->wcfg->appearance().getScaleFactorX(), arg1);
   impl->wcfg->appearance().setScaleFactorY(arg1);
 }
 
@@ -178,13 +221,13 @@ void SettingsDialog::on_scaling_same_btn_clicked(bool checked)
 
 void SettingsDialog::on_use_time_zone_clicked(bool checked)
 {
-  impl->wcfg->general().setShowLocalTime(!checked);
+  impl->acfg->window(impl->idx).general().setShowLocalTime(!checked);
   applyTimeZoneSettings();
 }
 
 void SettingsDialog::on_time_zone_edit_activated(int index)
 {
-  impl->wcfg->state().setTimeZone(ui->time_zone_edit->itemData(index).value<QTimeZone>());
+  impl->acfg->window(impl->idx).state().setTimeZone(ui->time_zone_edit->itemData(index).value<QTimeZone>());
   applyTimeZoneSettings();
 }
 
@@ -193,19 +236,16 @@ void SettingsDialog::on_opacity_edit_valueChanged(int arg1)
   qreal opacity = arg1 / 100.;
   if (qFuzzyCompare(opacity, impl->wcfg->appearance().getOpacity()))
     return;
-  impl->wnd->setWindowOpacity(opacity);
+  impl->window(&ClockWindow::setWindowOpacity, opacity);
   impl->wcfg->appearance().setOpacity(opacity);
 }
 
 void SettingsDialog::on_use_colorization_clicked(bool checked)
 {
   if (checked) {
-    auto effect = new QGraphicsColorizeEffect;
-    effect->setColor(impl->wcfg->appearance().getColorizationColor());
-    effect->setStrength(impl->wcfg->appearance().getColorizationStrength());
-    impl->wnd->setGraphicsEffect(effect);
+    impl->applyEffect();
   } else {
-    impl->wnd->setGraphicsEffect(nullptr);
+    impl->window(&ClockWindow::setGraphicsEffect, nullptr);
   }
   impl->wcfg->appearance().setApplyColorization(checked);
 }
@@ -217,7 +257,7 @@ void SettingsDialog::on_select_colorization_color_clicked()
                                       QString(),
                                       QColorDialog::ShowAlphaChannel);
   if (!color.isValid()) return;
-  qobject_cast<QGraphicsColorizeEffect*>(impl->wnd->graphicsEffect())->setColor(color);
+  impl->updateEffect(&QGraphicsColorizeEffect::setColor, color);
   impl->wcfg->appearance().setColorizationColor(color);
 }
 
@@ -226,28 +266,28 @@ void SettingsDialog::on_colorization_strength_edit_valueChanged(int arg1)
   qreal strength = arg1 / 100.;
   if (qFuzzyCompare(strength, impl->wcfg->appearance().getColorizationStrength()))
     return;
-  qobject_cast<QGraphicsColorizeEffect*>(impl->wnd->graphicsEffect())->setStrength(strength);
+  impl->updateEffect(&QGraphicsColorizeEffect::setStrength, strength);
   impl->wcfg->appearance().setColorizationStrength(strength);
 }
 
 void SettingsDialog::applySkin(std::shared_ptr<Skin> skin)
 {
   impl->app->skin_manager()->configureSkin(skin, impl->idx);
-  impl->wnd->setSkin(std::move(skin));
+  impl->window(&ClockWindow::setSkin, skin);
   updateSkinSettingsTab();
 }
 
 void SettingsDialog::applyFlashingSeparator(bool enable)
 {
-  impl->wnd->setSeparatorFlashes(enable);
+  impl->window(&ClockWindow::setSeparatorFlashes, enable);
 }
 
 void SettingsDialog::applyTimeZoneSettings()
 {
-  if (impl->wcfg->general().getShowLocalTime())
+  if (impl->acfg->window(impl->idx).general().getShowLocalTime())
     impl->wnd->setTimeZone(QDateTime::currentDateTime().timeZone());
   else
-    impl->wnd->setTimeZone(impl->wcfg->state().getTimeZone());
+    impl->wnd->setTimeZone(impl->acfg->window(impl->idx).state().getTimeZone());
 }
 
 void SettingsDialog::insertGlobalSettingsTab()

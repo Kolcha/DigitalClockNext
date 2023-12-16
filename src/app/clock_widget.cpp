@@ -129,6 +129,8 @@ void ClockWidgetWrap::animateSeparator()
 {
   if (!_impl->skin) return;
   _impl->skin->animateSeparator();
+  _impl->updateItem(_impl->dt);
+  updateGeometry();
   update();
 }
 
