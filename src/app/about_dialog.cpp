@@ -5,11 +5,10 @@
 #include <QLocale>
 #include <QSysInfo>
 
-#include "app/updater/build_date.hpp"
+#include "build_date.hpp"
 
 static QString buildDateString()
 {
-  using digital_clock::core::build_date;
   return QLocale::system().toString(build_date(), QLocale::ShortFormat);
 }
 

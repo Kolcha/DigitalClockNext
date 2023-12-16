@@ -11,14 +11,14 @@ void ApplicationPrivate::initCore()
 
 void ApplicationPrivate::initUpdater()
 {
-  _updater = std::make_unique<Updater>(_app_state->global().getLastUpdateCheck());
-  _updater->SetAutoupdate(_app_config->global().getCheckForUpdates());
-  _updater->SetUpdatePeriod(_app_config->global().getUpdatePeriodDays());
-  _updater->SetCheckForBeta(_app_config->global().getCheckForBetaVersion());
+  _update_checker = std::make_unique<UpdateChecker>(_app_state->global().getLastUpdateCheck());
+  _update_checker->setAutoupdate(_app_config->global().getCheckForUpdates());
+  _update_checker->setUpdatePeriod(_app_config->global().getUpdatePeriodDays());
+  _update_checker->setCheckForBeta(_app_config->global().getCheckForBetaVersion());
 
-  connect(_time_src.get(), &TimeSource::timeChanged, _updater.get(), &Updater::TimeoutHandler);
+  connect(_time_src.get(), &TimeSource::timeChanged, _update_checker.get(), &UpdateChecker::timerHandler);
 
-  connect(_updater.get(), &Updater::UpdateChecked, this, [this](QDateTime dt) {
+  connect(_update_checker.get(), &UpdateChecker::updateChecked, this, [this](QDateTime dt) {
     _app_state->global().setLastUpdateCheck(dt);
   });
 }
@@ -32,8 +32,7 @@ void Application::initUpdater()
 {
   _impl->initUpdater();
 
-  using digital_clock::core::Updater;
-  connect(_impl->updater().get(), &Updater::NewVersion, this, &Application::handleNewVersion);
-  connect(_impl->updater().get(), &Updater::UpToDate, this, &Application::handleUpToDate);
-  connect(_impl->updater().get(), &Updater::ErrorMessage, this, &Application::handleUpdateError);
+  connect(_impl->update_checker().get(), &UpdateChecker::newVersion, this, &Application::handleNewVersion);
+  connect(_impl->update_checker().get(), &UpdateChecker::upToDate, this, &Application::handleUpToDate);
+  connect(_impl->update_checker().get(), &UpdateChecker::errorMessage, this, &Application::handleUpdateError);
 }

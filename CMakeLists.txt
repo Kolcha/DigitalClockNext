@@ -50,12 +50,10 @@ set(PROJECT_SOURCES
         src/app/about_dialog.ui
         res/skins.qrc
         src/app/dialog_manager.hpp
-        src/app/updater/build_date.cpp
-        src/app/updater/build_date.hpp
-        src/app/updater/http_client.cpp
-        src/app/updater/http_client.hpp
-        src/app/updater/updater.cpp
-        src/app/updater/updater.hpp
+        src/app/build_date.cpp
+        src/app/build_date.hpp
+        src/app/update_checker.cpp
+        src/app/update_checker.hpp
         src/app/settings/app_globalsettings.hpp
         src/app/settings/app_globalsettings.cpp
         src/app/settings/app_globalsettings.ui
