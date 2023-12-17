@@ -27,6 +27,7 @@ jobs:
       - name: Install build tools
         run: |
           choco install ninja
+          "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
@@ -48,15 +49,13 @@ jobs:
 
       - name: Prepare build artifacts
         run: |
+          cmake --build build --target win_installer
           mkdir upload
-          mkdir DigitalClockNext
-          copy build/DigitalClockNext.exe DigitalClockNext
-          cd DigitalClockNext
-          New-Item -Name portable.txt -ItemType File
-          attrib +h portable.txt
-          windeployqt --libdir . --plugindir "plugins" --no-compiler-runtime --no-system-d3d-compiler --no-opengl-sw --no-translations DigitalClockNext.exe
-          cd ..
-          7z a upload/digital_clock_next-win64.zip DigitalClockNext
+          move build\dist\msi\digital_clock_next-x64.msi upload
+          move build\installer_files DigitalClockNext
+          New-Item -ItemType File -Path DigitalClockNext -Name portable.txt
+          attrib +h DigitalClockNext\portable.txt
+          7z a upload\digital_clock_next-win64.zip DigitalClockNext
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3

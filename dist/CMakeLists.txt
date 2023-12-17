@@ -4,6 +4,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_sources(${PROJECT_NAME} PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/digital_clock.rc
     )
+    add_subdirectory(msi)
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
