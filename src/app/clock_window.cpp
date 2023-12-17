@@ -29,7 +29,7 @@
 
 struct ClockWindow::impl {
   StatePtr state;
-  ClockWidgetWrap* clock_widget;
+  ClockWidget* clock_widget;
   QGridLayout* main_layout;
   QMenu* context_menu;
   QPoint drag_pos;
@@ -49,7 +49,7 @@ ClockWindow::ClockWindow(StatePtr state, QWidget* parent)
 {
   Q_ASSERT(state);
   _impl->state = std::move(state);
-  _impl->clock_widget = new ClockWidgetWrap(this);
+  _impl->clock_widget = new ClockWidget(this);
   // clock widget supports resize and fills all available space by default
   _impl->clock_widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   _impl->main_layout = new QGridLayout(this);

@@ -23,134 +23,152 @@
 
 #include "skin.hpp"
 
-class SkinEventsListener;
-
-struct ClockWidgetWrap::impl {
-  std::shared_ptr<Skin> skin;
-  std::shared_ptr<Glyph> item;
-  std::shared_ptr<SkinEventsListener> listener;
-  QDateTime dt;
-  QTimeZone tz;
-  qreal kx = 1;
-  qreal ky = 1;
-
-  impl(const QDateTime& dt, const std::shared_ptr<Skin>& skin)
-    : skin(skin)
-    , dt(dt.toUTC())
-    , tz(dt.timeZone())
-  {
-  }
-
-  void updateItem(const QDateTime& dt)
-  {
-    if (!skin) return;
-    item = skin->process(dt.toTimeZone(tz));
-  }
-
-  QSizeF scaledSize() const noexcept
-  {
-    if (!item) return {400., 150.};
-    auto s = item->geometry().size();
-    return {kx * s.width(), ky * s.height()};
-  }
-};
-
-
-class SkinEventsListener final : public SkinObserver {
+class ClockWidgetImpl : public SkinObserver,
+                        public std::enable_shared_from_this<ClockWidgetImpl> {
 public:
-  explicit SkinEventsListener(ClockWidgetWrap* w) noexcept
+  ClockWidgetImpl(QWidget* w, const QDateTime& dt)
       : _widget(w)
+      , _dt(dt.toUTC())
+      , _tz(dt.timeZone())
   {
     Q_ASSERT(_widget);
   }
 
-  void onConfigurationChanged() override
+  void setSkin(std::shared_ptr<Skin> skin)
   {
-    _widget->_impl->updateItem(_widget->_impl->dt);
+    _skin = std::move(skin);
+    if (_skin) _skin->addObserver(weak_from_this());
+    _glyph.reset();
+    update();
+  }
+
+  std::shared_ptr<Skin> skin() const { return _skin; }
+
+  void setDateTime(const QDateTime& dt)
+  {
+    _dt = dt.toUTC();
+    update();
+  }
+
+  void setTimeZone(const QTimeZone& tz)
+  {
+    _tz = tz;
+    update();
+  }
+
+  void animateSeparator()
+  {
+    if (!_skin) return;
+    _skin->animateSeparator();
+    update();
+  }
+
+  void scale(qreal kx, qreal ky)
+  {
+    _kx = std::clamp(kx, 0.01, 10.0);
+    _ky = std::clamp(ky, 0.01, 10.0);
+    update();
+  }
+
+  QSizeF size() const
+  {
+    if (!_glyph) return {400., 150.};
+    auto s = _glyph->geometry().size();
+    return {_kx * s.width(), _ky * s.height()};
+  }
+
+  void draw(QPainter* p)
+  {
+    if (!_glyph) return;
+    p->setRenderHint(QPainter::Antialiasing);
+    p->setRenderHint(QPainter::SmoothPixmapTransform);
+    p->scale(_kx, _ky);
+    p->translate(-_glyph->geometry().topLeft());
+    _glyph->draw(p);
+  }
+
+  void onConfigurationChanged() override { update(); }
+
+private:
+  void update()
+  {
+    if (!_skin) return;
+    _glyph = _skin->process(_dt.toTimeZone(_tz));
     _widget->updateGeometry();
     _widget->update();
   }
 
 private:
-  ClockWidgetWrap* _widget;
+  QWidget* _widget;
+  std::shared_ptr<Skin> _skin;
+  std::shared_ptr<Glyph> _glyph;
+  QDateTime _dt;
+  QTimeZone _tz;
+  qreal _kx = 1;
+  qreal _ky = 1;
 };
 
 
-ClockWidgetWrap::ClockWidgetWrap(QWidget* parent)
+struct ClockWidget::impl {
+  impl(QWidget* w)
+      : d(std::make_shared<ClockWidgetImpl>(w, QDateTime::currentDateTime()))
+  {}
+
+  std::shared_ptr<ClockWidgetImpl> d;
+};
+
+
+ClockWidget::ClockWidget(QWidget* parent)
   : QWidget(parent)
-  , _impl(std::make_unique<impl>(QDateTime::currentDateTime(), nullptr))
+  , _impl(std::make_unique<impl>(this))
 {
-  _impl->listener = std::make_shared<SkinEventsListener>(this);
 }
 
-ClockWidgetWrap::~ClockWidgetWrap() = default;
+ClockWidget::~ClockWidget() = default;
 
-QSize ClockWidgetWrap::sizeHint() const
+QSize ClockWidget::sizeHint() const
 {
   return minimumSizeHint();
 }
 
-QSize ClockWidgetWrap::minimumSizeHint() const
+QSize ClockWidget::minimumSizeHint() const
 {
-  return _impl->scaledSize().toSize();
+  return _impl->d->size().toSize();
 }
 
-void ClockWidgetWrap::setSkin(std::shared_ptr<Skin> skin)
+void ClockWidget::setSkin(std::shared_ptr<Skin> skin)
 {
-  if (skin) skin->addObserver(_impl->listener);
-  _impl->skin = std::move(skin);
-  _impl->item.reset();
-  _impl->updateItem(_impl->dt);
-  updateGeometry();
-  update();
+  _impl->d->setSkin(std::move(skin));
 }
 
-std::shared_ptr<Skin> ClockWidgetWrap::skin() const
+std::shared_ptr<Skin> ClockWidget::skin() const
 {
-  return _impl->skin;
+  return _impl->d->skin();
 }
 
-void ClockWidgetWrap::setDateTime(const QDateTime& dt)
+void ClockWidget::setDateTime(const QDateTime& dt)
 {
-  _impl->dt = dt.toUTC();
-  if (!_impl->skin) return;
-  _impl->updateItem(dt);
-  updateGeometry();
-  update();
+  _impl->d->setDateTime(dt);
 }
 
-void ClockWidgetWrap::setTimeZone(const QTimeZone& tz)
+void ClockWidget::setTimeZone(const QTimeZone& tz)
 {
-  _impl->tz = tz;
-  setDateTime(_impl->dt);
+  _impl->d->setTimeZone(tz);
 }
 
-void ClockWidgetWrap::animateSeparator()
+void ClockWidget::animateSeparator()
 {
-  if (!_impl->skin) return;
-  _impl->skin->animateSeparator();
-  _impl->updateItem(_impl->dt);
-  updateGeometry();
-  update();
+  _impl->d->animateSeparator();
 }
 
-void ClockWidgetWrap::scale(qreal kx, qreal ky)
+void ClockWidget::scale(qreal kx, qreal ky)
 {
-  _impl->kx = kx;
-  _impl->ky = ky;
-  updateGeometry();
-  update();
+  _impl->d->scale(kx, ky);
 }
 
-void ClockWidgetWrap::paintEvent(QPaintEvent* event)
+void ClockWidget::paintEvent(QPaintEvent* event)
 {
-  if (!_impl->item) return;
   QPainter p(this);
-  auto s = _impl->item->geometry().size();
-  p.setRenderHint(QPainter::Antialiasing);
-  p.setRenderHint(QPainter::SmoothPixmapTransform);
-  p.scale(width() / s.width(), height() / s.height());
-  p.translate(-_impl->item->geometry().topLeft());
-  _impl->item->draw(&p);
+  _impl->d->draw(&p);
   event->accept();
 }

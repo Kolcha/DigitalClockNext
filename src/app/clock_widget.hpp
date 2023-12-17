@@ -27,15 +27,15 @@
 
 class Skin;
 
-class ClockWidgetWrap : public QWidget
+class ClockWidget : public QWidget
 {
   Q_OBJECT
 
   using SkinPtr = std::shared_ptr<Skin>;
 
 public:
-  explicit ClockWidgetWrap(QWidget* parent = nullptr);
-  ~ClockWidgetWrap();
+  explicit ClockWidget(QWidget* parent = nullptr);
+  ~ClockWidget();
 
   QSize sizeHint() const override;
   QSize minimumSizeHint() const override;
@@ -57,5 +57,4 @@ protected:
 private:
   struct impl;
   std::unique_ptr<impl> _impl;
-  friend class SkinEventsListener;
 };
