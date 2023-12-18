@@ -52,7 +52,7 @@
      <item>
       <widget class="QLabel" name="spacing_label">
        <property name="text">
-        <string>&amp;spacing</string>
+        <string>spaci&amp;ng</string>
        </property>
        <property name="buddy">
         <cstring>spacing_edit</cstring>
@@ -76,7 +76,7 @@
      <item>
       <widget class="QLabel" name="time_format_label">
        <property name="text">
-        <string>&amp;time format</string>
+        <string>time &amp;format</string>
        </property>
        <property name="buddy">
         <cstring>time_format_cbox</cstring>
@@ -166,7 +166,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>&amp;Apply</string>
+        <string>Ap&amp;ply</string>
        </property>
       </widget>
      </item>
@@ -340,7 +340,7 @@
      <item>
       <widget class="QLabel" name="custom_seps_label">
        <property name="text">
-        <string>custom date/time separators (will be used instead of '&amp;:'):</string>
+        <string>custom date/time separators (will be used instead of '&amp;:')</string>
        </property>
        <property name="buddy">
         <cstring>custom_seps_edit</cstring>
@@ -348,7 +348,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="custom_seps_edit"/>
+      <widget class="QLineEdit" name="custom_seps_edit">
+       <property name="toolTip">
+        <string>replacement characters for ':' in format</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

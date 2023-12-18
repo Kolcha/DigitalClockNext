@@ -21,7 +21,7 @@
      </property>
      <widget class="QWidget" name="general_tab">
       <attribute name="title">
-       <string>General</string>
+       <string>&amp;General</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
@@ -226,7 +226,7 @@
             <item>
              <widget class="QCheckBox" name="use_colorization">
               <property name="text">
-               <string>render the clock with a tint of selected color</string>
+               <string>render the clock with a tint of selected &amp;color</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -250,7 +250,7 @@
             <item>
              <widget class="QLabel" name="colorization_strength_label">
               <property name="text">
-               <string>&amp;strength</string>
+               <string>stre&amp;ngth</string>
               </property>
               <property name="buddy">
                <cstring>colorization_strength_slider</cstring>
@@ -296,7 +296,7 @@
          <item>
           <widget class="QCheckBox" name="use_time_zone">
            <property name="text">
-            <string>&amp;time zone</string>
+            <string>time &amp;zone</string>
            </property>
           </widget>
          </item>

@@ -302,7 +302,7 @@ void SettingsDialog::insertGlobalSettingsTab()
 void SettingsDialog::updateSkinSettingsTab()
 {
   constexpr auto skin_tab_pos = 2;
-  const QString skin_tab_text = tr("Skin");
+  const QString skin_tab_text = tr("&Skin");
 
   if (ui->tabWidget->tabText(skin_tab_pos) == skin_tab_text) {
     auto skin_tab = ui->tabWidget->widget(skin_tab_pos);
