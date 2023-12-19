@@ -70,6 +70,7 @@ void FormatDateTime(const QDateTime& dt, QStringView fmt,
       case 'h': {
         repeat = qMin(repeat, 2);
         auto h = dt.time().hour();
+        if (h == 0) h = 12;
         format_number(h > 12 ? h - 12 : h, repeat == 2 ? 2 : 0, str_builder);
         break;
       }
