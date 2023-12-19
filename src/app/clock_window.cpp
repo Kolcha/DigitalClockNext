@@ -59,13 +59,13 @@ ClockWindow::ClockWindow(StatePtr state, QWidget* parent)
 
   using namespace Qt::Literals::StringLiterals;
   auto menu = new QMenu(this);
-  menu->addAction(QIcon::fromTheme(u"configure"_s), tr("&Settings"),
+  menu->addAction(QIcon::fromTheme(u"configure"_s), tr("Settings"),
                   this, &ClockWindow::settingsDialogRequested);
   menu->addSeparator();
-  menu->addAction(QIcon::fromTheme(u"help-about"_s), tr("&About"),
+  menu->addAction(QIcon::fromTheme(u"help-about"_s), tr("About"),
                   this, &ClockWindow::aboutDialogRequested);
   menu->addSeparator();
-  menu->addAction(QIcon::fromTheme(u"application-exit"_s), tr("&Quit"),
+  menu->addAction(QIcon::fromTheme(u"application-exit"_s), tr("Quit"),
                   this, &ClockWindow::appExitRequested);
   _impl->context_menu = menu;
 

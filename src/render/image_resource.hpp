@@ -75,7 +75,7 @@ public:
     : ImageResource(filename)
     , m_renderer(std::make_unique<QSvgRenderer>(filename))
   {
-    setGeometry(Geometry(m_renderer->viewBoxF()));
+    setGeometry(Geometry(m_renderer->defaultSize()));
   }
 
   void draw(QPainter* p) override;
