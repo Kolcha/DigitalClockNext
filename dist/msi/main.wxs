@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-  <Product Name="Digital Clock Next" Id="*" UpgradeCode="{64E0CE3B-F6E2-4CC9-ACD2-A24E812DF339}"
+  <Product Name="Digital Clock Next" Id="*" UpgradeCode="{1F9612A5-49CF-42CB-8060-0281AEA1F501}"
     Language="1033" Codepage="1252" Version="$(var.AppVersion)" Manufacturer="Nick Korotysh">
 
     <Package Id="*" Keywords="Installer" Platform="x64" Description="Digital Clock Next"
@@ -17,9 +17,9 @@
 
     <Property Id="ARPNOMODIFY">1</Property>
 
-    <Upgrade Id="{64E0CE3B-F6E2-4CC9-ACD2-A24E812DF339}">
+    <Upgrade Id="{1F9612A5-49CF-42CB-8060-0281AEA1F501}">
       <UpgradeVersion
-        Minimum="4.4.4" Maximum="$(var.AppVersion)"
+        Minimum="5.0.0" Maximum="$(var.AppVersion)"
         Property="PREVIOUSVERSIONSINSTALLED"
         IncludeMinimum="yes" IncludeMaximum="yes" />
     </Upgrade>
@@ -35,25 +35,25 @@
     </Directory>
 
     <ComponentGroup Id="Extras">
-      <Component Id="RegistryEntries" Directory="INSTALLDIR" Guid="{2126B850-19E1-464F-921D-36F907ECE477}">
+      <Component Id="RegistryEntries" Directory="INSTALLDIR" Guid="{58DBD3BF-4C75-4641-A002-905FF2448A7A}">
         <RegistryKey Root="HKCU" Key="Software\NickKorotysh\DigitalClockNext" ForceDeleteOnUninstall="yes" />
         <RegistryKey Root="HKCU" Key="Software\Microsoft\Windows\CurrentVersion\Run">
           <RegistryValue Type="string" Name="[ProductName]" Value="[INSTALLDIR]DigitalClockNext.exe" KeyPath="yes" />
         </RegistryKey>
       </Component>
 
-      <Component Id="cpm_main_exe_shortcut" Directory="ProgramMenuFolder" Guid="{16DF7C13-6346-42F9-B973-2EE58BD8B021}">
+      <Component Id="cpm_main_exe_shortcut" Directory="ProgramMenuFolder" Guid="{A7292974-7F16-436D-90E9-FE72337EABC3}">
         <Shortcut Id="main_exe_shortcut" Name="Digital Clock Next" Target="[#fil5922F8CA920015E8C80DBBDD96DC9F69]" WorkingDirectory="INSTALLDIR" />
         <RegistryValue Root="HKCU" Key="Software\NickKorotysh\DigitalClockNext" Name="app_shortcut" Type="integer" Value="1" KeyPath="yes" />
       </Component>
     </ComponentGroup>
 
     <Feature Id="Complete" Level="1">
-      <ComponentGroupRef Id="AllFiles" />
+      <ComponentGroupRef Id="AppFiles" />
       <ComponentGroupRef Id="Extras" />
     </Feature>
 
-    <Icon Id="app_icon.ico" SourceFile="digital_clock.ico" />
+    <Icon Id="app_icon.ico" SourceFile="$(var.AppIcon)" />
 
     <util:CloseApplication Id="close_main_exe" Target="DigitalClockNext.exe" EndSessionMessage="yes" RebootPrompt="no" />
 

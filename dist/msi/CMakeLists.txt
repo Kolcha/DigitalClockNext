@@ -1,6 +1,22 @@
 set(MSI_FILE "digital_clock_next-x64.msi")
 set(MSI_SRC_DIR "${CMAKE_BINARY_DIR}/installer_files")
-set(WIX_OBJ_FILES main.wixobj all_files.wixobj)
+
+set(WIX_SRC_FILES
+    main.wxs
+    app_files.wxs
+)
+
+set(WIX_CANDLE_FLAGS "-nologo -arch x64 -ext WixUtilExtension")
+string(APPEND WIX_CANDLE_FLAGS " -dAppVersion=${PROJECT_VERSION}")
+string(APPEND WIX_CANDLE_FLAGS " -dAppIcon=${CMAKE_SOURCE_DIR}/dist/digital_clock.ico")
+string(APPEND WIX_CANDLE_FLAGS " -dMySource=${MSI_SRC_DIR}")
+set(WIX_LIGHT_FLAGS "-nologo -ext WixUtilExtension -spdb -sw1076")
+
+list(TRANSFORM WIX_SRC_FILES REPLACE "\.wxs$" "\.wixobj" OUTPUT_VARIABLE WIX_OBJ_FILES)
+list(TRANSFORM WIX_SRC_FILES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+
+separate_arguments(WIX_CANDLE_FLAGS)
+separate_arguments(WIX_LIGHT_FLAGS)
 
 add_custom_command(
     OUTPUT ${MSI_SRC_DIR}/DigitalClockNext.exe
@@ -15,38 +31,19 @@ add_custom_target(deploy_qt
 )
 
 add_custom_command(
-    OUTPUT all_files.wxs
-    COMMAND heat dir ${MSI_SRC_DIR} -gg -cg AllFiles -var var.MySource -srd -scom -sreg -svb6 -nologo -dr INSTALLDIR -out all_files.wxs
-    DEPENDS deploy_qt
-    VERBATIM
-)
-
-add_custom_command(
-    OUTPUT main.wixobj
-    COMMAND candle -nologo -arch x64 -dAppVersion=${PROJECT_VERSION} -ext WixUtilExtension -o main.wixobj ${CMAKE_CURRENT_SOURCE_DIR}/main.wxs
-    DEPENDS main.wxs
-    VERBATIM
-)
-
-add_custom_command(
-    OUTPUT all_files.wixobj
-    COMMAND candle -nologo -arch x64 -dMySource=${MSI_SRC_DIR} -o all_files.wixobj all_files.wxs
-    DEPENDS all_files.wxs
-    VERBATIM
-)
-
-add_custom_command(
-    OUTPUT digital_clock.ico
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/dist/digital_clock.ico ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${PROJECT_NAME}
-)
-
-add_custom_command(
-    OUTPUT ${MSI_FILE}
-    COMMAND light -nologo -ext WixUtilExtension -spdb -sw1076 -o ${MSI_FILE} ${WIX_OBJ_FILES}
-    DEPENDS ${WIX_OBJ_FILES} digital_clock.ico
+    OUTPUT ${WIX_OBJ_FILES}
+    COMMAND candle ${WIX_CANDLE_FLAGS} ${WIX_SRC_FILES}
+    DEPENDS ${WIX_SRC_FILES}
     VERBATIM
     COMMAND_EXPAND_LISTS
 )
 
-add_custom_target(win_installer DEPENDS ${MSI_FILE} SOURCES main.wxs)
+add_custom_command(
+    OUTPUT ${MSI_FILE}
+    COMMAND light ${WIX_LIGHT_FLAGS} -o ${MSI_FILE} ${WIX_OBJ_FILES}
+    DEPENDS ${WIX_OBJ_FILES} deploy_qt
+    VERBATIM
+    COMMAND_EXPAND_LISTS
+)
+
+add_custom_target(win_installer DEPENDS ${MSI_FILE} SOURCES ${WIX_SRC_FILES})

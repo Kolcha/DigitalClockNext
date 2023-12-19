@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR">
+      <Directory Id="dir280A744A3793B4E73B0B13172DB8683E" Name="plugins" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="AppFiles">
+      <Component Id="cmp7BADBB0DC9E0153A768A6EE0E96143F1" Directory="INSTALLDIR" Guid="{DFAE76AC-C438-490E-8343-EB1696291B86}">
+        <File Id="fil5922F8CA920015E8C80DBBDD96DC9F69" KeyPath="yes" Source="$(var.MySource)\DigitalClockNext.exe" />
+      </Component>
+      <Component Id="cmp56F063206C147CBF74889413CA231FF1" Directory="INSTALLDIR" Guid="{2859B08A-9F80-4C4B-9AAF-14FF40398455}">
+        <File Id="fil99EB74EFB2EB42C04A0DCBB844BEE9B1" KeyPath="yes" Source="$(var.MySource)\Qt6Core.dll" />
+      </Component>
+      <Component Id="cmp6011ADEC16C9FF3AE5154C8E028F76A0" Directory="INSTALLDIR" Guid="{6EC8F543-D3B7-4E47-A36F-AF0B1FD12BAA}">
+        <File Id="fil7400C082121A5C0CAEC94EC2C9A15870" KeyPath="yes" Source="$(var.MySource)\Qt6Gui.dll" />
+      </Component>
+      <Component Id="cmp3DF2D539B6AF7FF49FF2425DD9926ADD" Directory="INSTALLDIR" Guid="{70D01163-444F-4582-8F52-5FB39E59E5E9}">
+        <File Id="filAF2504AC63442A07DF09646CE2F428C3" KeyPath="yes" Source="$(var.MySource)\Qt6Network.dll" />
+      </Component>
+      <Component Id="cmp79F79792D0F95EE22F04EE38B8BB42A3" Directory="INSTALLDIR" Guid="{36FD7B72-F07D-4108-A237-BAF02CB08A87}">
+        <File Id="fil46C833FC61C84E6118BBC920671477FB" KeyPath="yes" Source="$(var.MySource)\Qt6Svg.dll" />
+      </Component>
+      <Component Id="cmp853E95689CE2A9A2EDF66929F17D3700" Directory="INSTALLDIR" Guid="{EBBF820D-4F0E-4930-9986-0EB6DB0DC177}">
+        <File Id="filACABBB549FF34273BE6E692113DA8225" KeyPath="yes" Source="$(var.MySource)\Qt6Widgets.dll" />
+      </Component>
+      <Component Id="cmp6429D28736F78294E789F1285CDBA0C5" Directory="dir38849F6D66CAD1C9D4D23BF20EB0981D" Guid="{2E8E9E58-48CE-47CE-B478-632504EAD910}">
+        <File Id="fil7AEA337D7CE4012DC6754A25FCEC4511" KeyPath="yes" Source="$(var.MySource)\plugins\generic\qtuiotouchplugin.dll" />
+      </Component>
+      <Component Id="cmp8868342A11EC1A5F0F368534A0870AAB" Directory="dir2C41C47317919F7F40F42C2D5CABDBDE" Guid="{373846D9-7BD1-4DFD-AFEB-69198012067D}">
+        <File Id="filACA0F8188FFBA3FCA53DDF584A3C92BA" KeyPath="yes" Source="$(var.MySource)\plugins\iconengines\qsvgicon.dll" />
+      </Component>
+      <Component Id="cmp59F2CC1FC0003B3C2DC2E59B669C1485" Directory="dirC7D12466D9D4EFB37CFFCE0FE430D862" Guid="{8C32ACAB-988C-400E-9761-764B604C986C}">
+        <File Id="fil706689E2C7B5A960108A3851CA1FFFB5" KeyPath="yes" Source="$(var.MySource)\plugins\imageformats\qgif.dll" />
+      </Component>
+      <Component Id="cmp715C1286E8B00FFDC913B863D49664A7" Directory="dirC7D12466D9D4EFB37CFFCE0FE430D862" Guid="{27E885BC-8B5C-4D31-9FFE-2C53173DC6A9}">
+        <File Id="filA1C4CFCEA4776592E7A7B3708B0E39F5" KeyPath="yes" Source="$(var.MySource)\plugins\imageformats\qico.dll" />
+      </Component>
+      <Component Id="cmp482273AFA3312C5FF80B304BD35D80BE" Directory="dirC7D12466D9D4EFB37CFFCE0FE430D862" Guid="{A8AE7C5A-1750-4A66-8B36-2FF80C67A17B}">
+        <File Id="fil912762A8EB1F82029539A98F6A5D7B46" KeyPath="yes" Source="$(var.MySource)\plugins\imageformats\qjpeg.dll" />
+      </Component>
+      <Component Id="cmp75085EA01AF53C1C4393D459D1D6951C" Directory="dirC7D12466D9D4EFB37CFFCE0FE430D862" Guid="{A501C9A8-0660-4A0D-98DA-7454442A1B03}">
+        <File Id="filE9B34AC1DE1A10992341BF7A70583E2F" KeyPath="yes" Source="$(var.MySource)\plugins\imageformats\qsvg.dll" />
+      </Component>
+      <Component Id="cmp625DC10C0C4A5863E4CCFE819E990558" Directory="dir4F0578F2BC61AED767C601E31CCBE8E2" Guid="{CCE5538A-ABCB-4E77-A234-EB733F595490}">
+        <File Id="filADE8EFC6509C692B4B7BEA295644795D" KeyPath="yes" Source="$(var.MySource)\plugins\networkinformation\qnetworklistmanager.dll" />
+      </Component>
+      <Component Id="cmp936AC238E2EA0F51E3BB91C5449A0A76" Directory="dir20F500013C22111CF35E03A6B87810E7" Guid="{ECFDD5D8-FB70-427E-B251-DA61D59CE0D6}">
+        <File Id="filE49AA32C8913AE2348C59A5A35510458" KeyPath="yes" Source="$(var.MySource)\plugins\platforms\qwindows.dll" />
+      </Component>
+      <Component Id="cmp68C268AEB9787BA2B9E1E5C51ED36AF3" Directory="dirDB2D03FD80E110C5D67A547A8D04CBD3" Guid="{00E7A79C-FFA4-4F08-8790-17EC28E613BB}">
+        <File Id="fil671796BA2B70107DBA0BA618B24C5E80" KeyPath="yes" Source="$(var.MySource)\plugins\styles\qwindowsvistastyle.dll" />
+      </Component>
+      <Component Id="cmp80E75174A493DF4F7221EE7BB7D63064" Directory="dirF6F536CAC2A521B870028196D039D8E6" Guid="{80241663-2C09-4C3B-9A2A-2BD235CE40E6}">
+        <File Id="filEFFDA27E448FAD84740AEA7FE5939725" KeyPath="yes" Source="$(var.MySource)\plugins\tls\qcertonlybackend.dll" />
+      </Component>
+      <Component Id="cmpE9BF22AEB8AE6A5CFB0DB26232C2CD61" Directory="dirF6F536CAC2A521B870028196D039D8E6" Guid="{CC675693-259C-4B6C-AD52-8BE047DD32EC}">
+        <File Id="fil023BCBF0FB0B5C3FAC402BC8068500A8" KeyPath="yes" Source="$(var.MySource)\plugins\tls\qopensslbackend.dll" />
+      </Component>
+      <Component Id="cmpB13A54C5786E2EC7794076753CFAF572" Directory="dirF6F536CAC2A521B870028196D039D8E6" Guid="{46F8310F-F5A4-4909-BEE3-B9B964D588D8}">
+        <File Id="filF3708D10267E65BA5C8EBA8876CB7461" KeyPath="yes" Source="$(var.MySource)\plugins\tls\qschannelbackend.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="dir280A744A3793B4E73B0B13172DB8683E">
+      <Directory Id="dir20F500013C22111CF35E03A6B87810E7" Name="platforms" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="dir280A744A3793B4E73B0B13172DB8683E">
+      <Directory Id="dir2C41C47317919F7F40F42C2D5CABDBDE" Name="iconengines" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="dir280A744A3793B4E73B0B13172DB8683E">
+      <Directory Id="dir38849F6D66CAD1C9D4D23BF20EB0981D" Name="generic" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="dir280A744A3793B4E73B0B13172DB8683E">
+      <Directory Id="dir4F0578F2BC61AED767C601E31CCBE8E2" Name="networkinformation" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="dir280A744A3793B4E73B0B13172DB8683E">
+      <Directory Id="dirC7D12466D9D4EFB37CFFCE0FE430D862" Name="imageformats" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="dir280A744A3793B4E73B0B13172DB8683E">
+      <Directory Id="dirDB2D03FD80E110C5D67A547A8D04CBD3" Name="styles" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="dir280A744A3793B4E73B0B13172DB8683E">
+      <Directory Id="dirF6F536CAC2A521B870028196D039D8E6" Name="tls" />
+    </DirectoryRef>
+  </Fragment>
+</Wix>

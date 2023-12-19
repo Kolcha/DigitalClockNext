@@ -1,5 +1,9 @@
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(WIN_ICO_FILE "${CMAKE_CURRENT_SOURCE_DIR}/digital_clock.ico")
+    set(BUILD_NUMBER 0)
+    if (DEFINED ENV{GITHUB_RUN_NUMBER})
+        set(BUILD_NUMBER $ENV{GITHUB_RUN_NUMBER})
+    endif()
     configure_file(digital_clock.rc.in digital_clock.rc NEWLINE_STYLE CRLF)
     target_sources(${PROJECT_NAME} PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/digital_clock.rc
