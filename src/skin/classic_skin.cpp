@@ -83,15 +83,30 @@ public:
   ClassicLayoutBuilder(std::shared_ptr<ResourceFactory> factory,
                        std::shared_ptr<LayoutAlgorithm> layout_alg,
                        const ClassicSkin& skin)
-    : _layout(std::make_shared<CompositeGlyph>())
+    : _line(std::make_shared<CompositeGlyph>())
     , _factory(std::move(factory))
     , _skin(skin)
   {
-    _layout->setAlgorithm(std::move(layout_alg));
+    _line->setAlgorithm(std::move(layout_alg));
   }
 
   void addCharacter(QChar c) override
   {
+    if (c == QLatin1Char('\n')) {
+      if (!_layout) {
+        _layout = std::make_shared<CompositeGlyph>();
+        auto ca = std::dynamic_pointer_cast<LinearLayout>(_line->algorithm());
+        Q_ASSERT(ca);   // classic layout can have only linear layout
+        auto o = ca->orientation();
+        o = o == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal;
+        auto alg = std::make_unique<LinearLayout>(o, ca->spacing());
+        _layout->setAlgorithm(std::move(alg));
+      }
+      _line->updateGeometry();
+      _layout->addGlyph(_line);
+      _line = std::make_shared<CompositeGlyph>(_line->algorithm());
+      return;
+    }
     addItem(c);
   }
 
@@ -145,6 +160,12 @@ public:
 
   std::shared_ptr<Glyph> getLayout()
   {
+    if (_layout) {
+      _line->updateGeometry();
+      _layout->addGlyph(_line);
+    } else {
+      std::swap(_layout, _line);
+    }
     Q_ASSERT(_layout->rect().isNull());
     _layout->updateGeometry();
     return buildLayoutStack(std::move(_layout));
@@ -157,7 +178,7 @@ private:
     if (!r)
       return nullptr;
     auto item = buildItemStack(std::make_shared<SimpleGlyph>(std::move(r)));
-    _layout->addGlyph(item);
+    _line->addGlyph(item);
     return item;
   }
 
@@ -187,6 +208,7 @@ private:
   }
 
 private:
+  std::shared_ptr<CompositeGlyph> _line;
   std::shared_ptr<CompositeGlyph> _layout;
   std::shared_ptr<ResourceFactory> _factory;
   const ClassicSkin& _skin;
