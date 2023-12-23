@@ -6,6 +6,7 @@ void BorderEffect::draw(QPainter* p)
 {
   GlyphDecorator::draw(p);
   p->save();
+  p->translate(pos());
   p->setTransform(transform(), true);
   QPen pen(_color, _width);
   pen.setCosmetic(true);
@@ -21,6 +22,7 @@ void BaseLineEffect::draw(QPainter* p)
 {
   GlyphDecorator::draw(p);
   p->save();
+  p->translate(pos());
   p->setTransform(transform(), true);
   QPen pen(_color, _width);
   pen.setCosmetic(true);
@@ -53,14 +55,13 @@ void TexturingEffect::draw(QPainter* p)
 {
   GlyphDecorator::draw(p);
   p->save();
-  p->setTransform(transform(), true);
   p->setCompositionMode(QPainter::CompositionMode_SourceIn);
   if (auto tx = _brush.texture(); !tx.isNull() && _stretch) {
-    p->drawPixmap(rect(), tx, tx.rect());
+    p->drawPixmap(geometry(), tx, tx.rect());
   } else {
     p->setPen(Qt::NoPen);
     p->setBrush(_brush);
-    p->drawRect(rect());
+    p->drawRect(geometry());
   }
   p->restore();
 }
@@ -68,14 +69,13 @@ void TexturingEffect::draw(QPainter* p)
 void BackgroundEffect::draw(QPainter* p)
 {
   p->save();
-  p->setTransform(transform(), true);
-  p->setCompositionMode(QPainter::CompositionMode_Source);
+  p->setCompositionMode(QPainter::CompositionMode_SourceOver);
   if (auto tx = _brush.texture(); !tx.isNull() && _stretch) {
-    p->drawPixmap(rect(), tx, tx.rect());
+    p->drawPixmap(geometry(), tx, tx.rect());
   } else {
     p->setPen(Qt::NoPen);
     p->setBrush(_brush);
-    p->drawRect(rect());
+    p->drawRect(geometry());
   }
   p->restore();
   GlyphDecorator::draw(p);

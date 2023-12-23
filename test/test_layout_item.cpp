@@ -94,6 +94,8 @@ void LayoutItemTest::initialization()
 {
   QCOMPARE(_test_item->rect(), r);
   QCOMPARE(_test_item->transform(), QTransform());
+  QCOMPARE(_test_item->boundingRect(), _test_item->rect());
+  QCOMPARE(_test_item->pos(), QPointF(0, 0));
   QCOMPARE(_test_item->geometry(), _test_item->rect());
   QCOMPARE(_test_item->advanceX(), ax);
   QCOMPARE(_test_item->advanceY(), ay);
@@ -105,26 +107,41 @@ void LayoutItemTest::applyTransform()
 {
   // no change propagation on setTransform()
   QCOMPARE(_test_item->parent().get(), _fake_item.get());
+  QPointF pos(20, 50);
+  _test_item->setPos(pos);
   _test_item->setTransform(QTransform().scale(2.0, 1.5));
+  QCOMPARE_NE(_test_item->boundingRect(), _test_item->rect());
   QCOMPARE_NE(_test_item->geometry(), _test_item->rect());
   QCOMPARE_NE(_test_item->geometry(), r);
   QCOMPARE_NE(_test_item->advanceX(), ax);
   QCOMPARE_NE(_test_item->advanceY(), ay);
   QCOMPARE_EQ(_test_item->rect(), r);
-  QCOMPARE(_fake_item->geometryUpdateCount(), 0);
-  // no change propagation on resetGeometry()
-  _test_item->resetGeometry();
-  QCOMPARE(_test_item->parent().get(), _fake_item.get());
-  QCOMPARE(_test_item->transform(), QTransform());
-  QCOMPARE(_test_item->rect(), r);
-  QCOMPARE(_test_item->geometry(), _test_item->rect());
-  QCOMPARE(_test_item->advanceX(), ax);
-  QCOMPARE(_test_item->advanceY(), ay);
+  QCOMPARE_EQ(_test_item->geometry(), _test_item->boundingRect().translated(pos));
   QCOMPARE(_fake_item->geometryUpdateCount(), 0);
 }
 
 void LayoutItemTest::updateGeometry()
 {
+  // setPos() should update geometry
+  QCOMPARE(_test_item->pos(), QPointF(0, 0));
+  QCOMPARE(_test_item->geometry(), _test_item->boundingRect());
+  QPointF pos(20, 50);
+  _test_item->setPos(pos);
+  QCOMPARE(_test_item->pos(), pos);
+  QCOMPARE(_test_item->geometry(), _test_item->boundingRect().translated(pos));
+  // setPos() should not propagate change
+  QCOMPARE(_test_item->parent().get(), _fake_item.get());
+  QCOMPARE(_fake_item->geometryUpdateCount(), 0);
+  // setGeometry() should not change pos nor bounding rect
+  QRectF geometry = r.adjusted(-20, -60, 30, 40);
+  _test_item->setGeometry(geometry);
+  QCOMPARE(_test_item->geometry(), geometry);
+  QCOMPARE(_test_item->rect(), r);
+  QCOMPARE(_test_item->boundingRect(), r);
+  QCOMPARE(_test_item->pos(), pos);
+  // setGeometry() should not propagate change
+  QCOMPARE(_test_item->parent().get(), _fake_item.get());
+  QCOMPARE(_fake_item->geometryUpdateCount(), 0);
   // should propagate geometry change
   QCOMPARE(_test_item->parent().get(), _fake_item.get());
   QCOMPARE(_fake_item->geometryUpdateCount(), 0);

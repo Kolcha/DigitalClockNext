@@ -87,10 +87,10 @@ void LinearLayoutTest::horizontal()
   QCOMPARE(ll.spacing(), 0.0);
   ll.apply(_items);
   QCOMPARE(_items.size(), 4);
-  QCOMPARE(_items[0]->geometry(), QRectF( 0, -4, 5, 6));
-  QCOMPARE(_items[1]->geometry(), QRectF( 4, -3, 4, 7));
-  QCOMPARE(_items[2]->geometry(), QRectF( 9, -5, 4, 6));
-  QCOMPARE(_items[3]->geometry(), QRectF(11, -2, 5, 5));
+  QCOMPARE(_items[0]->geometry(), QRectF( 0, -5, 5, 9));
+  QCOMPARE(_items[1]->geometry(), QRectF( 4, -5, 4, 9));
+  QCOMPARE(_items[2]->geometry(), QRectF( 9, -5, 4, 9));
+  QCOMPARE(_items[3]->geometry(), QRectF(11, -5, 5, 9));
 }
 
 /*
@@ -125,10 +125,10 @@ void LinearLayoutTest::vertical()
   QCOMPARE(ll.spacing(), 0.0);
   ll.apply(_items);
   QCOMPARE(_items.size(), 4);
-  QCOMPARE(_items[0]->geometry(), QRectF( 0, -4, 5, 6));
-  QCOMPARE(_items[1]->geometry(), QRectF(-1,  1, 4, 7));
-  QCOMPARE(_items[2]->geometry(), QRectF(-1,  7, 4, 6));
-  QCOMPARE(_items[3]->geometry(), QRectF(-2, 14, 5, 5));
+  QCOMPARE(_items[0]->geometry(), QRectF(-2, -4, 7, 6));
+  QCOMPARE(_items[1]->geometry(), QRectF(-2,  1, 7, 7));
+  QCOMPARE(_items[2]->geometry(), QRectF(-2,  7, 7, 6));
+  QCOMPARE(_items[3]->geometry(), QRectF(-2, 14, 7, 5));
 }
 
 void LinearLayoutTest::changeSpacing()
@@ -139,24 +139,30 @@ void LinearLayoutTest::changeSpacing()
   QCOMPARE(ll.spacing(), 2.0);
   ll.apply(_items);
   QCOMPARE(_items.size(), 4);
-  QCOMPARE(_items[0]->geometry(), QRectF( 0, -4, 5, 6));
-  QCOMPARE(_items[1]->geometry(), QRectF( 6, -3, 4, 7));
-  QCOMPARE(_items[2]->geometry(), QRectF(13, -5, 4, 6));
-  QCOMPARE(_items[3]->geometry(), QRectF(17, -2, 5, 5));
+  QCOMPARE(_items[0]->geometry(), QRectF( 0, -5, 5, 9));
+  QCOMPARE(_items[1]->geometry(), QRectF( 6, -5, 4, 9));
+  QCOMPARE(_items[2]->geometry(), QRectF(13, -5, 4, 9));
+  QCOMPARE(_items[3]->geometry(), QRectF(17, -5, 5, 9));
 }
 
 void LinearLayoutTest::changeOrientation()
 {
   LinearLayout ll(Qt::Horizontal, 0.0);
   QCOMPARE(ll.orientation(), Qt::Horizontal);
+  ll.apply(_items);
+  QCOMPARE(_items.size(), 4);
+  QCOMPARE(_items[0]->geometry(), QRectF( 0, -5, 5, 9));
+  QCOMPARE(_items[1]->geometry(), QRectF( 4, -5, 4, 9));
+  QCOMPARE(_items[2]->geometry(), QRectF( 9, -5, 4, 9));
+  QCOMPARE(_items[3]->geometry(), QRectF(11, -5, 5, 9));
   ll.setOrientation(Qt::Vertical);
   QCOMPARE(ll.orientation(), Qt::Vertical);
   ll.apply(_items);
   QCOMPARE(_items.size(), 4);
-  QCOMPARE(_items[0]->geometry(), QRectF( 0, -4, 5, 6));
-  QCOMPARE(_items[1]->geometry(), QRectF(-1,  1, 4, 7));
-  QCOMPARE(_items[2]->geometry(), QRectF(-1,  7, 4, 6));
-  QCOMPARE(_items[3]->geometry(), QRectF(-2, 14, 5, 5));
+  QCOMPARE(_items[0]->geometry(), QRectF(-2, -4, 7, 6));
+  QCOMPARE(_items[1]->geometry(), QRectF(-2,  1, 7, 7));
+  QCOMPARE(_items[2]->geometry(), QRectF(-2,  7, 7, 6));
+  QCOMPARE(_items[3]->geometry(), QRectF(-2, 14, 7, 5));
 }
 
 QTEST_MAIN(LinearLayoutTest)

@@ -10,8 +10,7 @@ void CachedGlyph::draw(QPainter* p)
 
   p->save();
   auto ext_tr = p->transform();
-  p->setTransform(transform(), true);
-  auto br = p->transform().mapRect(rect());
+  auto br = p->transform().mapRect(geometry());
   auto sz = (br.size() * p->device()->devicePixelRatioF()).toSize();
 
   QString key = QString("%1_%2x%3")

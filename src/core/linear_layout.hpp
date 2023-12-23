@@ -74,27 +74,52 @@ public:
   /// Reimplements LayoutAlgorithm::apply()
   void apply(const ContainerType& items) const override
   {
+    if (items.empty()) return;
     qreal dpos = 0;
+    qreal min_coord = (items.front()->boundingRect().*_orientation->minCoord)();
+    qreal max_coord = (items.front()->boundingRect().*_orientation->maxCoord)();
     for (const auto& item : items) {
-      item->setTransform((*_orientation->transform)(dpos));
+      const auto& br = item->boundingRect();
+      min_coord = std::min(min_coord, (br.*_orientation->minCoord)());
+      max_coord = std::max(max_coord, (br.*_orientation->maxCoord)());
+      item->setPos((*_orientation->position)(dpos));
       dpos += (*item.*_orientation->advance)() + _spacing;
+    }
+    Q_ASSERT(max_coord >= min_coord);
+    for (const auto& item : items) {
+      auto geometry = item->boundingRect().translated(item->pos());
+      (geometry.*_orientation->setMinCoord)(min_coord);
+      (geometry.*_orientation->setMaxCoord)(max_coord);
+      item->setGeometry(std::move(geometry));
     }
   }
 
 private:
   struct OrientationImpl {
-    QTransform(*transform)(qreal);
+    QPointF(*position)(qreal);
     qreal(Glyph::*advance)() const;
+    qreal(QRectF::*minCoord)() const;
+    qreal(QRectF::*maxCoord)() const;
+    void(QRectF::*setMinCoord)(qreal);
+    void(QRectF::*setMaxCoord)(qreal);
   };
 
   static constexpr const OrientationImpl horizontal {
-    [](qreal dx) { return QTransform::fromTranslate(dx, 0); },
-    &Glyph::advanceX
+    [](qreal dx) { return QPointF(dx, 0); },
+    &Glyph::advanceX,
+    &QRectF::top,
+    &QRectF::bottom,
+    &QRectF::setTop,
+    &QRectF::setBottom,
   };
 
   static constexpr const OrientationImpl vertical {
-    [](qreal dy) { return QTransform::fromTranslate(0, dy); },
-    &Glyph::advanceY
+    [](qreal dy) { return QPointF(0, dy); },
+    &Glyph::advanceY,
+    &QRectF::left,
+    &QRectF::right,
+    &QRectF::setLeft,
+    &QRectF::setRight,
   };
 
   const OrientationImpl* _orientation = &horizontal;

@@ -67,14 +67,8 @@ public:
 private:
   void apply(const ContainerType& items) const override
   {
-    for (const auto& item : items) {
-      QVERIFY(item->geometry().isValid());
-      QCOMPARE(item->geometry(), item->rect());
-      QCOMPARE(item->transform(), QTransform());
-    }
-
     for (size_t i = 0; i < items.size(); i++)
-      items[i]->setTransform(QTransform().translate(_dx*i, 0));
+      items[i]->setPos({_dx*i, 0});
   }
 
 private:
@@ -93,7 +87,6 @@ private slots:
 
   void addGlyphs();
   void algorithmChange();
-  void itemsGeometryReset();
   void nestedLayouts();
   void algorithmOwnership();
   void itemsOwnership();
@@ -156,18 +149,6 @@ void LayoutTest::algorithmChange()
   QCOMPARE(_test_layout->rect(), QRectF(0, 0, 2*r.width(), r.height()));
   QCOMPARE(_test_layout->geometryUpdateCount(), 2);
   QCOMPARE(_parent_layout->geometryUpdateCount(), 2);
-}
-
-void LayoutTest::itemsGeometryReset()
-{
-  // should reset items' geometry before applying algorithm
-  _test_layout->setAlgorithm(std::make_shared<TestAlgorithm>(r.width()));
-  _test_layout->addGlyph(std::make_shared<TestGlyph>(r, r.width(), r.height()));
-  _test_layout->addGlyph(std::make_shared<TestGlyph>(r, r.width(), r.height()));
-  // call updateGeometry() twice, verification is done in TestAlgorithm
-  _test_layout->updateGeometry();
-  _test_layout->updateGeometry();
-  QCOMPARE(_test_layout->rect(), QRectF(0, 0, 2*r.width(), r.height()));
 }
 
 void LayoutTest::nestedLayouts()

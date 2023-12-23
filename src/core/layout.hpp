@@ -17,24 +17,23 @@ public:
   GlyphBase(GlyphBase&& other) noexcept = default;
   GlyphBase(const GlyphBase& other) noexcept = delete;
 
-  QRectF geometry() const noexcept final { return _curr_geom.rect(); }
+  QRectF rect() const noexcept final { return _init_geom.rect(); }
+  QRectF boundingRect() const noexcept final { return _curr_geom.rect(); }
+
   qreal advanceX() const noexcept final { return _curr_geom.advanceX(); }
   qreal advanceY() const noexcept final { return _curr_geom.advanceY(); }
 
-  QRectF rect() const noexcept final { return _init_geom.rect(); }
   QTransform transform() const noexcept final { return _transform; }
+
+  QPointF pos() const noexcept final { return _pos; }
+  QRectF geometry() const noexcept final { return _geometry; }
 
   void draw(QPainter* p) final;
 
+  Qt::Alignment alignment() const noexcept final { return _alignment; }
+
   bool isVisible() const noexcept final { return _visible; }
   void setVisible(bool visible) noexcept final { _visible = visible; }
-
-  void setGeometry(QRectF r, qreal ax, qreal ay) final
-  {
-    _init_geom.setRect(std::move(r));
-    _init_geom.setAdvance(ax, ay);
-    updateCachedGeometry();
-  }
 
   void setTransform(QTransform t) final
   {
@@ -42,18 +41,32 @@ public:
     updateCachedGeometry();
   }
 
+  void setPos(QPointF p) noexcept final
+  {
+    _geometry.translate(p - _pos);
+    _pos = std::move(p);
+  }
+
+  void setGeometry(QRectF g) noexcept final
+  {
+    _geometry = std::move(g);
+  }
+
   void updateGeometry() final;
 
-  void resetGeometry() noexcept override
-  {
-    _curr_geom = _init_geom;
-    _transform = QTransform();
-  }
+  void setAlignment(Qt::Alignment a) noexcept final { _alignment = a; }
 
   std::shared_ptr<Glyph> parent() const noexcept final { return _parent.lock(); }
   void setParent(std::weak_ptr<Glyph> p) noexcept final { _parent = std::move(p); }
 
 protected:
+  void setGeometry(QRectF r, qreal ax, qreal ay)
+  {
+    _init_geom.setRect(std::move(r));
+    _init_geom.setAdvance(ax, ay);
+    updateCachedGeometry();
+  }
+
   virtual void doUpdateGeometry() { updateCachedGeometry(); }
 
   virtual void doDraw(QPainter* p) = 0;
@@ -62,11 +75,18 @@ private:
   void updateCachedGeometry();
 
 private:
+  // item properties
   QTransform _transform;
   Geometry _init_geom;
   Geometry _curr_geom;
+  // drawing attributes
+  Qt::Alignment _alignment = Qt::AlignBaseline | Qt::AlignLeading;
   bool _visible = true;
+  // hierarchy support
   std::weak_ptr<Glyph> _parent;
+  // current geometry
+  QPointF _pos = QPointF(0, 0);
+  QRectF _geometry;
 };
 
 
