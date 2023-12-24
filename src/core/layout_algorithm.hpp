@@ -11,5 +11,5 @@ public:
 
   virtual ~LayoutAlgorithm() = default;
 
-  virtual void apply(const ContainerType& items) const = 0;
+  virtual std::pair<qreal, qreal> apply(const ContainerType& items) const = 0;
 };

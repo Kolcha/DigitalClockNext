@@ -18,6 +18,9 @@
 
 #include <QTest>
 
+#include <algorithm>
+#include <ranges>
+
 #include "layout.hpp"
 #include "fake_resource.hpp"
 
@@ -65,10 +68,12 @@ public:
   explicit TestAlgorithm(qreal dx) noexcept : _dx(dx) {}
 
 private:
-  void apply(const ContainerType& items) const override
+  std::pair<qreal, qreal> apply(const ContainerType& items) const override
   {
     for (size_t i = 0; i < items.size(); i++)
       items[i]->setPos({_dx*i, 0});
+    auto geth = [](const auto& i) { return i->boundingRect().height(); };
+    return {_dx*items.size(), std::ranges::max(items | std::views::transform(geth))};
   }
 
 private:

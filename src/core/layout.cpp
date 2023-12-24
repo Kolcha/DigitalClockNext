@@ -54,13 +54,16 @@ void CompositeGlyph::doUpdateGeometry()
 {
   if (_items.empty()) return;
 
-  if (_algorithm) _algorithm->apply(_items);
+  qreal ax = 0;
+  qreal ay = 0;
+  if (_algorithm) std::tie(ax, ay) = _algorithm->apply(_items);
   // calculate bounding rect
   QRectF r = std::accumulate(
       std::next(_items.begin()), _items.end(),
       _items.front()->geometry(),
       [](const auto& r, const auto& i) { return r | i->geometry(); }
       );
+  if (!_algorithm) std::tie(ax, ay) = std::pair{r.width(), r.height()};
   // set it as original rect
-  setGeometry(r, r.width(), r.height());
+  setGeometry(r, ax, ay);
 }
