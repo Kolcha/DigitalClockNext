@@ -69,7 +69,6 @@ public:
   void setOrientation(Qt::Orientation orientation) noexcept
   {
     _orientation = orientation == Qt::Vertical ? &vertical : &horizontal;
-    _opposite_or = orientation == Qt::Vertical ? &horizontal : &vertical;
   }
 
   /// Reimplements LayoutAlgorithm::apply()
@@ -90,23 +89,22 @@ private:
     [](qreal dx) { return QPointF(dx, 0); },
     &Glyph::advanceX,
     &QPointF::x,
-    &QRectF::top,
-    &QRectF::bottom,
-    &QRectF::setTop,
-    &QRectF::setBottom,
-  };
-
-  static constexpr const OrientationImpl vertical {
-    [](qreal dy) { return QPointF(0, dy); },
-    &Glyph::advanceY,
-    &QPointF::y,
     &QRectF::left,
     &QRectF::right,
     &QRectF::setLeft,
     &QRectF::setRight,
   };
 
+  static constexpr const OrientationImpl vertical {
+    [](qreal dy) { return QPointF(0, dy); },
+    &Glyph::advanceY,
+    &QPointF::y,
+    &QRectF::top,
+    &QRectF::bottom,
+    &QRectF::setTop,
+    &QRectF::setBottom,
+  };
+
   const OrientationImpl* _orientation = &horizontal;
-  const OrientationImpl* _opposite_or = &vertical;
   qreal _spacing = 0.0;
 };

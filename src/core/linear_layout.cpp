@@ -24,32 +24,56 @@ std::pair<qreal, qreal> LinearLayout::apply(const ContainerType& items) const
 {
   if (items.empty()) return {0, 0};
 
-  qreal dpos = 0;
-  qreal min_coord = (items.front()->boundingRect().*_orientation->minCoord)();
-  qreal max_coord = (items.front()->boundingRect().*_orientation->maxCoord)();
-  qreal max_op_adv = (*items.front().*_opposite_or->advance)();
-  for (const auto& item : items) {
+  auto cdir = _orientation;
+  auto odir = _orientation == &horizontal ? &vertical : &horizontal;
+
+  auto prev = items.begin();
+  (*prev)->setPos({0, 0});  // the first item is always at (0,0)
+
+  qreal min_coord = ((*prev)->boundingRect().*odir->minCoord)();
+  qreal max_coord = ((*prev)->boundingRect().*odir->maxCoord)();
+  qreal max_adv = (**prev.*odir->advance)();
+
+  for (auto iter = std::next(prev); iter != items.end(); ++iter) {
+    const auto& item = *iter;
     const auto& br = item->boundingRect();
-    min_coord = std::min(min_coord, (br.*_orientation->minCoord)());
-    max_coord = std::max(max_coord, (br.*_orientation->maxCoord)());
-    max_op_adv = std::max(max_op_adv, (*item.*_opposite_or->advance)());
-    item->setPos((*_orientation->position)(dpos));
-    dpos += (*item.*_orientation->advance)() + _spacing;
+    // values used for items' geometry calculation
+    min_coord = std::min(min_coord, (br.*odir->minCoord)());
+    max_coord = std::max(max_coord, (br.*odir->maxCoord)());
+    max_adv = std::max(max_adv, (*item.*odir->advance)());
+    // positioning
+    qreal dpos = ((*prev)->pos().*cdir->coord)();
+    if (_orientation == &horizontal) {
+      dpos += (*prev)->advanceX();
+    } else {
+      dpos += (*iter)->advanceY();
+    }
+    item->setPos((*cdir->position)(dpos + _spacing));
+    // current -> previous
+    prev = iter;
   }
 
   Q_ASSERT(max_coord >= min_coord);
-
+  // items' geometry calculation
   for (const auto& item : items) {
     auto geometry = item->boundingRect().translated(item->pos());
-    (geometry.*_orientation->setMinCoord)(min_coord);
-    (geometry.*_orientation->setMaxCoord)(max_coord);
+    (geometry.*odir->setMinCoord)(min_coord);
+    (geometry.*odir->setMaxCoord)(max_coord);
     item->setGeometry(std::move(geometry));
   }
 
-  qreal ax = (items.back()->pos().*_orientation->coord)() +
-             (*items.back().*_orientation->advance)() -
-             (items.front()->pos().*_orientation->coord)();
-  qreal ay = max_op_adv;
-  if (_orientation == &vertical) std::swap(ax, ay);
+  // layout's ax/ay calculation
+  qreal ax, ay;
+  if (_orientation == &horizontal) {
+    ax = items.back()->pos().x() -
+         items.front()->pos().x() +
+         items.back()->advanceX();    // last item
+    ay = max_adv;
+  } else {
+    ay = items.back()->pos().y() -
+         items.front()->pos().y() +
+         items.front()->advanceY();   // first item
+    ax = max_adv;
+  }
   return {ax, ay};
 }

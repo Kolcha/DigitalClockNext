@@ -49,10 +49,10 @@ private:
 
 void LinearLayoutTest::init()
 {
-  addItem(QRectF( 0, -4, 5, 6), 5, 4);
-  addItem(QRectF(-1, -3, 4, 7), 5, 8);
-  addItem(QRectF(-1, -5, 4, 6), 3, 4);
-  addItem(QRectF(-2, -2, 5, 5), 5, 5);
+  addItem(QRectF( 0, -4, 5, 6), 5, 5);
+  addItem(QRectF(-1, -3, 4, 7), 5, 4);
+  addItem(QRectF(-1, -5, 4, 6), 3, 8);
+  addItem(QRectF(-2, -2, 5, 5), 5, 4);
 }
 
 void LinearLayoutTest::cleanup()
@@ -85,12 +85,14 @@ void LinearLayoutTest::horizontal()
   LinearLayout ll(Qt::Horizontal, 0.0);
   QCOMPARE(ll.orientation(), Qt::Horizontal);
   QCOMPARE(ll.spacing(), 0.0);
-  ll.apply(_items);
+  auto [ax, ay] = ll.apply(_items);
   QCOMPARE(_items.size(), 4);
   QCOMPARE(_items[0]->geometry(), QRectF( 0, -5, 5, 9));
   QCOMPARE(_items[1]->geometry(), QRectF( 4, -5, 4, 9));
   QCOMPARE(_items[2]->geometry(), QRectF( 9, -5, 4, 9));
   QCOMPARE(_items[3]->geometry(), QRectF(11, -5, 5, 9));
+  QCOMPARE(ax, 18);
+  QCOMPARE(ay, 8);
 }
 
 /*
@@ -123,12 +125,14 @@ void LinearLayoutTest::vertical()
   LinearLayout ll(Qt::Vertical, 0.0);
   QCOMPARE(ll.orientation(), Qt::Vertical);
   QCOMPARE(ll.spacing(), 0.0);
-  ll.apply(_items);
+  auto [ax, ay] = ll.apply(_items);
   QCOMPARE(_items.size(), 4);
   QCOMPARE(_items[0]->geometry(), QRectF(-2, -4, 7, 6));
   QCOMPARE(_items[1]->geometry(), QRectF(-2,  1, 7, 7));
   QCOMPARE(_items[2]->geometry(), QRectF(-2,  7, 7, 6));
   QCOMPARE(_items[3]->geometry(), QRectF(-2, 14, 7, 5));
+  QCOMPARE(ax, 5);
+  QCOMPARE(ay, 21);
 }
 
 void LinearLayoutTest::changeSpacing()
