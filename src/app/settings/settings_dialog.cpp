@@ -110,6 +110,7 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   , impl(std::make_unique<Impl>(app, idx))
 {
   ui->setupUi(this);
+  ui->tabWidget->setTabVisible(ui->tabWidget->count() - 1, false);
 
   insertGlobalSettingsTab();
 

@@ -24,8 +24,9 @@ int main(int argc, char *argv[])
   QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
   QApplication::setQuitOnLastWindowClosed(false);
-
+#ifndef Q_OS_WINDOWS
   a.setStyle(u"fusion"_s);
+#endif
   a.init();
   return a.exec();
 }

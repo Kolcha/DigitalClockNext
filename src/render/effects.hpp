@@ -4,44 +4,6 @@
 
 #include <QBrush>
 
-// draws thin border around inner object
-class BorderEffect final : public GlyphDecorator {
-public:
-  using GlyphDecorator::GlyphDecorator;
-
-  void draw(QPainter* p) override;
-
-  QColor color() const noexcept { return _color; }
-  qreal width() const noexcept { return _width; }
-
-  void setColor(QColor c) noexcept { _color = std::move(c); }
-  void setWidth(qreal w) noexcept { _width = w; }
-
-private:
-  QColor _color = Qt::red;
-  qreal _width = 1.0;
-};
-
-
-// draws "base line"
-class BaseLineEffect final : public GlyphDecorator {
-public:
-  using GlyphDecorator::GlyphDecorator;
-
-  void draw(QPainter* p) override;
-
-  QColor color() const noexcept { return _color; }
-  qreal width() const noexcept { return _width; }
-
-  void setColor(QColor c) noexcept { _color = std::move(c); }
-  void setWidth(qreal w) noexcept { _width = w; }
-
-private:
-  QColor _color = Qt::green;
-  qreal _width = 1.0;
-};
-
-
 // creates new drawing surface and draws inner item on it
 // new surface size is equal to the size of the orinal one
 class NewSurfaceEffect final : public GlyphDecorator {

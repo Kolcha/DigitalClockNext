@@ -11,5 +11,6 @@ public:
   virtual void addSeparator(QChar) {}
 };
 
+// in format string only ':' is considered as separator
 void FormatDateTime(const QDateTime& dt, QStringView fmt,
                     DateTimeStringBuilder& str_builder);

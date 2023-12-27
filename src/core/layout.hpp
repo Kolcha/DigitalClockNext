@@ -80,7 +80,7 @@ private:
   Geometry _init_geom;
   Geometry _curr_geom;
   // drawing attributes
-  Qt::Alignment _alignment = Qt::AlignBaseline | Qt::AlignLeading;
+  Qt::Alignment _alignment = Qt::AlignBaseline | Qt::AlignJustify;
   bool _visible = true;
   // hierarchy support
   std::weak_ptr<Glyph> _parent;
