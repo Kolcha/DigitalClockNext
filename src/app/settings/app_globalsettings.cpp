@@ -74,10 +74,6 @@ void AppGlobalSettings::discard()
     return;
 
   impl->config.discard();
-
-  impl->app->update_checker()->setAutoupdate(impl->config.getCheckForUpdates());
-  impl->app->update_checker()->setUpdatePeriod(impl->config.getUpdatePeriodDays());
-  impl->app->update_checker()->setCheckForBeta(impl->config.getCheckForBetaVersion());
 }
 
 void AppGlobalSettings::on_enable_autostart_clicked(bool checked)
@@ -106,7 +102,6 @@ void AppGlobalSettings::on_enable_snap_to_edge_clicked(bool checked)
 
 void AppGlobalSettings::on_enable_autoupdate_clicked(bool checked)
 {
-  impl->app->update_checker()->setAutoupdate(checked);
   impl->config.setCheckForUpdates(checked);
   impl->markDirty();
 }
@@ -114,14 +109,12 @@ void AppGlobalSettings::on_enable_autoupdate_clicked(bool checked)
 void AppGlobalSettings::on_update_period_edit_activated(int index)
 {
   int period = ui->update_period_edit->itemData(index).toInt();
-  impl->app->update_checker()->setUpdatePeriod(period);
   impl->config.setUpdatePeriodDays(period);
   impl->markDirty();
 }
 
 void AppGlobalSettings::on_check_for_beta_clicked(bool checked)
 {
-  impl->app->update_checker()->setCheckForBeta(checked);
   impl->config.setCheckForBetaVersion(checked);
   impl->markDirty();
 }

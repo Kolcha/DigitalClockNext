@@ -26,7 +26,6 @@ private slots:
   void showAboutDialog();
 
   void handleNewVersion(QVersionNumber version, QDate date, QUrl link);
-  void handleUpToDate();
   void handleUpdateError(QString error_msg);
 
 private:

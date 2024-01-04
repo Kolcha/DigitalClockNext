@@ -8,21 +8,12 @@
 
 #include "build_date.hpp"
 
-UpdateChecker::UpdateChecker(QDateTime last_update, QObject* parent)
+UpdateChecker::UpdateChecker(QObject* parent)
   : QObject(parent)
-    , _autoupdate(true)
-    , _check_beta(false)
-    , _force_update(false)
-    , _is_running(false)
-    , _update_period(3)
-    , _last_update(std::move(last_update))
+  , _check_beta(false)
+  , _is_running(false)
 {
   connect(&_net_access_manager, &QNetworkAccessManager::finished, this, &UpdateChecker::readReply);
-}
-
-QDateTime UpdateChecker::lastUpdateTime() const noexcept
-{
-  return _last_update;
 }
 
 void UpdateChecker::checkForUpdates()
@@ -35,31 +26,12 @@ void UpdateChecker::setCheckForBeta(bool check) noexcept
   _check_beta = check;
 }
 
-void UpdateChecker::setAutoupdate(bool update) noexcept
-{
-  _autoupdate = update;
-}
-
-void UpdateChecker::setUpdatePeriod(int period) noexcept
-{
-  _update_period = period;
-}
-
-void UpdateChecker::timerHandler()
-{
-  if (!_autoupdate || _is_running)
-    return;
-
-  if (_last_update.daysTo(QDateTime::currentDateTime()) < _update_period)
-    return;
-
-  runCheckForUpdates(false);
-}
-
 void UpdateChecker::runCheckForUpdates(bool force)
 {
-  _force_update = force;
-  _last_update = QDateTime::currentDateTime();
+  Q_UNUSED(force);
+  if (_is_running)
+    return;
+
   sendRequest(QUrl("https://digitalclock4.sourceforge.io/update/"));
 }
 
@@ -109,8 +81,6 @@ void UpdateChecker::readReply(QNetworkReply* reply)
   if (latest > QVersionNumber::fromString(QCoreApplication::applicationVersion()) || build_date() < last_build) {
     emit newVersion(latest, last_build, {link});
   } else {
-    if (_force_update) emit upToDate();
+    emit upToDate();
   }
-
-  emit updateChecked(_last_update);
 }

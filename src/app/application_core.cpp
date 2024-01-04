@@ -11,16 +11,23 @@ void ApplicationPrivate::initCore()
 
 void ApplicationPrivate::initUpdater()
 {
-  _update_checker = std::make_unique<UpdateChecker>(_app_state->global().getLastUpdateCheck());
-  _update_checker->setAutoupdate(_app_config->global().getCheckForUpdates());
-  _update_checker->setUpdatePeriod(_app_config->global().getUpdatePeriodDays());
+  if (!_app_config->global().getCheckForUpdates())
+    return;
+
+  _update_checker = std::make_unique<UpdateChecker>();
   _update_checker->setCheckForBeta(_app_config->global().getCheckForBetaVersion());
 
-  connect(_time_src.get(), &TimeSource::timeChanged, _update_checker.get(), &UpdateChecker::timerHandler);
+  auto save_last_update = [this]() {
+    _app_state->global().setLastUpdateCheck(QDateTime::currentDateTime());
+  };
 
-  connect(_update_checker.get(), &UpdateChecker::updateChecked, this, [this](QDateTime dt) {
-    _app_state->global().setLastUpdateCheck(dt);
-  });
+  connect(_update_checker.get(), &UpdateChecker::newVersion, this, save_last_update);
+  connect(_update_checker.get(), &UpdateChecker::upToDate, this, save_last_update);
+
+  const auto& last_update = _app_state->global().getLastUpdateCheck();
+  const auto update_period = _app_config->global().getUpdatePeriodDays();
+  if (last_update.daysTo(QDateTime::currentDateTime()) >= update_period)
+    _update_checker->checkForUpdates();
 }
 
 void Application::initCore()
@@ -32,7 +39,9 @@ void Application::initUpdater()
 {
   _impl->initUpdater();
 
+  if (!_impl->update_checker())
+    return;
+
   connect(_impl->update_checker().get(), &UpdateChecker::newVersion, this, &Application::handleNewVersion);
-  connect(_impl->update_checker().get(), &UpdateChecker::upToDate, this, &Application::handleUpToDate);
   connect(_impl->update_checker().get(), &UpdateChecker::errorMessage, this, &Application::handleUpdateError);
 }

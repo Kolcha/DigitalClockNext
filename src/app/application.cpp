@@ -66,16 +66,6 @@ void Application::handleNewVersion(QVersionNumber version, QDate date, QUrl link
   connect(_impl->tray_icon().get(), &QSystemTrayIcon::messageClicked, this, on_msg_clicked);
 }
 
-void Application::handleUpToDate()
-{
-  // *INDENT-OFF*
-  _impl->tray_icon()->showMessage(
-        tr("%1 Update").arg(qApp->applicationDisplayName()),
-        tr("You already have the latest version (%1).").arg(qApp->applicationVersion()),
-        QSystemTrayIcon::Information);
-  // *INDENT-ON*
-}
-
 void Application::handleUpdateError(QString error_msg)
 {
   // *INDENT-OFF*
