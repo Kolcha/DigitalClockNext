@@ -35,6 +35,9 @@ public:
 public:
   const QFont& font() const noexcept { return _font; }
 
+  qreal ascent() const override;
+  qreal descent() const override;
+
 protected:
   std::shared_ptr<Resource> create(QChar ch) const override
   {

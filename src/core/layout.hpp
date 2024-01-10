@@ -67,6 +67,11 @@ protected:
     updateCachedGeometry();
   }
 
+  inline void updateRect(QRectF r)
+  {
+    setGeometry(std::move(r), _init_geom.advanceX(), _init_geom.advanceY());
+  }
+
   virtual void doUpdateGeometry() { updateCachedGeometry(); }
 
   virtual void doDraw(QPainter* p) = 0;
@@ -131,6 +136,13 @@ public:
 
   const auto& algorithm() const noexcept { return _algorithm; }
   const auto& items() const noexcept { return _items; }
+
+  /**
+   * Explicitly define item's rect
+   * @param r - desired item't rect
+   * @note The value will be lost after updateGeometry() call
+   */
+  void setRect(QRectF r) { updateRect(std::move(r)); }
 
   size_t cacheKey() const override;
 

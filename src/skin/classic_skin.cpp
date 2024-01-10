@@ -102,8 +102,7 @@ public:
         auto alg = std::make_unique<LinearLayout>(o, ca->spacing());
         _layout->setAlgorithm(std::move(alg));
       }
-      _line->updateGeometry();
-      _layout->addGlyph(_line);
+      addLine(_line);
       _line = std::make_shared<CompositeGlyph>(_line->algorithm());
       return;
     }
@@ -161,13 +160,12 @@ public:
   std::shared_ptr<Glyph> getLayout()
   {
     if (_layout) {
-      _line->updateGeometry();
-      _layout->addGlyph(_line);
+      addLine(std::move(_line));
+      _layout->updateGeometry();
     } else {
       std::swap(_layout, _line);
+      updateLineRect(*_layout);
     }
-    Q_ASSERT(_layout->rect().isNull());
-    _layout->updateGeometry();
     return buildLayoutStack(std::move(_layout));
   }
 
@@ -180,6 +178,23 @@ private:
     auto item = buildItemStack(std::make_shared<SimpleGlyph>(std::move(r)));
     _line->addGlyph(item);
     return item;
+  }
+
+  void addLine(std::shared_ptr<CompositeGlyph> line)
+  {
+    updateLineRect(*line);
+    _layout->addGlyph(std::move(line));
+    Q_ASSERT(_layout->rect().isNull());
+  }
+
+  void updateLineRect(CompositeGlyph& line)
+  {
+    Q_ASSERT(line.rect().isNull());
+    line.updateGeometry();
+    auto r = line.rect();
+    r.setTop(-_factory->ascent());
+    r.setBottom(_factory->descent());
+    line.setRect(std::move(r));
   }
 
   std::shared_ptr<Glyph> buildItemStack(std::shared_ptr<Glyph> item) const

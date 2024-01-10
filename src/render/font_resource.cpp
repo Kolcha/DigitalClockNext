@@ -21,3 +21,13 @@ void FontResource::draw(QPainter* p)
   p->drawText(0, 0, QString(_ch));
   p->restore();
 }
+
+qreal FontResourceFactory::ascent() const
+{
+  return QFontMetricsF(_font).ascent();
+}
+
+qreal FontResourceFactory::descent() const
+{
+  return QFontMetricsF(_font).descent();
+}

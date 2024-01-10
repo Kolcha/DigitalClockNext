@@ -96,6 +96,7 @@ private slots:
   void algorithmOwnership();
   void itemsOwnership();
   void assignParent();
+  void assignRect();
 
 private:
   std::shared_ptr<UpdateCounter<CompositeGlyph>> _test_layout;
@@ -225,6 +226,21 @@ void LayoutTest::assignParent()
   _test_layout->addGlyph(item);
   QVERIFY(item->parent());
   QCOMPARE(item->parent().get(), _test_layout.get());
+}
+
+void LayoutTest::assignRect()
+{
+  _test_layout->addGlyph(std::make_shared<TestGlyph>(r, r.width(), r.height()));
+  QVERIFY(_test_layout->rect().isNull());
+  _test_layout->updateGeometry();
+  QCOMPARE(_test_layout->rect(), r);
+  // should use explicitly assigned rect
+  const QRectF exp_r(-5, -40, 50, 75);
+  _test_layout->setRect(exp_r);
+  QCOMPARE(_test_layout->rect(), exp_r);
+  // should reset assigned rect on updateGeometry()
+  _test_layout->updateGeometry();
+  QCOMPARE(_test_layout->rect(), r);
 }
 
 QTEST_MAIN(LayoutTest)

@@ -34,6 +34,11 @@ public:
     return resource;
   }
 
+  virtual qreal ascent() const = 0;
+  virtual qreal descent() const = 0;
+
+  inline qreal height() const { return ascent() + descent(); }
+
 protected:
   virtual std::shared_ptr<Resource> create(QChar ch) const = 0;
 

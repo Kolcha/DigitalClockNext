@@ -42,13 +42,19 @@ class ImageResourceFactory final : public ResourceFactory {
 public:
   explicit ImageResourceFactory(const SkinFilesMap& files);
 
-  std::shared_ptr<Resource> create(QChar ch) const override;
-
   bool supportsSeparatorAnimation() const noexcept { return _has_2_seps; }
+
+  qreal ascent() const noexcept override { return -_min_y; }
+  qreal descent() const noexcept override { return _max_y; }
+
+protected:
+  std::shared_ptr<Resource> create(QChar ch) const override;
 
 private:
   QHash<QChar, std::shared_ptr<Resource>> _resources;
   bool _has_2_seps = false;
+  qreal _min_y = 0;
+  qreal _max_y = 0;
 };
 
 

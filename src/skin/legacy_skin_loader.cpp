@@ -189,8 +189,11 @@ ImageResourceFactory::ImageResourceFactory(const SkinFilesMap& files)
   for (auto iter = files.begin(); iter != files.end(); ++iter) {
     const auto& [file, gargs] = iter.value();
     auto resource = createResource(file);
-    if (resource)
+    if (resource) {
       updateGeometry(*resource, gargs);
+      _min_y = std::min(_min_y, resource->rect().top());
+      _max_y = std::max(_max_y, resource->rect().bottom());
+    }
     _resources[iter.key()] = resource;
   }
   _has_2_seps = _resources.contains(':') && _resources.contains(' ');
