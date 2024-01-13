@@ -48,7 +48,7 @@ public:
   qreal descent() const noexcept override { return _max_y; }
 
 protected:
-  std::shared_ptr<Resource> create(QChar ch) const override;
+  std::shared_ptr<Resource> create(char32_t ch) const override;
 
 private:
   QHash<QChar, std::shared_ptr<Resource>> _resources;

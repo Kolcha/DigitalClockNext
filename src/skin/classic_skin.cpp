@@ -90,9 +90,9 @@ public:
     _line->setAlgorithm(std::move(layout_alg));
   }
 
-  void addCharacter(QChar c) override
+  void addCharacter(char32_t c) override
   {
-    if (c == QLatin1Char('\n')) {
+    if (c == '\n') {
       if (!_layout) {
         _layout = std::make_shared<CompositeGlyph>();
         auto ca = std::dynamic_pointer_cast<LinearLayout>(_line->algorithm());
@@ -109,7 +109,7 @@ public:
     addItem(c);
   }
 
-  void addSeparator(QChar c) override
+  void addSeparator(char32_t c) override
   {
     if (_supports_custom_separator && _separator_idx < _separators.size())
       c = _separators[_separator_idx];
@@ -121,7 +121,7 @@ public:
     if (_animate_separator) {
       if (!_separator_visible) {
         if (_supports_separator_animation)
-          c = QLatin1Char(' ');
+          c = ' ';
         else
           separator_visible = false;
       }
@@ -140,7 +140,7 @@ public:
     _supports_separator_animation = supports;
   }
 
-  void setCustomSeparators(QString separators) noexcept
+  void setCustomSeparators(QList<uint> separators) noexcept
   {
     _separators = std::move(separators);
   }
@@ -170,7 +170,7 @@ public:
   }
 
 private:
-  std::shared_ptr<Glyph> addItem(QChar c)
+  std::shared_ptr<Glyph> addItem(char32_t c)
   {
     auto r = _factory->item(c);
     if (!r)
@@ -192,8 +192,11 @@ private:
     Q_ASSERT(line.rect().isNull());
     line.updateGeometry();
     auto r = line.rect();
-    r.setTop(-_factory->ascent());
-    r.setBottom(_factory->descent());
+    // do not strictly rely on ascent/descent values
+    // in case of Unicode characters not supported by selected font
+    // some fallback font can be used, and it has different metrics
+    r.setTop(std::min(r.top(), -_factory->ascent()));
+    r.setBottom(std::max(r.bottom(), _factory->descent()));
     line.setRect(std::move(r));
   }
 
@@ -234,7 +237,7 @@ private:
   bool _separator_visible = true;
 
   quint32 _separator_idx = 0;
-  QString _separators;
+  QList<uint> _separators;
 
   size_t _skin_cfg_hash = 0;
 };

@@ -74,7 +74,7 @@ public:
    */
   void setCustomSeparators(QString separators)
   {
-    _separators = std::move(separators);
+    _separators = separators.toUcs4();
     handleConfigChange();
   }
 
@@ -182,6 +182,6 @@ private:
   bool _separator_visible = true;
   bool _caching_enabled = true;
   QString _format;
-  QString _separators;
+  QList<uint> _separators;
   size_t _skin_cfg_hash = 0;
 };

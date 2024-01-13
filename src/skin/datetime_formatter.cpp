@@ -4,7 +4,7 @@
 
 namespace {
 
-qsizetype repeat_count(qsizetype pos, QStringView str) noexcept
+qsizetype repeat_count(qsizetype pos, auto&& str) noexcept
 {
   qsizetype count = 0;
   for (auto i = pos; i < str.size() && str[i] == str[pos]; ++i)
@@ -12,11 +12,11 @@ qsizetype repeat_count(qsizetype pos, QStringView str) noexcept
   return count;
 }
 
-QChar escape_char(QChar c) noexcept
+char32_t escape_char(char32_t c) noexcept
 {
-  switch (c.unicode()) {
+  switch (c) {
     case 'n':
-      return QLatin1Char('\n');
+      return '\n';
     default:
       return c;
   }
@@ -24,7 +24,8 @@ QChar escape_char(QChar c) noexcept
 
 void add_characters(QStringView chars, DateTimeStringBuilder& builder)
 {
-  for (const auto& c : std::as_const(chars)) builder.addCharacter(c);
+  const auto code_points = chars.toUcs4();
+  for (auto c : code_points) builder.addCharacter(c);
 }
 
 void format_number(int n, int pad, DateTimeStringBuilder& str_builder)
@@ -34,9 +35,12 @@ void format_number(int n, int pad, DateTimeStringBuilder& str_builder)
 
 } // namespace
 
-void FormatDateTime(const QDateTime& dt, QStringView fmt,
+void FormatDateTime(const QDateTime& dt, QStringView sfmt,
                     DateTimeStringBuilder& str_builder)
 {
+  const auto fp = sfmt.toUcs4();
+  const std::vector<char32_t> fmt(fp.begin(), fp.end());
+
   bool escaped = false;
   bool quoted = false;
 
@@ -66,7 +70,7 @@ void FormatDateTime(const QDateTime& dt, QStringView fmt,
 
     int repeat = repeat_count(i, fmt);
 
-    switch (c.unicode()) {
+    switch (c) {
       case 'h': {
         repeat = qMin(repeat, 2);
         auto h = dt.time().hour();
@@ -91,8 +95,10 @@ void FormatDateTime(const QDateTime& dt, QStringView fmt,
         if (i + 1 < fmt.size() && (fmt[i+1] == 'p' || fmt[i+1] == 'P'))
           repeat += 1;  // AP should be handled as 'A' (case insensitive)
         [[fallthrough]];
-      default:
-        add_characters(QLocale::system().toString(dt, fmt.mid(i, repeat)), str_builder);
+      default: {
+        const auto sfmt = QString::fromUcs4(&fmt[i], repeat);
+        add_characters(QLocale::system().toString(dt, sfmt), str_builder);
+      }
     }
 
     i += repeat - 1;

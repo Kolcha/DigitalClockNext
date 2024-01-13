@@ -25,15 +25,15 @@ namespace {
 class SimpleDateTimeStringBuilder final : public DateTimeStringBuilder
 {
 public:
-  void addCharacter(QChar ch) override { _result.append(ch); }
-  void addSeparator(QChar ch) override
+  void addCharacter(char32_t ch) override { _result.append(ch); }
+  void addSeparator(char32_t ch) override
   {
     addCharacter(ch);
     _seps.append(ch);
   }
 
-  QString result() const { return _result; }
-  QString separators() const { return _seps; }
+  QString result() const { return QString::fromUcs4(_result.data(), _result.size()); }
+  QString separators() const { return QString::fromUcs4(_seps.data(), _seps.size()); }
 
   void reset()
   {
@@ -42,8 +42,8 @@ public:
   }
 
 private:
-  QString _result;
-  QString _seps;
+  QVector<char32_t> _result;
+  QVector<char32_t> _seps;
 };
 
 } // namespace
@@ -63,6 +63,7 @@ private slots:
   void testQuoting();
   void testSeparator();
   void testComplexCase();
+  void testUnicode();
 
 private:
   SimpleDateTimeStringBuilder sb;
@@ -180,6 +181,14 @@ void DateTimeFormatterTest::testComplexCase()
   QString fmt = "hh:mm:x'\\n'x:ss:W,J,yyyy\\nx";
   FormatDateTime(dt, fmt, sb);
   QCOMPARE(sb.result(), u"12:30:x\nx:56:51,353,2023\nx");
+}
+
+void DateTimeFormatterTest::testUnicode()
+{
+  // should support any Unicode characters
+  QString fmt = "\U0001F605hh\U0001F643\U0001F643mm\U0001FAE0";
+  FormatDateTime(dt, fmt, sb);
+  QCOMPARE(sb.result(), "\U0001F60512\U0001F643\U0001F64330\U0001FAE0");
 }
 
 QTEST_MAIN(DateTimeFormatterTest)

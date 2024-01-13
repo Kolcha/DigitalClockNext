@@ -7,8 +7,8 @@ class DateTimeStringBuilder {
 public:
   virtual ~DateTimeStringBuilder() = default;
 
-  virtual void addCharacter(QChar) {}
-  virtual void addSeparator(QChar) {}
+  virtual void addCharacter(char32_t) {}
+  virtual void addSeparator(char32_t) {}
 };
 
 // in format string only ':' is considered as separator

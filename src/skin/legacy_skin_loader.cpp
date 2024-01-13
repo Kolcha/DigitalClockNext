@@ -199,8 +199,11 @@ ImageResourceFactory::ImageResourceFactory(const SkinFilesMap& files)
   _has_2_seps = _resources.contains(':') && _resources.contains(' ');
 }
 
-std::shared_ptr<Resource> ImageResourceFactory::create(QChar ch) const
+std::shared_ptr<Resource> ImageResourceFactory::create(char32_t c) const
 {
+  if (c > 0xFFFF)
+    return nullptr;
+  QChar ch(c);
   if (ch.isSpace())
     ch = ' ';
   if (!_has_2_seps && ch == ' ')

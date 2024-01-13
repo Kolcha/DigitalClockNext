@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include <QChar>
 #include <QHash>
 #include <QRect>
 
@@ -27,7 +26,7 @@ class ResourceFactory {
 public:
   virtual ~ResourceFactory() = default;
 
-  std::shared_ptr<Resource> item(QChar ch) const
+  std::shared_ptr<Resource> item(char32_t ch) const
   {
     auto& resource = _cache[ch];
     if (!resource) resource = create(ch);
@@ -40,8 +39,8 @@ public:
   inline qreal height() const { return ascent() + descent(); }
 
 protected:
-  virtual std::shared_ptr<Resource> create(QChar ch) const = 0;
+  virtual std::shared_ptr<Resource> create(char32_t ch) const = 0;
 
 private:
-  mutable QHash<QChar, std::shared_ptr<Resource>> _cache;
+  mutable QHash<char32_t, std::shared_ptr<Resource>> _cache;
 };

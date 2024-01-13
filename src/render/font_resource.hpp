@@ -6,7 +6,7 @@
 
 class FontResource final : public Resource {
 public:
-  FontResource(const QFont& font, QChar ch);
+  FontResource(const QFont& font, char32_t ch);
 
   QRectF rect() const noexcept override { return _br; }
   qreal advanceX() const noexcept override { return _ax; }
@@ -17,7 +17,7 @@ public:
   size_t cacheKey() const noexcept override { return _hash; }
 
 private:
-  QChar _ch;
+  char32_t _ch;
   QRectF _br;
   qreal _ax;
   qreal _ay;
@@ -39,7 +39,7 @@ public:
   qreal descent() const override;
 
 protected:
-  std::shared_ptr<Resource> create(QChar ch) const override
+  std::shared_ptr<Resource> create(char32_t ch) const override
   {
     return std::make_shared<FontResource>(_font, ch);
   }
