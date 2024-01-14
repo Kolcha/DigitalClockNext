@@ -89,17 +89,20 @@ public:
   }
 
 
-  void setOrientation(Qt::Orientation orientation)
-  {
-    _layout_alg->setOrientation(orientation);
-    handleConfigChange();
-  }
+  void setOrientation(Qt::Orientation orientation);
 
   void setSpacing(qreal spacing)
   {
     _layout_alg->setSpacing(spacing);
     handleConfigChange();
   }
+
+
+  void setIgnoreAdvanceX(bool enable);
+  void setIgnoreAdvanceY(bool enable);
+
+  bool ignoreAdvanceX() const noexcept { return _ignore_h_advance; }
+  bool ignoreAdvanceY() const noexcept { return _ignore_v_advance; }
 
 
   void setFormat(QString format)
@@ -181,6 +184,8 @@ private:
   bool _animate_separator = true;
   bool _separator_visible = true;
   bool _caching_enabled = true;
+  bool _ignore_h_advance = false;
+  bool _ignore_v_advance = false;
   QString _format;
   QList<uint> _separators;
   size_t _skin_cfg_hash = 0;

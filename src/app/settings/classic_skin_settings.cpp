@@ -75,6 +75,9 @@ ClassicSkinSettings::ClassicSkinSettings(ApplicationPrivate* app, std::size_t id
   QSignalBlocker _(ui->spacing_edit);
   ui->spacing_edit->setValue(impl->scfg->getSpacing());
 
+  ui->ignore_advance_x->setChecked(impl->scfg->getIgnoreAdvanceX());
+  ui->ignore_advance_y->setChecked(impl->scfg->getIgnoreAdvanceY());
+
   auto tfmt = impl->scfg->getTimeFormat();
   ui->allow_format_edit_cb->setChecked(ui->time_format_cbox->findText(tfmt) < 0);
   ui->time_format_cbox->setCurrentText(tfmt);
@@ -116,6 +119,18 @@ void ClassicSkinSettings::on_spacing_edit_valueChanged(int arg1)
 {
   impl->skin->setSpacing(arg1);
   impl->scfg->setSpacing(arg1);
+}
+
+void ClassicSkinSettings::on_ignore_advance_x_clicked(bool checked)
+{
+  impl->skin->setIgnoreAdvanceX(checked);
+  impl->scfg->setIgnoreAdvanceX(checked);
+}
+
+void ClassicSkinSettings::on_ignore_advance_y_clicked(bool checked)
+{
+  impl->skin->setIgnoreAdvanceY(checked);
+  impl->scfg->setIgnoreAdvanceY(checked);
 }
 
 void ClassicSkinSettings::on_time_format_cbox_textActivated(const QString& arg1)

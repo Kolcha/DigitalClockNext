@@ -71,6 +71,11 @@ public:
     _orientation = orientation == Qt::Vertical ? &vertical : &horizontal;
   }
 
+  /// Is advance value ignored
+  bool ignoreAdvance() const noexcept { return _ignore_advance; }
+  /// Ignore advance value, use width or height instead
+  void setIgnoreAdvance(bool ignore) noexcept { _ignore_advance = ignore; }
+
   /// Reimplements LayoutAlgorithm::apply()
   std::pair<qreal, qreal> apply(const ContainerType& items) const override;
 
@@ -107,4 +112,5 @@ private:
 
   const OrientationImpl* _orientation = &horizontal;
   qreal _spacing = 0.0;
+  bool _ignore_advance = false;
 };

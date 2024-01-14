@@ -100,6 +100,8 @@ public:
         auto o = ca->orientation();
         o = o == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal;
         auto alg = std::make_unique<LinearLayout>(o, ca->spacing());
+        if (o == Qt::Horizontal) alg->setIgnoreAdvance(_skin.ignoreAdvanceX());
+        if (o == Qt::Vertical) alg->setIgnoreAdvance(_skin.ignoreAdvanceY());
         _layout->setAlgorithm(std::move(alg));
       }
       addLine(_line);
@@ -191,6 +193,7 @@ private:
   {
     Q_ASSERT(line.rect().isNull());
     line.updateGeometry();
+    if (_skin.ignoreAdvanceY()) return;
     auto r = line.rect();
     // do not strictly rely on ascent/descent values
     // in case of Unicode characters not supported by selected font
@@ -256,6 +259,30 @@ std::shared_ptr<Glyph> ClassicSkin::process(const QDateTime& dt)
   builder.setSkinConfigHash(_skin_cfg_hash);
   FormatDateTime(dt, _format, builder);
   return builder.getLayout();
+}
+
+void ClassicSkin::setOrientation(Qt::Orientation orientation)
+{
+  _layout_alg->setOrientation(orientation);
+  if (orientation == Qt::Horizontal) _layout_alg->setIgnoreAdvance(_ignore_h_advance);
+  if (orientation == Qt::Vertical) _layout_alg->setIgnoreAdvance(_ignore_v_advance);
+  handleConfigChange();
+}
+
+void ClassicSkin::setIgnoreAdvanceX(bool enable)
+{
+  _ignore_h_advance = enable;
+  if (_layout_alg && _layout_alg->orientation() == Qt::Horizontal)
+    _layout_alg->setIgnoreAdvance(enable);
+  handleConfigChange();
+}
+
+void ClassicSkin::setIgnoreAdvanceY(bool enable)
+{
+  _ignore_v_advance = enable;
+  if (_layout_alg && _layout_alg->orientation() == Qt::Vertical)
+    _layout_alg->setIgnoreAdvance(enable);
+  handleConfigChange();
 }
 
 void ClassicSkin::handleConfigChange()

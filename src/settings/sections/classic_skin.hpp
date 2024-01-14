@@ -34,6 +34,8 @@ class ClassicSkinConfig final : public ConfigBaseQVariant {
   CONFIG_OPTION_Q(bool, TexturePerElement, true)
   CONFIG_OPTION_Q(bool, BackgroundPerElement, false)
   CONFIG_OPTION_Q(QString, CustomSeparators, QString(":"))
+  CONFIG_OPTION_Q(bool, IgnoreAdvanceX, false)
+  CONFIG_OPTION_Q(bool, IgnoreAdvanceY, true)
 public:
   using ConfigBaseQVariant::ConfigBaseQVariant;
 private:

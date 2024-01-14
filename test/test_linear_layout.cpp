@@ -35,6 +35,8 @@ private slots:
   void vertical();
   void changeSpacing();
   void changeOrientation();
+  void ignoreAdvanceX();
+  void ignoreAdvanceY();
 
 private:
   void addItem(auto&&... args)
@@ -167,6 +169,40 @@ void LinearLayoutTest::changeOrientation()
   QCOMPARE(_items[1]->geometry(), QRectF(-2,  1, 7, 7));
   QCOMPARE(_items[2]->geometry(), QRectF(-2,  7, 7, 6));
   QCOMPARE(_items[3]->geometry(), QRectF(-2, 14, 7, 5));
+}
+
+void LinearLayoutTest::ignoreAdvanceX()
+{
+  LinearLayout ll(Qt::Horizontal, 2.0);
+  ll.setIgnoreAdvance(true);
+  QCOMPARE(ll.orientation(), Qt::Horizontal);
+  QCOMPARE(ll.spacing(), 2.0);
+  QVERIFY(ll.ignoreAdvance());
+  auto [ax, ay] = ll.apply(_items);
+  QCOMPARE(_items.size(), 4);
+  QCOMPARE(_items[0]->geometry(), QRectF( 0, -5, 5, 9));
+  QCOMPARE(_items[1]->geometry(), QRectF( 7, -5, 4, 9));
+  QCOMPARE(_items[2]->geometry(), QRectF(13, -5, 4, 9));
+  QCOMPARE(_items[3]->geometry(), QRectF(19, -5, 5, 9));
+  QCOMPARE(ax, 26);
+  QCOMPARE(ay, 8);
+}
+
+void LinearLayoutTest::ignoreAdvanceY()
+{
+  LinearLayout ll(Qt::Vertical, 2.0);
+  ll.setIgnoreAdvance(true);
+  QCOMPARE(ll.orientation(), Qt::Vertical);
+  QCOMPARE(ll.spacing(), 2.0);
+  QVERIFY(ll.ignoreAdvance());
+  auto [ax, ay] = ll.apply(_items);
+  QCOMPARE(_items.size(), 4);
+  QCOMPARE(_items[0]->geometry(), QRectF(-2, -4, 7, 6));
+  QCOMPARE(_items[1]->geometry(), QRectF(-2,  4, 7, 7));
+  QCOMPARE(_items[2]->geometry(), QRectF(-2, 13, 7, 6));
+  QCOMPARE(_items[3]->geometry(), QRectF(-2, 21, 7, 5));
+  QCOMPARE(ax, 5);
+  QCOMPARE(ay, 28);
 }
 
 QTEST_MAIN(LinearLayoutTest)

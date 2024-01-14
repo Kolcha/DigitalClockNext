@@ -43,10 +43,12 @@ std::pair<qreal, qreal> LinearLayout::apply(const ContainerType& items) const
     max_adv = std::max(max_adv, (*item.*odir->advance)());
     // positioning
     qreal dpos = ((*prev)->pos().*cdir->coord)();
-    if (_orientation == &horizontal) {
-      dpos += (*prev)->advanceX();
+    if (_ignore_advance) {
+      dpos += ((*prev)->boundingRect().*cdir->maxCoord)();
+      dpos -= ((*iter)->boundingRect().*cdir->minCoord)();
     } else {
-      dpos += (*iter)->advanceY();
+      const auto& i = cdir == &horizontal ? *prev : *iter;
+      dpos += (*i.*cdir->advance)();
     }
     item->setPos((*cdir->position)(dpos + _spacing));
     // current -> previous
