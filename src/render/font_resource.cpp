@@ -14,7 +14,7 @@ FontResource::FontResource(const QFont& font, char32_t ch)
     _ax = fmf.horizontalAdvance(QChar(ch));
   } else {
     _br = fmf.tightBoundingRect(QString::fromUcs4(&ch, 1));
-    _ax = (_font.italic() ? 0.75 : 1.0) * _br.width();
+    _ax = (_font.italic() ? 0.8 : 1.0) * _br.width();
   }
   _ay = fmf.lineSpacing();
 }

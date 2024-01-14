@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>320</height>
+    <height>335</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
@@ -35,7 +35,7 @@
    <item row="1" column="0" colspan="2">
     <widget class="QCheckBox" name="ignore_advance_x">
      <property name="text">
-      <string>ignore &amp;horizontal distance between characters</string>
+      <string>ignore predefined &amp;horizontal distance between characters</string>
      </property>
     </widget>
    </item>
@@ -225,7 +225,7 @@
       <item row="4" column="0" colspan="2">
        <widget class="QCheckBox" name="bg_per_element_cb">
         <property name="text">
-         <string>apply per element</string>
+         <string>apply per character</string>
         </property>
        </widget>
       </item>
@@ -339,7 +339,7 @@
       <item row="4" column="0" colspan="2">
        <widget class="QCheckBox" name="tx_per_element_cb">
         <property name="text">
-         <string>apply per element</string>
+         <string>apply per character</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -379,7 +379,7 @@
    <item row="2" column="0" colspan="2">
     <widget class="QCheckBox" name="ignore_advance_y">
      <property name="text">
-      <string>ignore &amp;vertical distance between characters</string>
+      <string>ignore predefined &amp;vertical distance between characters</string>
      </property>
     </widget>
    </item>

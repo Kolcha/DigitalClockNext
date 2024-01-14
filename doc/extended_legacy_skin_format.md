@@ -103,7 +103,7 @@ Possible keys in section and their default values:
 * w - glyph width, can be not equal image width, defaults to image width
 * h - glyph height, can be not equal image height, defaults to image height
 * ax - horizontal distance to the next glyph, from (0,0) of current to (0,0) of next, defaults to w, can be both more or less than w
-* ay - vertical distance to the next glyph, from (0,0) of current to (0,0) of next, defaults to h, can be both more or less than h
+* ay - vertical distance to the previous glyph, from (0,0) of current to (0,0) of previous, defaults to h, can be both more or less than h
 
 Example section:
 
@@ -114,7 +114,7 @@ y=28.961                        ; can be interpreted as top margin
 w=11.641                        ; desired image width, if not equal to actual, image is scaled
 h=38.052                        ; desired image height, if not equal to actual, image is scaled
 ax=13.807                       ; horizontal distance from this symbol to the next one, between (0,0)
-ay=95.971                       ; vertical distance from this symbol to the next one, between (0,0)
+ay=95.971                       ; vertical distance from this symbol to the previous one, between (0,0)
 ```
 
 The first 4 values describe glyph's geometry as it (alone) would be placed at (0,0). `ax` and `ay` are for layout, to help it to place glyphs correctly one after another.
