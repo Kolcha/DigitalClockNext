@@ -27,6 +27,7 @@
 #include "classic_skin.hpp"
 
 #include "app_globalsettings.hpp"
+#include "debug_settings.hpp"
 #include "classic_skin_settings.hpp"
 
 namespace {
@@ -113,6 +114,7 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->tabWidget->setTabVisible(ui->tabWidget->count() - 1, false);
 
   insertGlobalSettingsTab();
+  insertDebugSettingsTab();
 
   auto now = QDateTime::currentDateTimeUtc();
   for (const auto& tz_id : QTimeZone::availableTimeZoneIds()) {
@@ -298,6 +300,17 @@ void SettingsDialog::insertGlobalSettingsTab()
   connect(this, &QDialog::accepted, w, &AppGlobalSettings::commit);
   connect(this, &QDialog::rejected, w, &AppGlobalSettings::discard);
   ui->tabWidget->insertTab(0, w, tr("&App Global"));
+}
+
+void SettingsDialog::insertDebugSettingsTab()
+{
+  if (!impl->acfg->global().getEnableDebugOptions())
+    return;
+  // TODO: disable tab if more than one dialog is opened
+  auto w = new DebugSettings(impl->app);
+  connect(this, &QDialog::accepted, w, &DebugSettings::commit);
+  connect(this, &QDialog::rejected, w, &DebugSettings::discard);
+  ui->tabWidget->addTab(w, tr("&Debug"));
 }
 
 void SettingsDialog::updateSkinSettingsTab()

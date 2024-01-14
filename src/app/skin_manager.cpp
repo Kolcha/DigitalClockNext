@@ -170,4 +170,11 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
 
   skin->setIgnoreAdvanceX(cfg.classicSkin().getIgnoreAdvanceX());
   skin->setIgnoreAdvanceY(cfg.classicSkin().getIgnoreAdvanceY());
+
+  if (_app->app_config()->global().getEnableDebugOptions()) {
+    skin->setItemDebugFlags(_app->app_config()->debug().getItemDebugFlags());
+    skin->setLayoutDebugFlags(_app->app_config()->debug().getLayoutDebugFlags());
+    skin->setDebugTopLevelLayout(_app->app_config()->debug().getEnableTopLevelDebug());
+    skin->setCachingEnabled(!_app->app_config()->debug().getDisableCaching());
+  }
 }

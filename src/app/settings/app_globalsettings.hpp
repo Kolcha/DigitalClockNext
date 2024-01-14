@@ -34,6 +34,8 @@ private slots:
   void on_wnd_count_edit_valueChanged(int arg1);
   void on_use_same_appearance_clicked(bool checked);
 
+  void on_enable_debug_options_clicked(bool checked);
+
 private:
   Ui::AppGlobalSettings* ui;
   struct Impl;

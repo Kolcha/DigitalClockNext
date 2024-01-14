@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DebugSettings</class>
+ <widget class="QWidget" name="DebugSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" name="debug_layout" columnstretch="1,0,0">
+   <item row="0" column="0">
+    <widget class="QLabel" name="draw_orig_r_label">
+     <property name="text">
+      <string>draw original rectangle</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QCheckBox" name="draw_orig_r_i_cb">
+     <property name="text">
+      <string>item</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QCheckBox" name="draw_orig_r_l_cb">
+     <property name="text">
+      <string>layout</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="draw_trans_r_label">
+     <property name="text">
+      <string>draw transformed rectangle</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="draw_trans_r_i_cb">
+     <property name="text">
+      <string>item</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QCheckBox" name="draw_trans_r_l_cb">
+     <property name="text">
+      <string>layout</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="draw_geom_r_label">
+     <property name="text">
+      <string>draw geometry rectangle</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QCheckBox" name="draw_geom_r_i_cb">
+     <property name="text">
+      <string>item</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QCheckBox" name="draw_geom_r_l_cb">
+     <property name="text">
+      <string>layout</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="draw_origin_label">
+     <property name="text">
+      <string>draw origin point</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="draw_origin_i_cb">
+     <property name="text">
+      <string>item</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QCheckBox" name="draw_origin_l_cb">
+     <property name="text">
+      <string>layout</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="draw_h_baseline_label">
+     <property name="text">
+      <string>draw horizontal baseline</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="draw_h_baseline_i_cb">
+     <property name="text">
+      <string>item</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QCheckBox" name="draw_h_baseline_l_cb">
+     <property name="text">
+      <string>layout</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="draw_v_baseline_label">
+     <property name="text">
+      <string>draw vertical baseline</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QCheckBox" name="draw_v_baseline_i_cb">
+     <property name="text">
+      <string>item</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QCheckBox" name="draw_v_baseline_l_cb">
+     <property name="text">
+      <string>layout</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <spacer name="debug_spacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>97</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="0">
+    <widget class="QCheckBox" name="enable_top_level_debug_cb">
+     <property name="text">
+      <string>apply layout options to top-level layout</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" colspan="2">
+    <widget class="QCheckBox" name="disable_caching_cb">
+     <property name="text">
+      <string>disable caching</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

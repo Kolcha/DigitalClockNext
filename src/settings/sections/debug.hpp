@@ -1,6 +1,6 @@
 /*
     Digital Clock - beautiful customizable clock with plugins
-    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
+    Copyright (C) 2024  Nick Korotysh <nick.korotysh@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,17 +20,13 @@
 
 #include "config_base_qvariant.hpp"
 
-class AppGlobalConfig final : public ConfigBaseQVariant {
-  CONFIG_OPTION_Q(int, WindowsCount, 1)
-  CONFIG_OPTION_Q(bool, ConfigPerWindow, false)
-  CONFIG_OPTION_Q(bool, StayOnTop, false)
-  CONFIG_OPTION_Q(bool, TransparentForMouse, false)
-  CONFIG_OPTION_Q(bool, CheckForUpdates, true)
-  CONFIG_OPTION_Q(bool, CheckForBetaVersion, false)
-  CONFIG_OPTION_Q(int, UpdatePeriodDays, 7)
-  CONFIG_OPTION_Q(bool, SnapToEdge, true)
-  CONFIG_OPTION_Q(int, SnapThreshold, 10)
-  CONFIG_OPTION_Q(bool, EnableDebugOptions, false)
+#include "layout_debug.hpp"
+
+class DebugConfig final : public ConfigBaseQVariant {
+  CONFIG_OPTION_Q(debug::LayoutDebug, ItemDebugFlags, static_cast<debug::LayoutDebug>(0))
+  CONFIG_OPTION_Q(debug::LayoutDebug, LayoutDebugFlags, static_cast<debug::LayoutDebug>(0))
+  CONFIG_OPTION_Q(bool, EnableTopLevelDebug, false)
+  CONFIG_OPTION_Q(bool, DisableCaching, false)
 public:
   using ConfigBaseQVariant::ConfigBaseQVariant;
 };

@@ -13,6 +13,7 @@
 #include "sections/app_global.hpp"
 #include "sections/appearance.hpp"
 #include "sections/classic_skin.hpp"
+#include "sections/debug.hpp"
 #include "sections/general.hpp"
 #include "sections/window_state.hpp"
 
@@ -82,6 +83,7 @@ public:
     : QObject(parent)
     , _storage(std::move(storage))
     , _global_config(std::make_unique<AppGlobalConfig>(_storage->client("AppGlobal")))
+    , _debug_config(std::make_unique<DebugConfig>(_storage->client("Debug")))
   {}
 
   // create objects on demand
@@ -98,22 +100,26 @@ public:
   }
 
   AppGlobalConfig& global() const noexcept { return *_global_config; }
+  DebugConfig& debug() const noexcept { return *_debug_config; }
 
 public slots:
   void commit()
   {
     _global_config->commit();
+    _debug_config->commit();
     std::ranges::for_each(_wnd_configs, [](const auto& c) { c->commit(); });
   }
 
   void discard()
   {
     _global_config->discard();
+    _debug_config->discard();
     std::ranges::for_each(_wnd_configs, [](const auto& c) { c->discard(); });
   }
 
 private:
   ConfigStoragePtr _storage;
   std::unique_ptr<AppGlobalConfig> _global_config;
+  std::unique_ptr<DebugConfig> _debug_config;
   std::vector<std::unique_ptr<WindowConfig>> _wnd_configs;
 };

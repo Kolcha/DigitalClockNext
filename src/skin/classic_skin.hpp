@@ -25,6 +25,7 @@
 #include <QBrush>
 #include <QString>
 
+#include "layout_debug.hpp"
 #include "linear_layout.hpp"
 #include "resource.hpp"
 
@@ -163,6 +164,13 @@ public:
   inline void disableCaching() noexcept { setCachingEnabled(false); }
   bool cachingEnabled() const noexcept { return _caching_enabled; }
 
+  void setItemDebugFlags(debug::LayoutDebug flags);
+  void setLayoutDebugFlags(debug::LayoutDebug flags);
+  void setDebugTopLevelLayout(bool enable);
+  debug::LayoutDebug itemDebugFlags() const noexcept { return _item_debug_flags; }
+  debug::LayoutDebug layoutDebugFlags() const noexcept { return _layout_debug_flags; }
+  bool debugTopLevelLayout() const noexcept { return _debug_top_level_layout; }
+
 private:
   void handleConfigChange();
   void updateConfigHash();
@@ -189,4 +197,8 @@ private:
   QString _format;
   QList<uint> _separators;
   size_t _skin_cfg_hash = 0;
+  // debug stuff
+  debug::LayoutDebug _item_debug_flags;
+  debug::LayoutDebug _layout_debug_flags;
+  bool _debug_top_level_layout = false;
 };

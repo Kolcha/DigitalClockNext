@@ -6,6 +6,8 @@ qt_add_library(core STATIC
     layout.cpp
     layout.hpp
     layout_algorithm.hpp
+    layout_debug.cpp
+    layout_debug.hpp
     linear_layout.cpp
     linear_layout.hpp
     resource.hpp

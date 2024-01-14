@@ -49,6 +49,7 @@ private:
   void applyTimeZoneSettings();
 
   void insertGlobalSettingsTab();
+  void insertDebugSettingsTab();
   void updateSkinSettingsTab();
 
 private:

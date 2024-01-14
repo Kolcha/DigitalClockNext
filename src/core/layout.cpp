@@ -24,9 +24,20 @@ void GlyphBase::draw(QPainter* p)
   if (valign == Qt::AlignVCenter) dy = _geometry.center().y() - br.center().y();
   if (valign == Qt::AlignBottom) dy = _geometry.bottom() - br.bottom();
   p->translate(dx, dy);
+
+  DEBUG_DRAW(debug::DrawTransformedRect, _debug_flags, p, Rect, boundingRect())
+  DEBUG_DRAW(debug::DrawOriginPoint, _debug_flags, p, Ellipse, QPoint(0, 0), 2, 2)
+  DEBUG_DRAW(debug::DrawHBaseline, _debug_flags, p, Line, boundingRect().left(), 0, boundingRect().right(), 0)
+  DEBUG_DRAW(debug::DrawVBaseline, _debug_flags, p, Line, 0, boundingRect().top(), 0, boundingRect().bottom())
+
   p->setTransform(transform(), true);
+
+  DEBUG_DRAW(debug::DrawOriginalRect, _debug_flags, p, Rect, rect())
+
   doDraw(p);
   p->restore();
+
+  DEBUG_DRAW(debug::DrawGeometry, _debug_flags, p, Rect, geometry())
 }
 
 void GlyphBase::updateGeometry()

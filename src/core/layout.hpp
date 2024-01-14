@@ -4,6 +4,7 @@
 
 #include "geometry.hpp"
 #include "layout_algorithm.hpp"
+#include "layout_debug.hpp"
 #include "resource.hpp"
 
 // common logic for "resource-based" glyphs
@@ -59,6 +60,9 @@ public:
   std::shared_ptr<Glyph> parent() const noexcept final { return _parent.lock(); }
   void setParent(std::weak_ptr<Glyph> p) noexcept final { _parent = std::move(p); }
 
+  debug::LayoutDebug debugFlags() const noexcept { return _debug_flags; }
+  void setDebugFlags(debug::LayoutDebug flags) noexcept { _debug_flags = flags; }
+
 protected:
   void setGeometry(QRectF r, qreal ax, qreal ay)
   {
@@ -92,6 +96,8 @@ private:
   // current geometry
   QPointF _pos = QPointF(0, 0);
   QRectF _geometry;
+  // debug stuff
+  debug::LayoutDebug _debug_flags;
 };
 
 

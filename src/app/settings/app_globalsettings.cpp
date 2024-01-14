@@ -46,6 +46,7 @@ AppGlobalSettings::AppGlobalSettings(ApplicationPrivate* app, QWidget* parent)
   ui->enable_multiwindow->setChecked(impl->config.getWindowsCount() > 1);
   ui->wnd_count_edit->setValue(impl->config.getWindowsCount());
   ui->use_same_appearance->setChecked(!impl->config.getConfigPerWindow());
+  ui->enable_debug_options->setChecked(impl->config.getEnableDebugOptions());
 
   QSignalBlocker _(ui->update_period_edit);
   ui->update_period_edit->addItem(tr("1 day"), 1);
@@ -134,5 +135,11 @@ void AppGlobalSettings::on_wnd_count_edit_valueChanged(int arg1)
 void AppGlobalSettings::on_use_same_appearance_clicked(bool checked)
 {
   impl->config.setConfigPerWindow(!checked);
+  impl->markDirty();
+}
+
+void AppGlobalSettings::on_enable_debug_options_clicked(bool checked)
+{
+  impl->config.setEnableDebugOptions(checked);
   impl->markDirty();
 }

@@ -168,6 +168,8 @@ public:
       std::swap(_layout, _line);
       updateLineRect(*_layout);
     }
+    if (_skin.debugTopLevelLayout())
+      _layout->setDebugFlags(_skin.layoutDebugFlags());
     return buildLayoutStack(std::move(_layout));
   }
 
@@ -177,7 +179,9 @@ private:
     auto r = _factory->item(c);
     if (!r)
       return nullptr;
-    auto item = buildItemStack(std::make_shared<SimpleGlyph>(std::move(r)));
+    auto sitem = std::make_shared<SimpleGlyph>(std::move(r));
+    sitem->setDebugFlags(_skin.itemDebugFlags());
+    auto item = buildItemStack(std::move(sitem));
     _line->addGlyph(item);
     return item;
   }
@@ -185,6 +189,7 @@ private:
   void addLine(std::shared_ptr<CompositeGlyph> line)
   {
     updateLineRect(*line);
+    line->setDebugFlags(_skin.layoutDebugFlags());
     _layout->addGlyph(std::move(line));
     Q_ASSERT(_layout->rect().isNull());
   }
@@ -285,6 +290,24 @@ void ClassicSkin::setIgnoreAdvanceY(bool enable)
   handleConfigChange();
 }
 
+void ClassicSkin::setItemDebugFlags(debug::LayoutDebug flags)
+{
+  _item_debug_flags = flags;
+  handleConfigChange();
+}
+
+void ClassicSkin::setLayoutDebugFlags(debug::LayoutDebug flags)
+{
+  _layout_debug_flags = flags;
+  handleConfigChange();
+}
+
+void ClassicSkin::setDebugTopLevelLayout(bool enable)
+{
+  _debug_top_level_layout = enable;
+  handleConfigChange();
+}
+
 void ClassicSkin::handleConfigChange()
 {
   configurationChanged();
@@ -294,6 +317,7 @@ void ClassicSkin::handleConfigChange()
 void ClassicSkin::updateConfigHash()
 {
   _skin_cfg_hash = hasher(
+      _item_debug_flags, _layout_debug_flags, _debug_top_level_layout,
       _texture, _texture_stretch, _texture_per_element,
       _background, _background_stretch, _background_per_element);
 }

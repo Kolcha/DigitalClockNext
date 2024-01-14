@@ -63,6 +63,9 @@ set(PROJECT_SOURCES
         src/app/clock_icon_engine.hpp
         src/app/clock_tray_icon.cpp
         src/app/clock_tray_icon.hpp
+        src/app/settings/debug_settings.cpp
+        src/app/settings/debug_settings.hpp
+        src/app/settings/debug_settings.ui
 )
 
 qt_add_executable(${PROJECT_NAME}

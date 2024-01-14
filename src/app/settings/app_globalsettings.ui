@@ -108,6 +108,13 @@
     </spacer>
    </item>
    <item>
+    <widget class="QCheckBox" name="enable_debug_options">
+     <property name="text">
+      <string>enable debug options</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="warning_label">
      <property name="text">
       <string>Most of options listed here require app restart to take effect.</string>
