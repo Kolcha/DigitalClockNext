@@ -20,6 +20,7 @@
 #include "ui_settings_dialog.h"
 
 #include <QColorDialog>
+#include <QFileDialog>
 #include <QFontDialog>
 #include <QGraphicsEffect>
 
@@ -57,6 +58,7 @@ struct SettingsDialog::Impl {
   ClockWindow* wnd;
   AppConfig* acfg;
   WindowConfig* wcfg;
+  QString last_path;
 
   Impl(ApplicationPrivate* a, std::size_t i) noexcept
     : app(a)
@@ -64,6 +66,7 @@ struct SettingsDialog::Impl {
     , wnd(a->window(i).get())
     , acfg(a->app_config().get())
     , wcfg(&a->app_config()->window(acfg->global().getConfigPerWindow() ? i : 0))
+    , last_path(QDir::home().absoluteFilePath("clock_settings.dc5"))
   {}
 
   template<typename Method, typename... Args>
@@ -271,6 +274,28 @@ void SettingsDialog::on_colorization_strength_edit_valueChanged(int arg1)
     return;
   impl->updateEffect(&QGraphicsColorizeEffect::setStrength, strength);
   impl->wcfg->appearance().setColorizationStrength(strength);
+}
+
+void SettingsDialog::on_export_btn_clicked()
+{
+  QString fname = QFileDialog::getSaveFileName(this,
+                                               tr("Export Settings"),
+                                               impl->last_path,
+                                               tr("Clock Settings Files (*.dc5)"));
+  if (fname.isEmpty()) return;
+  impl->last_path = fname;
+  impl->app->settings_manager()->exportSettings(fname);
+}
+
+void SettingsDialog::on_import_btn_clicked()
+{
+  QString fname = QFileDialog::getOpenFileName(this,
+                                               tr("Import Settings"),
+                                               impl->last_path,
+                                               tr("Clock Settings Files (*.dc5)"));
+  if (fname.isEmpty()) return;
+  impl->last_path = fname;
+  impl->app->settings_manager()->importSettings(fname);
 }
 
 void SettingsDialog::applySkin(std::shared_ptr<Skin> skin)

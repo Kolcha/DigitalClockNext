@@ -57,6 +57,22 @@ public slots:
 };
 
 
+class SettingsManager : public QObject
+{
+  Q_OBJECT
+
+public:
+  using QObject::QObject;
+
+public slots:
+  virtual void exportSettings(const QString& filename) = 0;
+  virtual void importSettings(const QString& filename) = 0;
+
+  virtual void confirmImport() = 0;
+  virtual void discardImport() = 0;
+};
+
+
 class ApplicationPrivate : public QObject
 {
   Q_OBJECT
@@ -65,12 +81,14 @@ class ApplicationPrivate : public QObject
 
 public:
   using QObject::QObject;
+  using ConfigStorageType = ConfigStorage<QString, QString, QVariant>;
 
   // config
   void initConfig();
 
   inline const auto& app_config() const noexcept { return _app_config; }
   inline const auto& app_state() const noexcept { return _app_state; }
+  inline const auto& config_storage() const noexcept { return _config_storage; }
 
   // tray
   void initTray();
@@ -84,6 +102,7 @@ public:
 
   inline const auto& time_source() const noexcept { return _time_src; }
   inline const auto& skin_manager() const noexcept { return _skin_manager; }
+  inline const auto& settings_manager() const noexcept { return _settings_manager; }
   inline const auto& update_checker() const noexcept { return _update_checker; }
 
   // windows
@@ -107,7 +126,6 @@ private:
 
 private:
   // config
-  using ConfigStorageType = ConfigStorage<QString, QString, QVariant>;
   std::shared_ptr<ConfigStorageType> _config_storage;
   std::unique_ptr<AppConfig> _app_config;
   std::unique_ptr<AppState> _app_state;
@@ -119,6 +137,7 @@ private:
   std::vector<std::unique_ptr<ClockWindow>> _windows;
   std::unique_ptr<TimeSource> _time_src;
   std::unique_ptr<SkinManager> _skin_manager;
+  std::unique_ptr<SettingsManager> _settings_manager;
   // updater
   std::unique_ptr<UpdateChecker> _update_checker;
 };

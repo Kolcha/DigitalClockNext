@@ -22,6 +22,7 @@
 #include <QDir>
 
 #include "backend_qsettings.hpp"
+#include "settings_manager.hpp"
 
 void ApplicationPrivate::initConfig()
 {
@@ -35,6 +36,7 @@ void ApplicationPrivate::initConfig()
   _app_state = std::make_unique<AppState>(backend);
   _config_storage = std::make_shared<ConfigStorageType>(std::move(backend));
   _app_config = std::make_unique<AppConfig>(_config_storage);
+  _settings_manager = std::make_unique<SettingsManagerImpl>(this);
 }
 
 void Application::initConfig()

@@ -66,6 +66,8 @@ set(PROJECT_SOURCES
         src/app/settings/debug_settings.cpp
         src/app/settings/debug_settings.hpp
         src/app/settings/debug_settings.ui
+        src/app/settings_manager.cpp
+        src/app/settings_manager.hpp
 )
 
 qt_add_executable(${PROJECT_NAME}

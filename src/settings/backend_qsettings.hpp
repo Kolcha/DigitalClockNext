@@ -42,13 +42,16 @@ public:
   SettingsData allSettings() const override
   {
     SettingsData all_settings;
-    const auto tags = _settings->childGroups();
-    for (const auto& tag : tags) {
-      auto& cur_settings = all_settings[tag];
-      GroupGuard _(*_settings, tag);
-      const auto keys = _settings->allKeys();
-      for (const auto& key : keys)
-        cur_settings[key] = _settings->value(key);
+    // this assumes some config implementation specific:
+    // key can't have '/', but tag can, so consider the
+    // last part of "path" as "key" and the rest as tag
+    const auto all_keys = _settings->allKeys();
+    for (const auto& skey : all_keys) {
+      auto sidx = skey.lastIndexOf('/');
+      if (sidx == -1) continue;
+      auto key = skey.mid(sidx + 1);
+      auto tag = skey.mid(0, sidx);
+      all_settings[tag][key] = _settings->value(skey);
     }
     return all_settings;
   }

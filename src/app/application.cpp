@@ -42,6 +42,8 @@ void Application::showSettingsDialog()
     else
       std::ranges::for_each(_impl->windows(), [this](auto& w) { _impl->configureWindow(w.get()); });
   };
+  connect(dlg, &QDialog::accepted, _impl->settings_manager().get(), &SettingsManager::confirmImport);
+  connect(dlg, &QDialog::rejected, _impl->settings_manager().get(), &SettingsManager::discardImport);
   connect(dlg, &QDialog::rejected, _impl.get(), reconfigure);
   connect(dlg, &QObject::destroyed, w, &QWidget::raise);
 }

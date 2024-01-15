@@ -43,6 +43,9 @@ private slots:
   void on_select_colorization_color_clicked();
   void on_colorization_strength_edit_valueChanged(int arg1);
 
+  void on_export_btn_clicked();
+  void on_import_btn_clicked();
+
 private:
   void applySkin(std::shared_ptr<Skin> skin);
   void applyFlashingSeparator(bool enable);
