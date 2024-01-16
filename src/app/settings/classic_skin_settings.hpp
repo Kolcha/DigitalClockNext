@@ -25,9 +25,6 @@ private slots:
   void on_spacing_edit_valueChanged(int arg1);
   void on_ignore_advance_x_clicked(bool checked);
   void on_ignore_advance_y_clicked(bool checked);
-  void on_time_format_cbox_textActivated(const QString& arg1);
-  void on_allow_format_edit_cb_toggled(bool checked);
-  void on_apply_format_btn_clicked();
 
   void on_texture_group_clicked(bool checked);
   void on_tx_solid_color_rbtn_clicked();
@@ -48,8 +45,6 @@ private slots:
   void on_bg_select_pattern_btn_clicked();
   void on_bg_pattern_stretch_clicked(bool checked);
   void on_bg_per_element_cb_clicked(bool checked);
-
-  void on_custom_seps_edit_textEdited(const QString& arg1);
 
 private:
   Ui::ClassicSkinSettings* ui;

@@ -78,10 +78,6 @@ ClassicSkinSettings::ClassicSkinSettings(ApplicationPrivate* app, std::size_t id
   ui->ignore_advance_x->setChecked(impl->scfg->getIgnoreAdvanceX());
   ui->ignore_advance_y->setChecked(impl->scfg->getIgnoreAdvanceY());
 
-  auto tfmt = impl->scfg->getTimeFormat();
-  ui->allow_format_edit_cb->setChecked(ui->time_format_cbox->findText(tfmt) < 0);
-  ui->time_format_cbox->setCurrentText(tfmt);
-
   auto tx = impl->scfg->getTexture();
   ui->texture_group->setChecked(tx.style() != Qt::NoBrush);
   ui->tx_solid_color_rbtn->setChecked(tx.style() == Qt::SolidPattern);
@@ -97,10 +93,6 @@ ClassicSkinSettings::ClassicSkinSettings(ApplicationPrivate* app, std::size_t id
   ui->bg_pattern_rbtn->setChecked(bg.style() == Qt::TexturePattern);
   ui->bg_pattern_stretch->setChecked(impl->scfg->getBackgroundStretch());
   ui->bg_per_element_cb->setChecked(impl->scfg->getBackgroundPerElement());
-
-  ui->custom_seps_label->setEnabled(impl->skin->supportsCustomSeparator());
-  ui->custom_seps_edit->setEnabled(impl->skin->supportsCustomSeparator());
-  ui->custom_seps_edit->setText(impl->scfg->getCustomSeparators());
 }
 
 ClassicSkinSettings::~ClassicSkinSettings()
@@ -131,23 +123,6 @@ void ClassicSkinSettings::on_ignore_advance_y_clicked(bool checked)
 {
   impl->skin->setIgnoreAdvanceY(checked);
   impl->scfg->setIgnoreAdvanceY(checked);
-}
-
-void ClassicSkinSettings::on_time_format_cbox_textActivated(const QString& arg1)
-{
-  impl->skin->setFormat(arg1);
-  impl->scfg->setTimeFormat(arg1);
-}
-
-void ClassicSkinSettings::on_allow_format_edit_cb_toggled(bool checked)
-{
-  ui->time_format_cbox->setEditable(checked);
-  ui->apply_format_btn->setEnabled(checked);
-}
-
-void ClassicSkinSettings::on_apply_format_btn_clicked()
-{
-  on_time_format_cbox_textActivated(ui->time_format_cbox->currentText());
 }
 
 void ClassicSkinSettings::on_texture_group_clicked(bool checked)
@@ -320,10 +295,4 @@ void ClassicSkinSettings::on_bg_per_element_cb_clicked(bool checked)
 {
   impl->scfg->setBackgroundPerElement(checked);
   impl->skin->setBackgroundPerElement(checked);
-}
-
-void ClassicSkinSettings::on_custom_seps_edit_textEdited(const QString& arg1)
-{
-  impl->skin->setCustomSeparators(arg1);
-  impl->scfg->setCustomSeparators(arg1);
 }

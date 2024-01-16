@@ -7,152 +7,10 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>335</height>
+    <height>300</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="5" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="custom_seps_layout">
-     <item>
-      <widget class="QLabel" name="custom_seps_label">
-       <property name="text">
-        <string>custom date/time separators (will be used instead of '&amp;:')</string>
-       </property>
-       <property name="buddy">
-        <cstring>custom_seps_edit</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="custom_seps_edit">
-       <property name="toolTip">
-        <string>replacement characters for ':' in format</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="QCheckBox" name="ignore_advance_x">
-     <property name="text">
-      <string>ignore predefined &amp;horizontal distance between characters</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="time_format_label">
-       <property name="text">
-        <string>time &amp;format</string>
-       </property>
-       <property name="buddy">
-        <cstring>time_format_cbox</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="time_format_cbox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <item>
-        <property name="text">
-         <string notr="true">h:mm</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string notr="true">hh:mm</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string notr="true">hh:mm:ss</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string notr="true">h:mmA</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string notr="true">h:mm a</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string notr="true">hh:mmA</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string notr="true">hh:mm a</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string notr="true">hh:mm:ssA</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string notr="true">hh:mm:ss a</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string notr="true">H:mm</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string notr="true">HH:mm</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string notr="true">HH:mm:ss</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="allow_format_edit_cb">
-       <property name="text">
-        <string>allow &amp;edit</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="apply_format_btn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Ap&amp;ply</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>348</width>
-       <height>58</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="0" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
@@ -213,7 +71,27 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="1">
+   <item row="2" column="0" colspan="2">
+    <widget class="QCheckBox" name="ignore_advance_y">
+     <property name="text">
+      <string>ignore predefined &amp;vertical distance between characters</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>348</width>
+       <height>58</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="1">
     <widget class="QGroupBox" name="background_group">
      <property name="title">
       <string>&amp;background</string>
@@ -293,7 +171,7 @@
      </layout>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="3" column="0">
     <widget class="QGroupBox" name="texture_group">
      <property name="title">
       <string>te&amp;xture</string>
@@ -376,10 +254,10 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QCheckBox" name="ignore_advance_y">
+   <item row="1" column="0" colspan="2">
+    <widget class="QCheckBox" name="ignore_advance_x">
      <property name="text">
-      <string>ignore predefined &amp;vertical distance between characters</string>
+      <string>ignore predefined &amp;horizontal distance between characters</string>
      </property>
     </widget>
    </item>

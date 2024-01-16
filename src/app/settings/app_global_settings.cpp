@@ -1,5 +1,5 @@
-#include "app_globalsettings.hpp"
-#include "ui_app_globalsettings.h"
+#include "app_global_settings.hpp"
+#include "ui_app_global_settings.h"
 
 #include "app/application_private.hpp"
 

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TimeFormatSettings</class>
+ <widget class="QWidget" name="TimeFormatSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" name="time_format_layout">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="format_group">
+     <layout class="QGridLayout" name="format_group_layout">
+      <item row="1" column="0" colspan="2">
+       <widget class="QCheckBox" name="leading_zero">
+        <property name="text">
+         <string>leading zero</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QCheckBox" name="show_seconds">
+        <property name="text">
+         <string>show seconds</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="rb_24h">
+        <property name="text">
+         <string>24h</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="rb_12h">
+        <property name="text">
+         <string>12h</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="am_pm_group">
+     <layout class="QGridLayout" name="am_pm_group_layout">
+      <item row="0" column="0" colspan="2">
+       <widget class="QCheckBox" name="show_apm">
+        <property name="text">
+         <string>show AM/PM</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QCheckBox" name="add_space_before_apm">
+        <property name="text">
+         <string>add space before AM/PM</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="rb_ucase_apm">
+        <property name="text">
+         <string>uppercase</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QRadioButton" name="rb_lcase_apm">
+        <property name="text">
+         <string>lowercase</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="custom_format_layout">
+     <item>
+      <widget class="QCheckBox" name="use_custom_format">
+       <property name="text">
+        <string>custom format</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="format_edit"/>
+     </item>
+     <item>
+      <widget class="QToolButton" name="format_help_btn">
+       <property name="icon">
+        <iconset theme="help-hint"/>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="format_apply_btn">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="custom_seps_layout">
+     <item>
+      <widget class="QLabel" name="custom_seps_label">
+       <property name="text">
+        <string>custom date/time separators (will be used instead of '&amp;:')</string>
+       </property>
+       <property name="buddy">
+        <cstring>custom_seps_edit</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="custom_seps_edit">
+       <property name="toolTip">
+        <string>replacement characters for ':' in format</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>132</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>rb_12h</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>am_pm_group</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>315</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>show_apm</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>add_space_before_apm</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>347</x>
+     <y>38</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>347</x>
+     <y>64</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>show_apm</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>rb_ucase_apm</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>29</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>show_apm</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>rb_lcase_apm</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>266</x>
+     <y>32</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>347</x>
+     <y>90</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>use_custom_format</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>format_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>106</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>123</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>use_custom_format</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>format_help_btn</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>103</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>use_custom_format</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>format_apply_btn</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>99</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -27,9 +27,10 @@
 #include "app/application_private.hpp"
 #include "classic_skin.hpp"
 
-#include "app_globalsettings.hpp"
+#include "app_global_settings.hpp"
 #include "debug_settings.hpp"
 #include "classic_skin_settings.hpp"
+#include "time_format_settings.hpp"
 
 namespace {
 using namespace Qt::Literals::StringLiterals;
@@ -349,8 +350,18 @@ void SettingsDialog::updateSkinSettingsTab()
     delete skin_tab;
   }
 
+  const QString fmt_tab_text = tr("&Format");
+
+  if (ui->tabWidget->tabText(skin_tab_pos) == fmt_tab_text) {
+    auto fmt_tab = ui->tabWidget->widget(skin_tab_pos);
+    ui->tabWidget->removeTab(skin_tab_pos);
+    delete fmt_tab;
+  }
+
   if (auto cskin = std::dynamic_pointer_cast<ClassicSkin>(impl->wnd->skin())) {
     auto w = new ClassicSkinSettings(impl->app, impl->idx);
     ui->tabWidget->insertTab(skin_tab_pos, w, skin_tab_text);
+    auto t = new TimeFormatSettings(impl->app, impl->idx);
+    ui->tabWidget->insertTab(skin_tab_pos + 1, t, fmt_tab_text);
   }
 }

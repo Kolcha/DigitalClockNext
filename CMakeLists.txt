@@ -54,9 +54,9 @@ set(PROJECT_SOURCES
         src/app/build_date.hpp
         src/app/update_checker.cpp
         src/app/update_checker.hpp
-        src/app/settings/app_globalsettings.hpp
-        src/app/settings/app_globalsettings.cpp
-        src/app/settings/app_globalsettings.ui
+        src/app/settings/app_global_settings.hpp
+        src/app/settings/app_global_settings.cpp
+        src/app/settings/app_global_settings.ui
         src/app/logo_label.cpp
         src/app/logo_label.hpp
         src/app/clock_icon_engine.cpp
@@ -68,6 +68,9 @@ set(PROJECT_SOURCES
         src/app/settings/debug_settings.ui
         src/app/settings_manager.cpp
         src/app/settings_manager.hpp
+        src/app/settings/time_format_settings.cpp
+        src/app/settings/time_format_settings.hpp
+        src/app/settings/time_format_settings.ui
 )
 
 qt_add_executable(${PROJECT_NAME}

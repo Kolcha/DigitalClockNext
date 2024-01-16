@@ -4,6 +4,7 @@
         <file>icons/unicons-line/scalable/clock.svg</file>
         <file>icons/unicons-line/scalable/configure.svg</file>
         <file>icons/unicons-line/scalable/help-about.svg</file>
+        <file>icons/unicons-line/scalable/help-hint.svg</file>
         <file>icons/unicons-line/index.theme</file>
     </qresource>
 </RCC>
