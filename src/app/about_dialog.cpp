@@ -6,6 +6,7 @@
 #include <QSysInfo>
 
 #include "build_date.hpp"
+#include "update_checker.hpp"
 
 static QString buildDateString()
 {
@@ -73,9 +74,33 @@ AboutDialog::AboutDialog(QWidget* parent)
   ui->app_ver_lbl->setText(tr("version: %1").arg(QApplication::applicationVersion()));
   ui->build_qt_lbl->setText(buildCompatibilityString());
   ui->build_date_lbl->setText(tr("build date: %1").arg(buildDateString()));
+
+  ui->app_ver_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+  ui->info_tab_layout->setAlignment(ui->app_ver_lbl, Qt::AlignCenter);
+
+  _u_btn = new QLabel(ui->info_tab);
+  _u_btn->setAlignment(Qt::AlignCenter);
+
+  auto uc = new UpdateChecker(this);
+  connect(uc, &UpdateChecker::upToDate, _u_btn, [this]() {
+    _u_btn->setPixmap(QIcon::fromTheme("checkmark").pixmap(_u_btn->height() - 2));
+  });
+  connect(uc, &UpdateChecker::newVersion, _u_btn, [this]() {
+    _u_btn->setPixmap(QIcon::fromTheme("update-none").pixmap(_u_btn->height() - 2));
+  });
+  uc->checkForUpdates();
 }
 
 AboutDialog::~AboutDialog()
 {
   delete ui;
+}
+
+void AboutDialog::showEvent(QShowEvent* event)
+{
+  QDialog::showEvent(event);
+  // geometry is not yet known on resizeEvent()
+  const auto& vg = ui->app_ver_lbl->geometry();
+  _u_btn->resize(vg.height(), vg.height());
+  _u_btn->move(vg.topRight() + QPoint(3, 0));
 }
