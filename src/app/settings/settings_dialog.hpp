@@ -21,6 +21,9 @@ public:
                           QWidget* parent = nullptr);
   ~SettingsDialog();
 
+  void HideAppGlobalSettings();
+  void HidePerWindowSettings();
+
 private slots:
   void on_font_rbtn_clicked();
   void on_skin_rbtn_clicked();

@@ -164,6 +164,30 @@ SettingsDialog::~SettingsDialog()
   delete ui;
 }
 
+void SettingsDialog::HideAppGlobalSettings()
+{
+  const QSet<QString> global_settings = {
+    "AppGlobalSettings",
+    "DebugSettings",
+  };
+  for (int i = 0; i < ui->tabWidget->count(); i++)
+    if (global_settings.contains(ui->tabWidget->widget(i)->objectName()))
+      ui->tabWidget->setTabVisible(i, false);
+}
+
+void SettingsDialog::HidePerWindowSettings()
+{
+  const QSet<QString> per_window_settings = {
+    "general_tab",
+    "ClassicSkinSettings",
+    "TimeFormatSettings",
+  };
+  for (int i = 0; i < ui->tabWidget->count(); i++)
+    if (per_window_settings.contains(ui->tabWidget->widget(i)->objectName()))
+      ui->tabWidget->setTabVisible(i, false);
+  ui->tabWidget->setCurrentIndex(0);
+}
+
 void SettingsDialog::on_font_rbtn_clicked()
 {
   auto skin = impl->app->skin_manager()->loadSkin(impl->wcfg->state().getTextSkinFont());

@@ -60,8 +60,8 @@ void ApplicationPrivate::createWindow(const QScreen* screen)
   }
   if (_app_config->global().getTransparentForMouse())
     wnd->setWindowFlag(Qt::WindowTransparentForInput);
-#ifndef Q_OS_MACOS
-  wnd->setWindowFlag(Qt::Tool);   // trick to hide app icon from taskbar (Win/Linux)
+#ifdef Q_OS_WINDOWS
+  wnd->setWindowFlag(Qt::Tool);   // trick to hide app icon from taskbar (Windows only)
 #endif
   connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::setDateTime);
   if (_windows.empty() || _app_config->global().getConfigPerWindow())

@@ -36,6 +36,10 @@ void Application::showSettingsDialog()
   w->activateWindow();
   const auto tag = 0x73646c67 + widx;
   auto dlg = _impl->maybeCreateAndShowDialog<SettingsDialog>(tag, _impl.get(), widx);
+  // show only app global settings if multiple windows are enabled and
+  // settings dialog was called using tray icon
+  if (_impl->app_config()->global().getWindowsCount() > 1 && !qobject_cast<ClockWindow*>(sender()))
+    dlg->HidePerWindowSettings();
   auto reconfigure = [=, this]() {
     if (_impl->app_config()->global().getConfigPerWindow())
       _impl->configureWindow(widx);
