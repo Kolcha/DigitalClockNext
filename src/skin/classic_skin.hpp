@@ -56,6 +56,11 @@ public:
     _separator_visible = !_separator_visible;
   }
 
+  void setSupportsGlyphBaseHeight(bool supports) noexcept
+  {
+    _supports_glyph_base_height = supports;
+  }
+
   void setSupportsCustomSeparator(bool supports) noexcept
   {
     _supports_custom_separator = supports;
@@ -77,6 +82,11 @@ public:
   {
     _separators = separators.toUcs4();
     handleConfigChange();
+  }
+
+  bool supportsGlyphBaseHeight() const noexcept
+  {
+    return _supports_glyph_base_height;
   }
 
   bool supportsCustomSeparator() const noexcept
@@ -159,6 +169,8 @@ public:
   }
   const QBrush& background() const noexcept { return _background; }
 
+  void setGlyphBaseHeight(qreal h);
+
   void setCachingEnabled(bool enable) noexcept { _caching_enabled = enable; }
   inline void enableCaching() noexcept { setCachingEnabled(true); }
   inline void disableCaching() noexcept { setCachingEnabled(false); }
@@ -179,6 +191,7 @@ private:
   std::shared_ptr<ResourceFactory> _factory;
   std::shared_ptr<LinearLayout> _layout_alg;
   // public properties
+  bool _supports_glyph_base_height = true;
   bool _supports_custom_separator = false;
   bool _supports_separator_animation = false;
   // effects configuration
@@ -197,6 +210,7 @@ private:
   QString _format;
   QList<uint> _separators;
   size_t _skin_cfg_hash = 0;
+  qreal _k_base_size = 1.0;
   // debug stuff
   debug::LayoutDebug _item_debug_flags;
   debug::LayoutDebug _layout_debug_flags;

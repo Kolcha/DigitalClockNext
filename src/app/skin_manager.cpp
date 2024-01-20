@@ -53,6 +53,7 @@ SkinManager::SkinPtr SkinManagerImpl::loadSkin(const QFont& font) const
 {
   auto provider = std::make_shared<FontResourceFactory>(font);
   auto skin = std::make_shared<ClassicSkin>(std::move(provider));
+  skin->setSupportsGlyphBaseHeight(false);
   skin->setSupportsCustomSeparator(true);
   return skin;
 }
@@ -170,6 +171,8 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
 
   skin->setIgnoreAdvanceX(cfg.classicSkin().getIgnoreAdvanceX());
   skin->setIgnoreAdvanceY(cfg.classicSkin().getIgnoreAdvanceY());
+
+  skin->setGlyphBaseHeight(cfg.classicSkin().getGlyphBaseHeight());
 
   if (_app->app_config()->global().getEnableDebugOptions()) {
     skin->setItemDebugFlags(_app->app_config()->debug().getItemDebugFlags());

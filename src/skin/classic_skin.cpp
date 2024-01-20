@@ -159,6 +159,8 @@ public:
 
   void setSkinConfigHash(size_t hash) noexcept { _skin_cfg_hash = hash; }
 
+  void setGlyphScaleFactor(qreal ks) noexcept { _ks = ks; }
+
   std::shared_ptr<Glyph> getLayout()
   {
     if (_layout) {
@@ -182,6 +184,7 @@ private:
     auto sitem = std::make_shared<SimpleGlyph>(std::move(r));
     sitem->setDebugFlags(_skin.itemDebugFlags());
     auto item = buildItemStack(std::move(sitem));
+    item->setTransform(item->transform().scale(_ks, _ks));
     _line->addGlyph(item);
     return item;
   }
@@ -248,6 +251,8 @@ private:
   QList<uint> _separators;
 
   size_t _skin_cfg_hash = 0;
+
+  qreal _ks = 1.0;
 };
 
 } // namespace
@@ -262,6 +267,7 @@ std::shared_ptr<Glyph> ClassicSkin::process(const QDateTime& dt)
   builder.setSeparatorAnimationEnabled(_animate_separator);
   builder.setSeparatorVisible(_separator_visible);
   builder.setSkinConfigHash(_skin_cfg_hash);
+  builder.setGlyphScaleFactor(_k_base_size);
   FormatDateTime(dt, _format, builder);
   return builder.getLayout();
 }
@@ -287,6 +293,13 @@ void ClassicSkin::setIgnoreAdvanceY(bool enable)
   _ignore_v_advance = enable;
   if (_layout_alg && _layout_alg->orientation() == Qt::Vertical)
     _layout_alg->setIgnoreAdvance(enable);
+  handleConfigChange();
+}
+
+void ClassicSkin::setGlyphBaseHeight(qreal h)
+{
+  if (!supportsGlyphBaseHeight()) return;
+  _k_base_size = h / _factory->height();
   handleConfigChange();
 }
 

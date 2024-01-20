@@ -73,6 +73,7 @@ public:
     auto factory = std::make_unique<ImageResourceFactory>(_files);
     bool supports_separator_animation = factory->supportsSeparatorAnimation();
     auto skin = std::make_unique<ClassicSkin>(std::move(factory));
+    skin->setSupportsGlyphBaseHeight(true);
     skin->setSupportsSeparatorAnimation(supports_separator_animation);
     return skin;
   }
