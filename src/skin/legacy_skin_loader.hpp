@@ -19,7 +19,7 @@
 #pragma once
 
 #include "classic_skin_loader.hpp"
-#include "resource.hpp"
+#include "resource_factory.hpp"
 
 #include <optional>
 

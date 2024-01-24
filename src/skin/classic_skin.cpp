@@ -1,6 +1,6 @@
 /*
     Digital Clock - beautiful customizable clock with plugins
-    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@
 #include "datetime_formatter.hpp"
 #include "effects.hpp"
 #include "hasher.hpp"
-#include "layout.hpp"
+#include "linear_layout.hpp"
 
 namespace {
 
 template<class Effect>
-std::shared_ptr<Glyph> createEffect(std::shared_ptr<Glyph> inner, QBrush b, bool stretch)
+std::shared_ptr<Resource> createEffect(std::shared_ptr<Resource> inner, QBrush b, bool stretch)
 {
   auto effect = std::make_shared<Effect>(std::move(inner));
   effect->setBrush(std::move(b));
@@ -34,7 +34,7 @@ std::shared_ptr<Glyph> createEffect(std::shared_ptr<Glyph> inner, QBrush b, bool
   return effect;
 }
 
-std::shared_ptr<Glyph> buildEffectsStack(std::shared_ptr<Glyph> g, auto tx_cfg, auto bg_cfg)
+std::shared_ptr<Resource> buildEffectsStack(std::shared_ptr<Resource> g, auto tx_cfg, auto bg_cfg)
 {
   auto [bg, bg_stretch] = bg_cfg;
   auto [tx, tx_stretch] = tx_cfg;
@@ -59,16 +59,16 @@ std::shared_ptr<Glyph> buildEffectsStack(std::shared_ptr<Glyph> g, auto tx_cfg, 
 }
 
 
-class CacheKeyUpdater final : public GlyphDecorator {
+class CacheKeyUpdater final : public ResourceDecorator {
 public:
-  CacheKeyUpdater(std::shared_ptr<Glyph> inner, size_t hash) noexcept
-    : GlyphDecorator(std::move(inner))
+  CacheKeyUpdater(std::shared_ptr<Resource> inner, size_t hash) noexcept
+    : ResourceDecorator(std::move(inner))
     , _skin_cfg_hash(hash)
   {}
 
   size_t cacheKey() const override
   {
-    return GlyphDecorator::cacheKey() ^ _skin_cfg_hash;
+    return ResourceDecorator::cacheKey() ^ _skin_cfg_hash;
   }
 
   void setSkinConfigHash(size_t hash) noexcept { _skin_cfg_hash = hash; }
@@ -78,34 +78,44 @@ private:
 };
 
 
+class ResRectOverride final : public ResourceDecorator {
+public:
+  using ResourceDecorator::ResourceDecorator;
+
+  QRectF rect() const override
+  {
+    return _rect.isValid() ? _rect : ResourceDecorator::rect();
+  }
+
+  void setRect(QRectF r) noexcept { _rect = std::move(r); }
+
+private:
+  QRectF _rect;
+};
+
+
 class ClassicLayoutBuilder final : public DateTimeStringBuilder {
 public:
   ClassicLayoutBuilder(std::shared_ptr<ResourceFactory> factory,
-                       std::shared_ptr<LayoutAlgorithm> layout_alg,
                        const ClassicSkin& skin)
-    : _line(std::make_shared<CompositeGlyph>())
+    : _line(std::make_shared<LinearLayout>(skin.orientation(), skin.spacing()))
     , _factory(std::move(factory))
     , _skin(skin)
   {
-    _line->setAlgorithm(std::move(layout_alg));
+    applyIgnoreAdvanceOptions(*_line);
   }
 
   void addCharacter(char32_t c) override
   {
     if (c == '\n') {
       if (!_layout) {
-        _layout = std::make_shared<CompositeGlyph>();
-        auto ca = std::dynamic_pointer_cast<LinearLayout>(_line->algorithm());
-        Q_ASSERT(ca);   // classic layout can have only linear layout
-        auto o = ca->orientation();
-        o = o == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal;
-        auto alg = std::make_unique<LinearLayout>(o, ca->spacing());
-        if (o == Qt::Horizontal) alg->setIgnoreAdvance(_skin.ignoreAdvanceX());
-        if (o == Qt::Vertical) alg->setIgnoreAdvance(_skin.ignoreAdvanceY());
-        _layout->setAlgorithm(std::move(alg));
+        auto o = _skin.orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal;
+        _layout = std::make_shared<LinearLayout>(o, _skin.spacing());
+        applyIgnoreAdvanceOptions(*_layout);
       }
-      addLine(_line);
-      _line = std::make_shared<CompositeGlyph>(_line->algorithm());
+      addLine(std::move(_line));
+      _line = std::make_shared<LinearLayout>(_skin.orientation(), _skin.spacing());
+      applyIgnoreAdvanceOptions(*_line);
       return;
     }
     addItem(c);
@@ -129,7 +139,7 @@ public:
       }
     }
 
-    addItem(c)->setVisible(separator_visible);
+    addItem(c, separator_visible);
   }
 
   void setSupportsCustomSeparator(bool supports) noexcept
@@ -161,57 +171,67 @@ public:
 
   void setGlyphScaleFactor(qreal ks) noexcept { _ks = ks; }
 
-  std::shared_ptr<Glyph> getLayout()
+  std::shared_ptr<Resource> getLayout()
   {
+    std::shared_ptr<LayoutItem> layout;
     if (_layout) {
       addLine(std::move(_line));
       _layout->updateGeometry();
+      layout = std::move(_layout);
     } else {
       std::swap(_layout, _line);
-      updateLineRect(*_layout);
+      layout = updateLineRect(std::move(_layout));
     }
-    if (_skin.debugTopLevelLayout())
-      _layout->setDebugFlags(_skin.layoutDebugFlags());
-    return buildLayoutStack(std::move(_layout));
+    return buildLayoutStack(layout->resource());
   }
 
 private:
-  std::shared_ptr<Glyph> addItem(char32_t c)
+  void addItem(char32_t c, bool visible = true)
   {
     auto r = _factory->item(c);
     if (!r)
-      return nullptr;
-    auto sitem = std::make_shared<SimpleGlyph>(std::move(r));
-    sitem->setDebugFlags(_skin.itemDebugFlags());
-    auto item = buildItemStack(std::move(sitem));
+      return;
+    if (visible)
+      r = buildItemStack(std::move(r));
+    else
+      r = std::make_shared<InvisibleResource>(r->rect(), r->advanceX(), r->advanceY());
+    auto item = std::make_shared<LayoutItem>(std::move(r));
     item->setTransform(item->transform().scale(_ks, _ks));
-    _line->addGlyph(item);
-    return item;
+    _line->addItem(std::move(item));
   }
 
-  void addLine(std::shared_ptr<CompositeGlyph> line)
+  void addLine(std::shared_ptr<LinearLayout> line)
   {
-    updateLineRect(*line);
-    line->setDebugFlags(_skin.layoutDebugFlags());
-    _layout->addGlyph(std::move(line));
+    _layout->addItem(updateLineRect(std::move(line)));
     Q_ASSERT(_layout->rect().isNull());
   }
 
-  void updateLineRect(CompositeGlyph& line)
+  // returns updated layout item that should be used instead
+  // given layout item is not modified
+  std::shared_ptr<LayoutItem> updateLineRect(std::shared_ptr<LayoutItem> line)
   {
-    Q_ASSERT(line.rect().isNull());
-    line.updateGeometry();
-    if (_skin.ignoreAdvanceY()) return;
-    auto r = line.rect();
+    Q_ASSERT(line->rect().isNull());
+    line->updateGeometry();
+    if (_skin.ignoreAdvanceY()) return line;
+    auto r = line->resource()->rect();
     // do not strictly rely on ascent/descent values
     // in case of Unicode characters not supported by selected font
     // some fallback font can be used, and it has different metrics
     r.setTop(std::min(r.top(), -_factory->ascent()));
     r.setBottom(std::max(r.bottom(), _factory->descent()));
-    line.setRect(std::move(r));
+    // why is it here? to preserve line height!
+    auto res = std::make_shared<ResRectOverride>(line->resource());
+    res->setRect(std::move(r));
+    return std::make_shared<LayoutItem>(std::move(res));
   }
 
-  std::shared_ptr<Glyph> buildItemStack(std::shared_ptr<Glyph> item) const
+  void applyIgnoreAdvanceOptions(LinearLayout& l) const noexcept
+  {
+    if (l.orientation() == Qt::Horizontal) l.setIgnoreAdvance(_skin.ignoreAdvanceX());
+    if (l.orientation() == Qt::Vertical) l.setIgnoreAdvance(_skin.ignoreAdvanceY());
+  }
+
+  std::shared_ptr<Resource> buildItemStack(std::shared_ptr<Resource> item) const
   {
     std::pair<QBrush, bool> tx;
     std::pair<QBrush, bool> bg;
@@ -221,11 +241,11 @@ private:
     bg.second = _skin.backgroundStretch();
     item = buildEffectsStack(std::move(item), std::move(tx), std::move(bg));
     item = std::make_shared<CacheKeyUpdater>(std::move(item), _skin_cfg_hash);
-    if (_skin.cachingEnabled()) item = std::make_shared<CachedGlyph>(item);
+    if (_skin.cachingEnabled()) item = std::make_shared<CachedResource>(item);
     return item;
   }
 
-  std::shared_ptr<Glyph> buildLayoutStack(std::shared_ptr<Glyph> item) const
+  std::shared_ptr<Resource> buildLayoutStack(std::shared_ptr<Resource> item) const
   {
     std::pair<QBrush, bool> tx;
     std::pair<QBrush, bool> bg;
@@ -237,8 +257,8 @@ private:
   }
 
 private:
-  std::shared_ptr<CompositeGlyph> _line;
-  std::shared_ptr<CompositeGlyph> _layout;
+  std::shared_ptr<LinearLayout> _line;
+  std::shared_ptr<LinearLayout> _layout;
   std::shared_ptr<ResourceFactory> _factory;
   const ClassicSkin& _skin;
 
@@ -257,10 +277,10 @@ private:
 
 } // namespace
 
-std::shared_ptr<Glyph> ClassicSkin::process(const QDateTime& dt)
+std::shared_ptr<Resource> ClassicSkin::process(const QDateTime& dt)
 {
   // TODO: consider to make it class member instead
-  ClassicLayoutBuilder builder(_factory, _layout_alg, *this);
+  ClassicLayoutBuilder builder(_factory, *this);
   builder.setSupportsCustomSeparator(supportsCustomSeparator());
   builder.setSupportsSeparatorAnimation(supportsSeparatorAnimation());
   builder.setCustomSeparators(_separators);
@@ -274,25 +294,19 @@ std::shared_ptr<Glyph> ClassicSkin::process(const QDateTime& dt)
 
 void ClassicSkin::setOrientation(Qt::Orientation orientation)
 {
-  _layout_alg->setOrientation(orientation);
-  if (orientation == Qt::Horizontal) _layout_alg->setIgnoreAdvance(_ignore_h_advance);
-  if (orientation == Qt::Vertical) _layout_alg->setIgnoreAdvance(_ignore_v_advance);
+  _orienatation = orientation;
   handleConfigChange();
 }
 
 void ClassicSkin::setIgnoreAdvanceX(bool enable)
 {
   _ignore_h_advance = enable;
-  if (_layout_alg && _layout_alg->orientation() == Qt::Horizontal)
-    _layout_alg->setIgnoreAdvance(enable);
   handleConfigChange();
 }
 
 void ClassicSkin::setIgnoreAdvanceY(bool enable)
 {
   _ignore_v_advance = enable;
-  if (_layout_alg && _layout_alg->orientation() == Qt::Vertical)
-    _layout_alg->setIgnoreAdvance(enable);
   handleConfigChange();
 }
 
@@ -300,24 +314,6 @@ void ClassicSkin::setGlyphBaseHeight(qreal h)
 {
   if (!supportsGlyphBaseHeight()) return;
   _k_base_size = h / _factory->height();
-  handleConfigChange();
-}
-
-void ClassicSkin::setItemDebugFlags(debug::LayoutDebug flags)
-{
-  _item_debug_flags = flags;
-  handleConfigChange();
-}
-
-void ClassicSkin::setLayoutDebugFlags(debug::LayoutDebug flags)
-{
-  _layout_debug_flags = flags;
-  handleConfigChange();
-}
-
-void ClassicSkin::setDebugTopLevelLayout(bool enable)
-{
-  _debug_top_level_layout = enable;
   handleConfigChange();
 }
 
@@ -330,7 +326,6 @@ void ClassicSkin::handleConfigChange()
 void ClassicSkin::updateConfigHash()
 {
   _skin_cfg_hash = hasher(
-      _item_debug_flags, _layout_debug_flags, _debug_top_level_layout,
       _texture, _texture_stretch, _texture_per_element,
       _background, _background_stretch, _background_per_element);
 }

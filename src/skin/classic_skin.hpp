@@ -1,6 +1,6 @@
 /*
     Digital Clock - beautiful customizable clock with plugins
-    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,9 +25,7 @@
 #include <QBrush>
 #include <QString>
 
-#include "layout_debug.hpp"
-#include "linear_layout.hpp"
-#include "resource.hpp"
+#include "resource_factory.hpp"
 
 // TODO: consider to add setter for factory object -
 // this will allow to change classic skins only with changing factory
@@ -35,13 +33,12 @@ class ClassicSkin final : public Skin {
 public:
   explicit ClassicSkin(std::shared_ptr<ResourceFactory> factory)
     : _factory(std::move(factory))
-    , _layout_alg(std::make_shared<LinearLayout>())
     , _format(QLatin1String("hh:mm a"))
   {
     updateConfigHash();   // to set default value
   }
 
-  std::shared_ptr<Glyph> process(const QDateTime& dt) override;
+  std::shared_ptr<Resource> process(const QDateTime& dt) override;
 
   void setSeparatorAnimationEnabled(bool enabled) override
   {
@@ -101,12 +98,15 @@ public:
 
 
   void setOrientation(Qt::Orientation orientation);
+  Qt::Orientation orientation() const noexcept { return _orienatation; }
 
   void setSpacing(qreal spacing)
   {
-    _layout_alg->setSpacing(spacing);
+    _spacing = spacing;
     handleConfigChange();
   }
+
+  qreal spacing() const noexcept { return _spacing; }
 
 
   void setIgnoreAdvanceX(bool enable);
@@ -176,20 +176,12 @@ public:
   inline void disableCaching() noexcept { setCachingEnabled(false); }
   bool cachingEnabled() const noexcept { return _caching_enabled; }
 
-  void setItemDebugFlags(debug::LayoutDebug flags);
-  void setLayoutDebugFlags(debug::LayoutDebug flags);
-  void setDebugTopLevelLayout(bool enable);
-  debug::LayoutDebug itemDebugFlags() const noexcept { return _item_debug_flags; }
-  debug::LayoutDebug layoutDebugFlags() const noexcept { return _layout_debug_flags; }
-  bool debugTopLevelLayout() const noexcept { return _debug_top_level_layout; }
-
 private:
   void handleConfigChange();
   void updateConfigHash();
 
 private:
   std::shared_ptr<ResourceFactory> _factory;
-  std::shared_ptr<LinearLayout> _layout_alg;
   // public properties
   bool _supports_glyph_base_height = true;
   bool _supports_custom_separator = false;
@@ -210,9 +202,7 @@ private:
   QString _format;
   QList<uint> _separators;
   size_t _skin_cfg_hash = 0;
+  Qt::Orientation _orienatation = Qt::Horizontal;
+  qreal _spacing = 0.0;
   qreal _k_base_size = 1.0;
-  // debug stuff
-  debug::LayoutDebug _item_debug_flags;
-  debug::LayoutDebug _layout_debug_flags;
-  bool _debug_top_level_layout = false;
 };

@@ -41,19 +41,12 @@ public slots:
 private slots:
   void on_draw_orig_r_i_cb_clicked(bool checked);
   void on_draw_orig_r_l_cb_clicked(bool checked);
-  void on_draw_trans_r_i_cb_clicked(bool checked);
-  void on_draw_trans_r_l_cb_clicked(bool checked);
-  void on_draw_geom_r_i_cb_clicked(bool checked);
-  void on_draw_geom_r_l_cb_clicked(bool checked);
   void on_draw_origin_i_cb_clicked(bool checked);
   void on_draw_origin_l_cb_clicked(bool checked);
   void on_draw_h_baseline_i_cb_clicked(bool checked);
   void on_draw_h_baseline_l_cb_clicked(bool checked);
   void on_draw_v_baseline_i_cb_clicked(bool checked);
   void on_draw_v_baseline_l_cb_clicked(bool checked);
-
-  void on_enable_top_level_debug_cb_clicked(bool checked);
-  void on_disable_caching_cb_clicked(bool checked);
 
 private:
   Ui::DebugSettings* ui;

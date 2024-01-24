@@ -1,166 +1,166 @@
+/*
+    Digital Clock - beautiful customizable clock with plugins
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #pragma once
 
-#include "glyph.hpp"
-
-#include "geometry.hpp"
-#include "layout_algorithm.hpp"
-#include "layout_debug.hpp"
 #include "resource.hpp"
 
-// common logic for "resource-based" glyphs
+#include <memory>
+#include <vector>
+
+#include <QTransform>
+
 // implements geometry changes propagation,
 // geometry caching, and other common tasks
-class GlyphBase : public Glyph {
+class LayoutItem : public std::enable_shared_from_this<LayoutItem> {
 public:
-  GlyphBase() noexcept = default;
-  GlyphBase& operator=(GlyphBase &&other) noexcept = default;
-  GlyphBase& operator=(const GlyphBase &) noexcept = delete;
-  GlyphBase(GlyphBase&& other) noexcept = default;
-  GlyphBase(const GlyphBase& other) noexcept = delete;
+  explicit LayoutItem(std::shared_ptr<Resource> res);
 
-  QRectF rect() const noexcept final { return _init_geom.rect(); }
-  QRectF boundingRect() const noexcept final { return _curr_geom.rect(); }
+  LayoutItem(const LayoutItem&) = delete;
+  LayoutItem(LayoutItem&&) = default;
 
-  qreal advanceX() const noexcept final { return _curr_geom.advanceX(); }
-  qreal advanceY() const noexcept final { return _curr_geom.advanceY(); }
+  LayoutItem& operator=(const LayoutItem&) = delete;
+  LayoutItem& operator=(LayoutItem&&) = default;
 
-  QTransform transform() const noexcept final { return _transform; }
+  virtual ~LayoutItem() = default;
 
-  QPointF pos() const noexcept final { return _pos; }
-  QRectF geometry() const noexcept final { return _geometry; }
+  QRectF rect() const { return _rect; }
+  qreal ax() const { return _ax; }
+  qreal ay() const { return _ay; }
 
-  void draw(QPainter* p) final;
+  std::shared_ptr<Resource> resource() const { return _res; }
 
-  Qt::Alignment alignment() const noexcept final { return _alignment; }
+  QPointF pos() const { return _pos; }
+  void setPos(QPointF p) { _pos = std::move(p); }
 
-  bool isVisible() const noexcept final { return _visible; }
-  void setVisible(bool visible) noexcept final { _visible = visible; }
+  QTransform transform() const
+  {
+    return QTransform(_transform).scale(_ks, _ks);
+  }
 
-  void setTransform(QTransform t) final
+  void setTransform(QTransform t)
   {
     _transform = std::move(t);
     updateCachedGeometry();
   }
 
-  void setPos(QPointF p) noexcept final
-  {
-    _geometry.translate(p - _pos);
-    _pos = std::move(p);
-  }
+  // is it really requred?
+  std::shared_ptr<LayoutItem> parent() const { return _parent.lock(); }
+  void setParent(std::weak_ptr<LayoutItem> p) { _parent = std::move(p); }
 
-  void setGeometry(QRectF g) noexcept final
-  {
-    _geometry = std::move(g);
-  }
+  void updateGeometry();
 
-  void updateGeometry() final;
+  // layout stuff
+  bool resizeEnabled() const { return _resize_enabled; }
+  void setResizeEnabled(bool enabled);
+  inline void enableResize() { setResizeEnabled(true); }
+  inline void disableResize() { setResizeEnabled(false); }
 
-  void setAlignment(Qt::Alignment a) noexcept final { _alignment = a; }
-
-  std::shared_ptr<Glyph> parent() const noexcept final { return _parent.lock(); }
-  void setParent(std::weak_ptr<Glyph> p) noexcept final { _parent = std::move(p); }
-
-  debug::LayoutDebug debugFlags() const noexcept { return _debug_flags; }
-  void setDebugFlags(debug::LayoutDebug flags) noexcept { _debug_flags = flags; }
+  // resize item in given direction
+  // aspect ratio is preserved
+  void resize(qreal l, Qt::Orientation o);
 
 protected:
-  void setGeometry(QRectF r, qreal ax, qreal ay)
-  {
-    _init_geom.setRect(std::move(r));
-    _init_geom.setAdvance(ax, ay);
-    updateCachedGeometry();
-  }
-
-  inline void updateRect(QRectF r)
-  {
-    setGeometry(std::move(r), _init_geom.advanceX(), _init_geom.advanceY());
-  }
-
-  virtual void doUpdateGeometry() { updateCachedGeometry(); }
-
-  virtual void doDraw(QPainter* p) = 0;
+  virtual void doUpdateGeometry() {}
 
 private:
   void updateCachedGeometry();
 
 private:
-  // item properties
-  QTransform _transform;
-  Geometry _init_geom;
-  Geometry _curr_geom;
-  // drawing attributes
-  Qt::Alignment _alignment = Qt::AlignBaseline | Qt::AlignJustify;
-  bool _visible = true;
-  // hierarchy support
-  std::weak_ptr<Glyph> _parent;
-  // current geometry
   QPointF _pos = QPointF(0, 0);
-  QRectF _geometry;
-  // debug stuff
-  debug::LayoutDebug _debug_flags;
-};
-
-
-// implements geometry using "skin resource"
-class SimpleGlyph : public GlyphBase {
-public:
-  explicit SimpleGlyph(std::shared_ptr<Resource> r)
-      : _res(std::move(r))
-  {
-    Q_ASSERT(_res);
-    setGeometry(_res->rect(), _res->advanceX(), _res->advanceY());
-  }
-
-  size_t cacheKey() const override { return _res->cacheKey(); }
-
-protected:
-  void doDraw(QPainter* p) override { _res->draw(p); }
-
-private:
+  QTransform _transform;
+  std::weak_ptr<LayoutItem> _parent;
+  // resource
   std::shared_ptr<Resource> _res;
+  // transformed resource geometry
+  QRectF _rect;
+  qreal _ax = 0;
+  qreal _ay = 0;
+  // is resizing enabled?
+  bool _resize_enabled = false;
+  // scaling coefficient to achive "resize effect"
+  qreal _ks = 1.0;
 };
 
 
-// "layout"
-class CompositeGlyph : public GlyphBase {
+// base class for all layout implementations
+class Layout : public LayoutItem {
 public:
-  explicit CompositeGlyph(std::shared_ptr<LayoutAlgorithm> a = nullptr) noexcept
-      : GlyphBase()
-      , _algorithm(std::move(a))
-  {}
-
-  void addGlyph(std::shared_ptr<Glyph> g)
+  void addItem(std::shared_ptr<LayoutItem> item)
   {
-    g->setParent(weak_from_this());
-    _items.push_back(std::move(g));
+    Q_ASSERT(item);
+    item->setParent(weak_from_this());
+    doAddItem(item);
+    _res->addItem(std::move(item));
   }
 
-  void setAlgorithm(std::shared_ptr<LayoutAlgorithm> a) noexcept
-  {
-    _algorithm = std::move(a);
-  }
-
-  const auto& algorithm() const noexcept { return _algorithm; }
-  const auto& items() const noexcept { return _items; }
-
-  /**
-   * Explicitly define item's rect
-   * @param r - desired item't rect
-   * @note The value will be lost after updateGeometry() call
-   */
-  void setRect(QRectF r) { updateRect(std::move(r)); }
-
-  size_t cacheKey() const override;
+  const auto& items() const noexcept { return _res->items(); }
 
 protected:
-  void doUpdateGeometry() override;
+  Layout();
 
-  void doDraw(QPainter* p) override
+  // it should be "final", but kept "override" for testing purposes
+  void doUpdateGeometry() override
   {
-    for (const auto& i : _items) i->draw(p);
+    auto [ax, ay] = doBuildLayout();
+    _res->updateGeometry(ax, ay);
   }
 
+  virtual void doAddItem(std::shared_ptr<LayoutItem> item) = 0;
+  // returns (ax,ay)
+  virtual std::pair<qreal, qreal> doBuildLayout() = 0;
+
 private:
-  std::shared_ptr<LayoutAlgorithm> _algorithm;
-  std::vector<std::shared_ptr<Glyph>> _items;
+  // integral part of layout implementation
+  // should not be a part of public API
+  class LayoutResource : public Resource {
+  public:
+    QRectF rect() const override { return _rect; }
+    qreal advanceX() const override { return _ax; }
+    qreal advanceY() const override { return _ay; }
+
+    void draw(QPainter* p) override;
+
+    size_t cacheKey() const override;
+
+    void addItem(std::shared_ptr<LayoutItem> item)
+    {
+      _items.push_back(std::move(item));
+    }
+
+    using Items = std::vector<std::shared_ptr<LayoutItem>>;
+    const Items& items() const noexcept { return _items; }
+
+    // there is no way to guess ax/ay,
+    // only layout may know them,
+    // so they must be passed explicitly
+    void updateGeometry(qreal ax, qreal ay);
+
+  private:
+    std::vector<std::shared_ptr<LayoutItem>> _items;
+
+    QRectF _rect;
+    qreal _ax = 0;
+    qreal _ay = 0;
+  };
+
+  Layout(std::shared_ptr<LayoutResource> res);
+
+private:
+  std::shared_ptr<LayoutResource> _res;
 };

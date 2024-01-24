@@ -1,80 +1,167 @@
+/*
+    Digital Clock - beautiful customizable clock with plugins
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include "layout.hpp"
 
+#include <functional>
 #include <numeric>
 
 #include <QPainter>
 
-#include "hasher.hpp"
+#include "layout_debug.hpp"
 
-void GlyphBase::draw(QPainter* p)
+namespace {
+
+using DebugContext = ::debug::LayoutDebug;
+
+class DebugResource final : public ResourceDecorator {
+public:
+  static auto decorate(std::shared_ptr<Resource> res, DebugContext ctx)
+  {
+    // avoid double decoration, re-use the same debug resource
+    if (auto dres = std::dynamic_pointer_cast<DebugResource>(res))
+      return dres;
+
+    auto dres = std::make_shared<DebugResource>(std::move(res));
+    dres->_ctx = std::move(ctx);
+    return dres;
+  }
+
+  void draw(QPainter* p) override
+  {
+    ResourceDecorator::draw(p);
+
+    DEBUG_DRAW(debug::DrawOriginalRect, _ctx, p, Rect, rect());
+    DEBUG_DRAW(debug::DrawOriginPoint, _ctx, p, Ellipse, QPoint(0, 0), 2, 2);
+    DEBUG_DRAW(debug::DrawHBaseline, _ctx, p, Line, rect().left(), 0, rect().right(), 0);
+    DEBUG_DRAW(debug::DrawVBaseline, _ctx, p, Line, 0, rect().top(), 0, rect().bottom());
+  }
+
+protected:
+  using ResourceDecorator::ResourceDecorator;
+
+private:
+  DebugContext _ctx;
+};
+
+auto item_context() noexcept
 {
-  if (!isVisible()) return;
-
-  p->save();
-  p->translate(pos());
-  auto br = boundingRect().translated(pos());
-  auto halign = _alignment & Qt::AlignHorizontal_Mask;
-  auto valign = _alignment & Qt::AlignVertical_Mask;
-  qreal dx = 0;
-  qreal dy = 0;
-  if (halign == Qt::AlignLeft) dx = _geometry.left() - br.left();
-  if (halign == Qt::AlignHCenter) dx = _geometry.center().x() - br.center().x();
-  if (halign == Qt::AlignRight) dx = _geometry.right() - br.right();
-  if (valign == Qt::AlignTop) dy = _geometry.top() - br.top();
-  if (valign == Qt::AlignVCenter) dy = _geometry.center().y() - br.center().y();
-  if (valign == Qt::AlignBottom) dy = _geometry.bottom() - br.bottom();
-  p->translate(dx, dy);
-
-  DEBUG_DRAW(debug::DrawTransformedRect, _debug_flags, p, Rect, boundingRect())
-  DEBUG_DRAW(debug::DrawOriginPoint, _debug_flags, p, Ellipse, QPoint(0, 0), 2, 2)
-  DEBUG_DRAW(debug::DrawHBaseline, _debug_flags, p, Line, boundingRect().left(), 0, boundingRect().right(), 0)
-  DEBUG_DRAW(debug::DrawVBaseline, _debug_flags, p, Line, 0, boundingRect().top(), 0, boundingRect().bottom())
-
-  p->setTransform(transform(), true);
-
-  DEBUG_DRAW(debug::DrawOriginalRect, _debug_flags, p, Rect, rect())
-
-  doDraw(p);
-  p->restore();
-
-  DEBUG_DRAW(debug::DrawGeometry, _debug_flags, p, Rect, geometry())
+  auto raw_value = qEnvironmentVariableIntValue(debug::ItemDebugFlagsVar);
+  return static_cast<debug::LayoutDebug>(raw_value);
 }
 
-void GlyphBase::updateGeometry()
+auto layout_context() noexcept
+{
+  auto raw_value = qEnvironmentVariableIntValue(debug::LayoutDebugFlagsVar);
+  return static_cast<debug::LayoutDebug>(raw_value);
+}
+
+} // namespace
+
+LayoutItem::LayoutItem(std::shared_ptr<Resource> res)
+  : _res(DebugResource::decorate(std::move(res), item_context()))
+{
+  Q_ASSERT(_res);
+  updateCachedGeometry();
+}
+
+void LayoutItem::updateGeometry()
 {
   doUpdateGeometry();
+  updateCachedGeometry();
 
-  if (auto p = parent())
-    p->updateGeometry();
+  if (auto parent = _parent.lock())
+    parent->updateGeometry();
 }
 
-void GlyphBase::updateCachedGeometry()
+void LayoutItem::setResizeEnabled(bool enabled)
 {
-  _curr_geom.setRect(_transform.mapRect(_init_geom.rect()));
-  _curr_geom.setAdvanceX(_transform.map(QLineF(0, 0, _init_geom.advanceX(), 0)).dx());
-  _curr_geom.setAdvanceY(_transform.map(QLineF(0, 0, 0, _init_geom.advanceY())).dy());
-  _geometry = _curr_geom.rect().translated(_pos);
+  _resize_enabled = enabled;
+  if (!enabled) _ks = 1.0;
+  updateCachedGeometry();
 }
 
-size_t CompositeGlyph::cacheKey() const
+void LayoutItem::resize(qreal l, Qt::Orientation o)
 {
-  return hasher(_items);
+  Q_ASSERT(_resize_enabled);
+  if (o == Qt::Horizontal)
+    _ks = l / _rect.width();
+  else
+    _ks = l / _rect.height();
+  updateCachedGeometry();
 }
 
-void CompositeGlyph::doUpdateGeometry()
+void LayoutItem::updateCachedGeometry()
+{
+  _rect = _transform.mapRect(_res->rect());
+  _ax = _transform.map(QLineF(0, 0, _res->advanceX(), 0)).dx();
+  _ay = _transform.map(QLineF(0, 0, 0, _res->advanceY())).dy();
+
+  if (_resize_enabled) {
+    _rect = QRectF(_rect.topLeft() * _ks, _rect.size() * _ks);
+    _ax *= _ks;
+    _ay *= _ks;
+  }
+}
+
+Layout::Layout() : Layout(std::make_shared<Layout::LayoutResource>())
+{
+}
+
+Layout::Layout(std::shared_ptr<LayoutResource> res)
+  : LayoutItem(DebugResource::decorate(res, layout_context()))
+  , _res(std::move(res))
+{
+  Q_ASSERT(_res);
+}
+
+void Layout::LayoutResource::draw(QPainter* p)
+{
+  for (const auto& item : _items) {
+    p->save();
+    p->translate(item->pos());
+    p->setTransform(item->transform(), true);
+    item->resource()->draw(p);
+    p->restore();
+  }
+}
+
+size_t Layout::LayoutResource::cacheKey() const
+{
+  return std::transform_reduce(
+        _items.begin(), _items.end(),
+        static_cast<size_t>(0),
+        std::bit_xor{},
+        [](const auto& item) { return item->resource()->cacheKey(); }
+  );
+}
+
+void Layout::LayoutResource::updateGeometry(qreal ax, qreal ay)
 {
   if (_items.empty()) return;
 
-  qreal ax = 0;
-  qreal ay = 0;
-  if (_algorithm) std::tie(ax, ay) = _algorithm->apply(_items);
-  // calculate bounding rect
-  QRectF r = std::accumulate(
-      std::next(_items.begin()), _items.end(),
-      _items.front()->geometry(),
-      [](const auto& r, const auto& i) { return r | i->geometry(); }
-      );
-  if (!_algorithm) std::tie(ax, ay) = std::pair{r.width(), r.height()};
-  // set it as original rect
-  setGeometry(r, ax, ay);
+  _rect = std::transform_reduce(
+            _items.begin(), _items.end(),
+            _items.front()->rect().translated(_items.front()->pos()),
+            std::bit_or{},
+            [](const auto& i) { return i->rect().translated(i->pos()); }
+  );
+
+  _ax = ax;
+  _ay = ay;
 }

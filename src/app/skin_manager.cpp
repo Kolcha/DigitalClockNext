@@ -1,6 +1,6 @@
 /*
     Digital Clock - beautiful customizable clock with plugins
-    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -173,11 +173,4 @@ void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size
   skin->setIgnoreAdvanceY(cfg.classicSkin().getIgnoreAdvanceY());
 
   skin->setGlyphBaseHeight(cfg.classicSkin().getGlyphBaseHeight());
-
-  if (_app->app_config()->global().getEnableDebugOptions()) {
-    skin->setItemDebugFlags(_app->app_config()->debug().getItemDebugFlags());
-    skin->setLayoutDebugFlags(_app->app_config()->debug().getLayoutDebugFlags());
-    skin->setDebugTopLevelLayout(_app->app_config()->debug().getEnableTopLevelDebug());
-    skin->setCachingEnabled(!_app->app_config()->debug().getDisableCaching());
-  }
 }

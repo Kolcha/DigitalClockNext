@@ -1,6 +1,6 @@
 /*
     Digital Clock - beautiful customizable clock with plugins
-    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ public:
   QSizeF size() const
   {
     if (!_glyph) return {400., 150.};
-    auto s = _glyph->geometry().size();
+    auto s = _glyph->rect().size();
     return {_kx * s.width(), _ky * s.height()};
   }
 
@@ -83,7 +83,7 @@ public:
     p->setRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::SmoothPixmapTransform);
     p->scale(_kx, _ky);
-    p->translate(-_glyph->geometry().topLeft());
+    p->translate(-_glyph->rect().topLeft());
     _glyph->draw(p);
   }
 
@@ -101,7 +101,7 @@ private:
 private:
   QWidget* _widget;
   std::shared_ptr<Skin> _skin;
-  std::shared_ptr<Glyph> _glyph;
+  std::shared_ptr<Resource> _glyph;
   QDateTime _dt;
   QTimeZone _tz;
   qreal _kx = 1;

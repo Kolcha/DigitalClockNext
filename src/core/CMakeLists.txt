@@ -1,15 +1,12 @@
 qt_add_library(core STATIC
-    geometry.hpp
-    glyph.cpp
-    glyph.hpp
     hasher.hpp
     layout.cpp
     layout.hpp
-    layout_algorithm.hpp
     layout_debug.cpp
     layout_debug.hpp
     linear_layout.cpp
     linear_layout.hpp
+    resource.cpp
     resource.hpp
 )
 target_link_libraries(core PUBLIC Qt::Gui)

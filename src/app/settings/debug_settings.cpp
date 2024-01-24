@@ -30,6 +30,11 @@ struct DebugSettings::Impl {
     , config(app->app_config()->debug())
   {}
 
+  ~Impl()
+  {
+    app->applyDebugOptions();
+  }
+
   bool dirty = false;
 
   void markDirty() noexcept { dirty = true; }
@@ -45,22 +50,19 @@ DebugSettings::DebugSettings(ApplicationPrivate* app, QWidget* parent)
 
   auto item_flags = impl->config.getItemDebugFlags();
   ui->draw_orig_r_i_cb->setChecked(item_flags & debug::DrawOriginalRect);
-  ui->draw_trans_r_i_cb->setChecked(item_flags & debug::DrawTransformedRect);
-  ui->draw_geom_r_i_cb->setChecked(item_flags & debug::DrawGeometry);
   ui->draw_origin_i_cb->setChecked(item_flags & debug::DrawOriginPoint);
   ui->draw_h_baseline_i_cb->setChecked(item_flags & debug::DrawHBaseline);
   ui->draw_v_baseline_i_cb->setChecked(item_flags & debug::DrawVBaseline);
 
   auto layout_flags = impl->config.getLayoutDebugFlags();
   ui->draw_orig_r_l_cb->setChecked(layout_flags & debug::DrawOriginalRect);
-  ui->draw_trans_r_l_cb->setChecked(layout_flags & debug::DrawTransformedRect);
-  ui->draw_geom_r_l_cb->setChecked(layout_flags & debug::DrawGeometry);
   ui->draw_origin_l_cb->setChecked(layout_flags & debug::DrawOriginPoint);
   ui->draw_h_baseline_l_cb->setChecked(layout_flags & debug::DrawHBaseline);
   ui->draw_v_baseline_l_cb->setChecked(layout_flags & debug::DrawVBaseline);
 
-  ui->enable_top_level_debug_cb->setChecked(impl->config.getEnableTopLevelDebug());
-  ui->disable_caching_cb->setChecked(impl->config.getDisableCaching());
+  const auto all_cboxes = findChildren<QCheckBox*>();
+  for (const auto& cbox : all_cboxes)
+    connect(cbox, &QCheckBox::clicked, impl->app, &ApplicationPrivate::applyDebugOptions);
 }
 
 DebugSettings::~DebugSettings()
@@ -93,30 +95,6 @@ void DebugSettings::on_draw_orig_r_i_cb_clicked(bool checked)
 void DebugSettings::on_draw_orig_r_l_cb_clicked(bool checked)
 {
   impl->config.setLayoutDebugFlags(impl->config.getLayoutDebugFlags().setFlag(debug::DrawOriginalRect, checked));
-  impl->markDirty();
-}
-
-void DebugSettings::on_draw_trans_r_i_cb_clicked(bool checked)
-{
-  impl->config.setItemDebugFlags(impl->config.getItemDebugFlags().setFlag(debug::DrawTransformedRect, checked));
-  impl->markDirty();
-}
-
-void DebugSettings::on_draw_trans_r_l_cb_clicked(bool checked)
-{
-  impl->config.setLayoutDebugFlags(impl->config.getLayoutDebugFlags().setFlag(debug::DrawTransformedRect, checked));
-  impl->markDirty();
-}
-
-void DebugSettings::on_draw_geom_r_i_cb_clicked(bool checked)
-{
-  impl->config.setItemDebugFlags(impl->config.getItemDebugFlags().setFlag(debug::DrawGeometry, checked));
-  impl->markDirty();
-}
-
-void DebugSettings::on_draw_geom_r_l_cb_clicked(bool checked)
-{
-  impl->config.setLayoutDebugFlags(impl->config.getLayoutDebugFlags().setFlag(debug::DrawGeometry, checked));
   impl->markDirty();
 }
 
@@ -153,17 +131,5 @@ void DebugSettings::on_draw_v_baseline_i_cb_clicked(bool checked)
 void DebugSettings::on_draw_v_baseline_l_cb_clicked(bool checked)
 {
   impl->config.setLayoutDebugFlags(impl->config.getLayoutDebugFlags().setFlag(debug::DrawVBaseline, checked));
-  impl->markDirty();
-}
-
-void DebugSettings::on_enable_top_level_debug_cb_clicked(bool checked)
-{
-  impl->config.setEnableTopLevelDebug(checked);
-  impl->markDirty();
-}
-
-void DebugSettings::on_disable_caching_cb_clicked(bool checked)
-{
-  impl->config.setDisableCaching(checked);
   impl->markDirty();
 }

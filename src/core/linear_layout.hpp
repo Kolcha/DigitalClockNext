@@ -1,6 +1,6 @@
 /*
     Digital Clock - beautiful customizable clock with plugins
-    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,99 +18,112 @@
 
 #pragma once
 
-#include "layout_algorithm.hpp"
+#include "layout.hpp"
 
-/**
- * @brief Arranges items horizontally or vertically
- *
- * Layout algorithm that puts items in a row one after another optionally
- * adding some spacing between them.
- *
- * Spacing and orientation are customizable.
- *
- * @see LayoutItem::advanceX(), LayoutItem::advanceY(), setSpacing()
- */
-class LinearLayout final : public LayoutAlgorithm {
+class LinearLayout : public Layout {
 public:
-  /**
-   * @brief Default constructor
-   *
-   * Provided for convenience. Constructs horizontal layout with no
-   * additional spacing added between items.
-   */
   LinearLayout() noexcept = default;
 
-  /**
-   * @brief Constructor
-   *
-   * Constructs layout with given orientation and spacing.
-   *
-   * @param o - layout's orientation
-   * @param spacing - additional spacing
-   */
   explicit LinearLayout(Qt::Orientation o, qreal spacing = 0.0) noexcept
     : _spacing(spacing)
   {
     setOrientation(o);
   }
 
-  /// Current spacing
   qreal spacing() const noexcept { return _spacing; }
-  /// Change @a spacing
   void setSpacing(qreal spacing) noexcept { _spacing = spacing; }
 
-  /// Current orientation
   Qt::Orientation orientation() const noexcept
   {
-    return _orientation == &vertical ? Qt::Vertical : Qt::Horizontal;
+    return _orientation->current;
   }
 
-  /// Change @a orientation
   void setOrientation(Qt::Orientation orientation) noexcept
   {
     _orientation = orientation == Qt::Vertical ? &vertical : &horizontal;
   }
 
-  /// Is advance value ignored
   bool ignoreAdvance() const noexcept { return _ignore_advance; }
-  /// Ignore advance value, use width or height instead
   void setIgnoreAdvance(bool ignore) noexcept { _ignore_advance = ignore; }
 
-  /// Reimplements LayoutAlgorithm::apply()
-  std::pair<qreal, qreal> apply(const ContainerType& items) const override;
+  Qt::Alignment itemAlignment(std::size_t i) const noexcept
+  {
+    Q_ASSERT(0 <= i && i < _items_alignment.size());
+    return _items_alignment[i];
+  }
+
+  void setItemAlignment(std::size_t i, Qt::Alignment a) noexcept
+  {
+    Q_ASSERT(0 <= i && i < _items_alignment.size());
+    Q_ASSERT(_items_alignment.size() == _items.size());
+    _items_alignment[i] = a;
+  }
+
+protected:
+  void doAddItem(std::shared_ptr<LayoutItem> item) override
+  {
+    _items.push_back(std::move(item));
+    _items_alignment.push_back(Qt::AlignBaseline | Qt::AlignJustify);
+  }
+
+  std::pair<qreal, qreal> doBuildLayout() override;
 
 private:
-  struct OrientationImpl {
-    QPointF(*position)(qreal);
-    qreal(Glyph::*advance)() const;
-    qreal(QPointF::*coord)() const;
-    qreal(QRectF::*minCoord)() const;
-    qreal(QRectF::*maxCoord)() const;
-    void(QRectF::*setMinCoord)(qreal);
-    void(QRectF::*setMaxCoord)(qreal);
+  // items are resized only in the opposite direction
+  // (e.g. in vertical direction for horizontal layout),
+  // item itself decides how to handle resize
+  // returns min/max coordinates (in opposite direction)
+  std::pair<qreal, qreal> resizeItems();
+
+  // applies alignment to the item
+  // g is an item's geometry defined by layout
+  void applyAlignment(LayoutItem& item, Qt::Alignment a, const QRectF& g);
+
+  // constructs item's geometry using omin/omax
+  // and applies alignment to the item at index i
+  void applyAlignment(std::size_t i, qreal omin, qreal omax)
+  {
+    const auto& item = _items[i];
+    auto g = _orientation->geometry(item->rect(), omin, omax);
+    Q_ASSERT(_items_alignment.size() == _items.size());
+    applyAlignment(*item, _items_alignment[i], g);
+  }
+
+  // set coordinate to 0 for opposite direction
+  // required for correctly changing layout on run-time
+  void resetPosInOppositeDirection();
+
+private:
+  struct Orientation {
+    // just an orientation values
+    Qt::Orientation current;
+    Qt::Orientation opposite;
+
+    // min/max coordinates in the same direction
+    qreal(QRectF::*cmin)() const;
+    qreal(QRectF::*cmax)() const;
+    // min/max coordinates in opposite direction
+    qreal(QRectF::*omin)() const;
+    qreal(QRectF::*omax)() const;
+    // r/w reference to coordinate in the same direction
+    qreal&(QPointF::*cpos)();
+    // r/w reference to coordinate in opposite direction
+    qreal&(QPointF::*opos)();
+    // calculates advance in the same direction
+    qreal(*cadvance)(const LayoutItem& curr, const LayoutItem& prev);
+    // calculates current item geometry based on min/max values
+    QRectF(*geometry)(const QRectF& r, qreal omin, qreal omax);
+    // calculates layout's advance values (ax, ay)
+    using ItemsList = std::vector<std::shared_ptr<LayoutItem>>;
+    std::pair<qreal, qreal>(*advances)(const ItemsList& items);
   };
 
-  static constexpr const OrientationImpl horizontal {
-    [](qreal dx) { return QPointF(dx, 0); },
-    &Glyph::advanceX,
-    &QPointF::x,
-    &QRectF::left,
-    &QRectF::right,
-    &QRectF::setLeft,
-    &QRectF::setRight,
-  };
+  static const Orientation horizontal;
+  static const Orientation vertical;
 
-  static constexpr const OrientationImpl vertical {
-    [](qreal dy) { return QPointF(0, dy); },
-    &Glyph::advanceY,
-    &QPointF::y,
-    &QRectF::top,
-    &QRectF::bottom,
-    &QRectF::setTop,
-    &QRectF::setBottom,
-  };
-
-  const OrientationImpl* _orientation = &horizontal;
-  qreal _spacing = 0.0;
+  std::vector<std::shared_ptr<LayoutItem>> _items;
+  std::vector<Qt::Alignment> _items_alignment;
+  qreal _spacing = 0;
+  const Orientation* _orientation = &horizontal;
   bool _ignore_advance = false;
 };

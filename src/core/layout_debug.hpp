@@ -45,6 +45,11 @@ private:
   QPainter& _p;
 };
 
+static constexpr const char* const ItemDebugFlagsVar =
+    "DIGITAL_CLOCK_NEXT_DEBUG_ITEM_FLAGS";
+static constexpr const char* const LayoutDebugFlagsVar =
+    "DIGITAL_CLOCK_NEXT_DEBUG_LAYOUT_FLAGS";
+
 } // namespace debug
 
 #define DEBUG_DRAW(flag, flags, painter, shape, ...)  \

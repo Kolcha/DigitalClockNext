@@ -4,7 +4,7 @@ target_link_libraries(test_datetime_formatter PRIVATE Qt::Test)
 add_test(NAME test_datetime_formatter COMMAND test_datetime_formatter)
 
 qt_add_executable(test_item_geometry test_item_geometry.cpp)
-target_link_libraries(test_item_geometry PRIVATE core)
+target_link_libraries(test_item_geometry PRIVATE render)
 target_link_libraries(test_item_geometry PRIVATE Qt::Test)
 add_test(NAME test_item_geometry COMMAND test_item_geometry)
 

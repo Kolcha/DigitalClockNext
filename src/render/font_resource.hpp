@@ -1,6 +1,6 @@
 #pragma once
 
-#include "resource.hpp"
+#include "resource_factory.hpp"
 
 #include <QFont>
 

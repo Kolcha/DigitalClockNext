@@ -1,6 +1,25 @@
+/*
+    Digital Clock - beautiful customizable clock with plugins
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include "application.hpp"
 #include "application_private.hpp"
 
+#include "layout_debug.hpp"
 #include "skin_manager.hpp"
 
 void ApplicationPrivate::initCore()
@@ -30,8 +49,20 @@ void ApplicationPrivate::initUpdater()
     _update_checker->checkForUpdates();
 }
 
+void ApplicationPrivate::applyDebugOptions()
+{
+  if (_app_config->global().getEnableDebugOptions()) {
+    qputenv(debug::ItemDebugFlagsVar, QByteArray::number(_app_config->debug().getItemDebugFlags()));
+    qputenv(debug::LayoutDebugFlagsVar, QByteArray::number(_app_config->debug().getLayoutDebugFlags()));
+  } else {
+    qunsetenv(debug::ItemDebugFlagsVar);
+    qunsetenv(debug::LayoutDebugFlagsVar);
+  }
+}
+
 void Application::initCore()
 {
+  _impl->applyDebugOptions();
   _impl->initCore();
 }
 

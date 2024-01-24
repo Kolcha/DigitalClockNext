@@ -1,6 +1,6 @@
 /*
     Digital Clock - beautiful customizable clock with plugins
-    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -120,6 +120,9 @@ public:
   {
     return _dialog_manager.maybeCreateAndShowDialog<Dialog>(tag, std::forward<Args>(args)...);
   }
+
+public slots:
+  void applyDebugOptions();
 
 private:
   void createWindow(const QScreen* screen);

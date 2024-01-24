@@ -142,4 +142,5 @@ void AppGlobalSettings::on_enable_debug_options_clicked(bool checked)
 {
   impl->config.setEnableDebugOptions(checked);
   impl->markDirty();
+  impl->app->applyDebugOptions();
 }

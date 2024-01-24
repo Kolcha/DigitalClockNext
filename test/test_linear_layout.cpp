@@ -1,6 +1,6 @@
 /*
     Digital Clock - beautiful customizable clock with plugins
-    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,17 +19,17 @@
 #include <QTest>
 
 #include "linear_layout.hpp"
-#include "layout.hpp"
-#include "fake_resource.hpp"
+
+static_assert(!std::is_copy_constructible_v<LinearLayout>, "is_copy_constructible");
+static_assert(std::is_move_constructible_v<LinearLayout>, "!is_move_constructible");
+static_assert(!std::is_copy_assignable_v<LinearLayout>, "is_copy_assignable");
+static_assert(std::is_move_assignable_v<LinearLayout>, "!is_move_assignable");
 
 class LinearLayoutTest : public QObject
 {
   Q_OBJECT
 
 private slots:
-  void init();
-  void cleanup();
-
   void defaultConstruct();
   void horizontal();
   void vertical();
@@ -37,37 +37,35 @@ private slots:
   void changeOrientation();
   void ignoreAdvanceX();
   void ignoreAdvanceY();
+  // TODO: test scaling
+  // TODO: test alignment
+  // TODO: scaling + alignment
+  // TODO: test geomtery change propagation (implicitly done?)
 
 private:
-  void addItem(auto&&... args)
+  auto createItem(auto&&... args)
   {
-    auto res = std::make_shared<FakeResource>(args...);
-    _items.push_back(std::make_shared<SimpleGlyph>(res));
+    auto res = std::make_shared<InvisibleResource>(args...);
+    return std::make_shared<LayoutItem>(std::move(res));
   }
 
-private:
-  LayoutAlgorithm::ContainerType _items;
+  void addItems(LinearLayout& l)
+  {
+    l.addItem(createItem(QRectF( 0, -4, 5, 6), 5, 5));
+    l.addItem(createItem(QRectF(-1, -3, 4, 7), 5, 4));
+    l.addItem(createItem(QRectF(-1, -5, 4, 6), 3, 8));
+    l.addItem(createItem(QRectF(-2, -2, 5, 5), 5, 4));
+    l.updateGeometry();
+  }
 };
-
-void LinearLayoutTest::init()
-{
-  addItem(QRectF( 0, -4, 5, 6), 5, 5);
-  addItem(QRectF(-1, -3, 4, 7), 5, 4);
-  addItem(QRectF(-1, -5, 4, 6), 3, 8);
-  addItem(QRectF(-2, -2, 5, 5), 5, 4);
-}
-
-void LinearLayoutTest::cleanup()
-{
-  _items.clear();
-}
 
 void LinearLayoutTest::defaultConstruct()
 {
-  LinearLayout ll;
-  QCOMPARE(ll.orientation(), Qt::Horizontal);
-  QCOMPARE(ll.spacing(), 0.0);
-  ll.apply(LayoutAlgorithm::ContainerType());
+  auto ll = std::make_shared<LinearLayout>();
+  QCOMPARE(ll->orientation(), Qt::Horizontal);
+  QCOMPARE(ll->spacing(), 0.0);
+  QVERIFY(!ll->ignoreAdvance());
+  QCOMPARE(ll->items().size(), 0);
 }
 
 /*
@@ -84,17 +82,24 @@ void LinearLayoutTest::defaultConstruct()
  */
 void LinearLayoutTest::horizontal()
 {
-  LinearLayout ll(Qt::Horizontal, 0.0);
-  QCOMPARE(ll.orientation(), Qt::Horizontal);
-  QCOMPARE(ll.spacing(), 0.0);
-  auto [ax, ay] = ll.apply(_items);
-  QCOMPARE(_items.size(), 4);
-  QCOMPARE(_items[0]->geometry(), QRectF( 0, -5, 5, 9));
-  QCOMPARE(_items[1]->geometry(), QRectF( 4, -5, 4, 9));
-  QCOMPARE(_items[2]->geometry(), QRectF( 9, -5, 4, 9));
-  QCOMPARE(_items[3]->geometry(), QRectF(11, -5, 5, 9));
-  QCOMPARE(ax, 18);
-  QCOMPARE(ay, 8);
+  auto ll = std::make_shared<LinearLayout>(Qt::Horizontal);
+  QCOMPARE(ll->orientation(), Qt::Horizontal);
+  QCOMPARE(ll->spacing(), 0.0);
+  addItems(*ll);
+  QCOMPARE(ll->items().size(), 4);
+  QCOMPARE(ll->rect(), QRectF(0, -5, 16, 9));
+  // should respect ax()
+  QCOMPARE(ll->items()[0]->pos(), QPointF( 0, 0));
+  QCOMPARE(ll->items()[1]->pos(), QPointF( 5, 0));
+  QCOMPARE(ll->items()[2]->pos(), QPointF(10, 0));
+  QCOMPARE(ll->items()[3]->pos(), QPointF(13, 0));
+  QCOMPARE(ll->ax(), 18);
+  QCOMPARE(ll->ay(), 8);
+  // rect remains unchanged
+  QCOMPARE(ll->items()[0]->rect(), QRectF( 0, -4, 5, 6));
+  QCOMPARE(ll->items()[1]->rect(), QRectF(-1, -3, 4, 7));
+  QCOMPARE(ll->items()[2]->rect(), QRectF(-1, -5, 4, 6));
+  QCOMPARE(ll->items()[3]->rect(), QRectF(-2, -2, 5, 5));
 }
 
 /*
@@ -124,85 +129,100 @@ void LinearLayoutTest::horizontal()
  */
 void LinearLayoutTest::vertical()
 {
-  LinearLayout ll(Qt::Vertical, 0.0);
-  QCOMPARE(ll.orientation(), Qt::Vertical);
-  QCOMPARE(ll.spacing(), 0.0);
-  auto [ax, ay] = ll.apply(_items);
-  QCOMPARE(_items.size(), 4);
-  QCOMPARE(_items[0]->geometry(), QRectF(-2, -4, 7, 6));
-  QCOMPARE(_items[1]->geometry(), QRectF(-2,  1, 7, 7));
-  QCOMPARE(_items[2]->geometry(), QRectF(-2,  7, 7, 6));
-  QCOMPARE(_items[3]->geometry(), QRectF(-2, 14, 7, 5));
-  QCOMPARE(ax, 5);
-  QCOMPARE(ay, 21);
+  auto ll = std::make_shared<LinearLayout>(Qt::Vertical);
+  QCOMPARE(ll->orientation(), Qt::Vertical);
+  QCOMPARE(ll->spacing(), 0.0);
+  addItems(*ll);
+  QCOMPARE(ll->items().size(), 4);
+  QCOMPARE(ll->rect(), QRectF(-2, -4, 7, 23));
+  // should respect ay()
+  QCOMPARE(ll->items()[0]->pos(), QPointF(0,  0));
+  QCOMPARE(ll->items()[1]->pos(), QPointF(0,  4));
+  QCOMPARE(ll->items()[2]->pos(), QPointF(0, 12));
+  QCOMPARE(ll->items()[3]->pos(), QPointF(0, 16));
+  QCOMPARE(ll->ax(), 5);
+  QCOMPARE(ll->ay(), 21);
+  // rect remains unchanged
+  QCOMPARE(ll->items()[0]->rect(), QRectF( 0, -4, 5, 6));
+  QCOMPARE(ll->items()[1]->rect(), QRectF(-1, -3, 4, 7));
+  QCOMPARE(ll->items()[2]->rect(), QRectF(-1, -5, 4, 6));
+  QCOMPARE(ll->items()[3]->rect(), QRectF(-2, -2, 5, 5));
 }
 
 void LinearLayoutTest::changeSpacing()
 {
-  LinearLayout ll(Qt::Horizontal, 0.0);
-  QCOMPARE(ll.spacing(), 0.0);
-  ll.setSpacing(2.0);
-  QCOMPARE(ll.spacing(), 2.0);
-  ll.apply(_items);
-  QCOMPARE(_items.size(), 4);
-  QCOMPARE(_items[0]->geometry(), QRectF( 0, -5, 5, 9));
-  QCOMPARE(_items[1]->geometry(), QRectF( 6, -5, 4, 9));
-  QCOMPARE(_items[2]->geometry(), QRectF(13, -5, 4, 9));
-  QCOMPARE(_items[3]->geometry(), QRectF(17, -5, 5, 9));
+  auto ll = std::make_shared<LinearLayout>(Qt::Horizontal);
+  addItems(*ll);
+  QCOMPARE(ll->spacing(), 0.0);
+  ll->setSpacing(2.0);
+  QCOMPARE(ll->spacing(), 2.0);
+  ll->updateGeometry();
+  QCOMPARE(ll->items().size(), 4);
+  QCOMPARE(ll->rect(), QRectF(0, -5, 22, 9));
+  QCOMPARE(ll->items()[0]->pos(), QPointF( 0, 0));
+  QCOMPARE(ll->items()[1]->pos(), QPointF( 7, 0));
+  QCOMPARE(ll->items()[2]->pos(), QPointF(14, 0));
+  QCOMPARE(ll->items()[3]->pos(), QPointF(19, 0));
+  QCOMPARE(ll->ax(), 24);
+  QCOMPARE(ll->ay(), 8);
 }
 
 void LinearLayoutTest::changeOrientation()
 {
-  LinearLayout ll(Qt::Horizontal, 0.0);
-  QCOMPARE(ll.orientation(), Qt::Horizontal);
-  ll.apply(_items);
-  QCOMPARE(_items.size(), 4);
-  QCOMPARE(_items[0]->geometry(), QRectF( 0, -5, 5, 9));
-  QCOMPARE(_items[1]->geometry(), QRectF( 4, -5, 4, 9));
-  QCOMPARE(_items[2]->geometry(), QRectF( 9, -5, 4, 9));
-  QCOMPARE(_items[3]->geometry(), QRectF(11, -5, 5, 9));
-  ll.setOrientation(Qt::Vertical);
-  QCOMPARE(ll.orientation(), Qt::Vertical);
-  ll.apply(_items);
-  QCOMPARE(_items.size(), 4);
-  QCOMPARE(_items[0]->geometry(), QRectF(-2, -4, 7, 6));
-  QCOMPARE(_items[1]->geometry(), QRectF(-2,  1, 7, 7));
-  QCOMPARE(_items[2]->geometry(), QRectF(-2,  7, 7, 6));
-  QCOMPARE(_items[3]->geometry(), QRectF(-2, 14, 7, 5));
+  auto ll = std::make_shared<LinearLayout>(Qt::Horizontal);
+  addItems(*ll);
+  QCOMPARE(ll->orientation(), Qt::Horizontal);
+  QCOMPARE(ll->items().size(), 4);
+  QCOMPARE(ll->rect(), QRectF(0, -5, 16, 9));
+  QCOMPARE(ll->items()[0]->pos(), QPointF( 0, 0));
+  QCOMPARE(ll->items()[1]->pos(), QPointF( 5, 0));
+  QCOMPARE(ll->items()[2]->pos(), QPointF(10, 0));
+  QCOMPARE(ll->items()[3]->pos(), QPointF(13, 0));
+  ll->setOrientation(Qt::Vertical);
+  QCOMPARE(ll->orientation(), Qt::Vertical);
+  ll->updateGeometry();
+  QCOMPARE(ll->items().size(), 4);
+  QCOMPARE(ll->rect(), QRectF(-2, -4, 7, 23));
+  QCOMPARE(ll->items()[0]->pos(), QPointF(0,  0));
+  QCOMPARE(ll->items()[1]->pos(), QPointF(0,  4));
+  QCOMPARE(ll->items()[2]->pos(), QPointF(0, 12));
+  QCOMPARE(ll->items()[3]->pos(), QPointF(0, 16));
 }
 
 void LinearLayoutTest::ignoreAdvanceX()
 {
-  LinearLayout ll(Qt::Horizontal, 2.0);
-  ll.setIgnoreAdvance(true);
-  QCOMPARE(ll.orientation(), Qt::Horizontal);
-  QCOMPARE(ll.spacing(), 2.0);
-  QVERIFY(ll.ignoreAdvance());
-  auto [ax, ay] = ll.apply(_items);
-  QCOMPARE(_items.size(), 4);
-  QCOMPARE(_items[0]->geometry(), QRectF( 0, -5, 5, 9));
-  QCOMPARE(_items[1]->geometry(), QRectF( 7, -5, 4, 9));
-  QCOMPARE(_items[2]->geometry(), QRectF(13, -5, 4, 9));
-  QCOMPARE(_items[3]->geometry(), QRectF(19, -5, 5, 9));
-  QCOMPARE(ax, 26);
-  QCOMPARE(ay, 8);
+  auto ll = std::make_shared<LinearLayout>(Qt::Horizontal, 2.0);
+  ll->setIgnoreAdvance(true);
+  QCOMPARE(ll->orientation(), Qt::Horizontal);
+  QCOMPARE(ll->spacing(), 2.0);
+  QVERIFY(ll->ignoreAdvance());
+  addItems(*ll);
+  QCOMPARE(ll->rect(), QRectF(0, -5, 24, 9));
+  QCOMPARE(ll->items().size(), 4);
+  QCOMPARE(ll->items()[0]->pos(), QPointF( 0, 0));
+  QCOMPARE(ll->items()[1]->pos(), QPointF( 8, 0));
+  QCOMPARE(ll->items()[2]->pos(), QPointF(14, 0));
+  QCOMPARE(ll->items()[3]->pos(), QPointF(21, 0));
+  QCOMPARE(ll->ax(), 26);
+  QCOMPARE(ll->ay(), 8);
 }
 
 void LinearLayoutTest::ignoreAdvanceY()
 {
-  LinearLayout ll(Qt::Vertical, 2.0);
-  ll.setIgnoreAdvance(true);
-  QCOMPARE(ll.orientation(), Qt::Vertical);
-  QCOMPARE(ll.spacing(), 2.0);
-  QVERIFY(ll.ignoreAdvance());
-  auto [ax, ay] = ll.apply(_items);
-  QCOMPARE(_items.size(), 4);
-  QCOMPARE(_items[0]->geometry(), QRectF(-2, -4, 7, 6));
-  QCOMPARE(_items[1]->geometry(), QRectF(-2,  4, 7, 7));
-  QCOMPARE(_items[2]->geometry(), QRectF(-2, 13, 7, 6));
-  QCOMPARE(_items[3]->geometry(), QRectF(-2, 21, 7, 5));
-  QCOMPARE(ax, 5);
-  QCOMPARE(ay, 28);
+  auto ll = std::make_shared<LinearLayout>(Qt::Vertical, 2.0);
+  ll->setIgnoreAdvance(true);
+  QCOMPARE(ll->orientation(), Qt::Vertical);
+  QCOMPARE(ll->spacing(), 2.0);
+  QVERIFY(ll->ignoreAdvance());
+  addItems(*ll);
+  QCOMPARE(ll->rect(), QRectF(-2, -4, 7, 30));
+  QCOMPARE(ll->items().size(), 4);
+  QCOMPARE(ll->items()[0]->pos(), QPointF(0,  0));
+  QCOMPARE(ll->items()[1]->pos(), QPointF(0,  7));
+  QCOMPARE(ll->items()[2]->pos(), QPointF(0, 18));
+  QCOMPARE(ll->items()[3]->pos(), QPointF(0, 23));
+  QCOMPARE(ll->ax(), 5);
+  QCOMPARE(ll->ay(), 28);
 }
 
 QTEST_MAIN(LinearLayoutTest)

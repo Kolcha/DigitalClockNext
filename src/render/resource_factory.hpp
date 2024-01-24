@@ -18,13 +18,29 @@
 
 #pragma once
 
-#include "config_base_qvariant.hpp"
+#include <QHash>
 
-#include "layout_debug.hpp"
+#include "resource.hpp"
 
-class DebugConfig final : public ConfigBaseQVariant {
-  CONFIG_OPTION_Q(debug::LayoutDebug, ItemDebugFlags, static_cast<debug::LayoutDebug>(0))
-  CONFIG_OPTION_Q(debug::LayoutDebug, LayoutDebugFlags, static_cast<debug::LayoutDebug>(0))
+class ResourceFactory {
 public:
-  using ConfigBaseQVariant::ConfigBaseQVariant;
+  virtual ~ResourceFactory() = default;
+
+  std::shared_ptr<Resource> item(char32_t ch) const
+  {
+    auto& resource = _cache[ch];
+    if (!resource) resource = create(ch);
+    return resource;
+  }
+
+  virtual qreal ascent() const = 0;
+  virtual qreal descent() const = 0;
+
+  inline qreal height() const { return ascent() + descent(); }
+
+protected:
+  virtual std::shared_ptr<Resource> create(char32_t ch) const = 0;
+
+private:
+  mutable QHash<char32_t, std::shared_ptr<Resource>> _cache;
 };

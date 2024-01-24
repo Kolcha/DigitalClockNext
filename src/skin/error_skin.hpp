@@ -1,6 +1,6 @@
 /*
     Digital Clock - beautiful customizable clock with plugins
-    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 #pragma once
 
 #include "skin.hpp"
-#include "layout.hpp"
-#include "resource.hpp"
 
 /**
  * @brief Error message implementation
@@ -57,13 +55,12 @@ class ErrorSkin final : public Skin {
 public:
   ErrorSkin()
     : _msg(std::make_shared<ErrorMessage>())
-    , _renderable(std::make_shared<SimpleGlyph>(_msg))
   {}
 
-  std::shared_ptr<Glyph> process(const QDateTime& dt) noexcept override
+  std::shared_ptr<Resource> process(const QDateTime& dt) noexcept override
   {
     Q_UNUSED(dt);
-    return _renderable;
+    return _msg;
   }
 
   void setSeparatorAnimationEnabled([[maybe_unused]] bool enabled) override {}
@@ -71,5 +68,4 @@ public:
 
 private:
   std::shared_ptr<ErrorMessage> _msg;
-  std::shared_ptr<Glyph> _renderable;
 };

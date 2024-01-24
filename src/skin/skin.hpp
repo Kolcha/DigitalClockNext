@@ -1,6 +1,6 @@
 /*
     Digital Clock - beautiful customizable clock with plugins
-    Copyright (C) 2023  Nick Korotysh <nick.korotysh@gmail.com>
+    Copyright (C) 2023-2024  Nick Korotysh <nick.korotysh@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 #include <QDateTime>
 
-#include "glyph.hpp"
+#include "resource.hpp"
 #include "observable.hpp"
 
 class SkinObserver {
@@ -36,7 +36,7 @@ class Skin : public Observable<SkinObserver> {
 public:
   virtual ~Skin() = default;
 
-  virtual std::shared_ptr<Glyph> process(const QDateTime& dt) = 0;
+  virtual std::shared_ptr<Resource> process(const QDateTime& dt) = 0;
 
   virtual void setSeparatorAnimationEnabled(bool enabled) = 0;
   inline void EnableSeparatorAnimation() { setSeparatorAnimationEnabled(true); }
