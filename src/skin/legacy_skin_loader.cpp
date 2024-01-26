@@ -179,7 +179,7 @@ void updateGeometry(ImageResource& item, const GlyphGeometryRaw& gargs)
   qreal h = gargs.h.value_or(r.height());
   qreal ax = gargs.ax.value_or(w);
   qreal ay = gargs.ay.value_or(h);
-  item.setGeometry({x, y, w, h, ax, ay});
+  item.setGeometry({x, y, w, h}, ax, ay);
 }
 
 } // namespace

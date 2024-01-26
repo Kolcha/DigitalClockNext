@@ -25,28 +25,37 @@
 #include <QIcon>
 #include <QSvgRenderer>
 
-#include "geometry.hpp"
-
 class ImageResource : public Resource {
 public:
   explicit ImageResource(const QString& filename) noexcept
     : m_hash(qHash(filename))
   {}
 
-  QRectF rect() const noexcept final { return m_gg.rect(); }
-  qreal advanceX() const noexcept final { return m_gg.advanceX(); }
-  qreal advanceY() const noexcept final { return m_gg.advanceY(); }
+  QRectF rect() const noexcept final { return m_rect; }
+  qreal advanceX() const noexcept final { return m_ax; }
+  qreal advanceY() const noexcept final { return m_ay; }
 
   size_t cacheKey() const noexcept final { return m_hash; }
 
-  void setGeometry(const QRectF& r, qreal ax, qreal ay) noexcept
+  void setGeometry(QRectF r, qreal ax, qreal ay) noexcept
   {
-    setGeometry(Geometry(r, ax, ay));
+    m_rect = std::move(r);
+    m_ax = ax;
+    m_ay = ay;
   }
-  void setGeometry(Geometry gg) noexcept { m_gg = std::move(gg); }
+
+protected:
+  void initGeometry(const QSizeF& sz) noexcept
+  {
+    m_rect = QRectF({0.0, 0.0}, sz);
+    m_ax = sz.width();
+    m_ay = sz.height();
+  }
 
 private:
-  Geometry m_gg;
+  QRectF m_rect;
+  qreal m_ax = 0.0;
+  qreal m_ay = 0.0;
   size_t m_hash;  // do not calculate hash every time
 };
 
@@ -58,7 +67,7 @@ public:
     , m_icon(filename)
     , m_size(m_icon.availableSizes().constFirst())
   {
-    setGeometry(Geometry(m_size));
+    initGeometry(m_size);
   }
 
   void draw(QPainter* p) override;
@@ -75,7 +84,7 @@ public:
     : ImageResource(filename)
     , m_renderer(std::make_unique<QSvgRenderer>(filename))
   {
-    setGeometry(Geometry(m_renderer->defaultSize()));
+    initGeometry(m_renderer->defaultSize());
   }
 
   void draw(QPainter* p) override;

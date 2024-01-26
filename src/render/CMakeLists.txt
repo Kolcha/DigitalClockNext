@@ -3,7 +3,6 @@ qt_add_library(render STATIC
     effects.hpp
     font_resource.cpp
     font_resource.hpp
-    geometry.hpp
     image_resource.cpp
     image_resource.hpp
     resource_factory.hpp
