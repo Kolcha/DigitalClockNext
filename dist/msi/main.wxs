@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2023 Nick Korotysh <nick.korotysh@gmail.com>
+
+SPDX-License-Identifier: MIT
+-->
+
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <Product Name="Digital Clock Next" Id="*" UpgradeCode="{1F9612A5-49CF-42CB-8060-0281AEA1F501}"

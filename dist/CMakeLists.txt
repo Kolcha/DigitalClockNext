@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Nick Korotysh <nick.korotysh@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(WIN_ICO_FILE "${CMAKE_CURRENT_SOURCE_DIR}/digital_clock.ico")
     set(BUILD_NUMBER 0)

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Nick Korotysh <nick.korotysh@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 set(MSI_FILE "digital_clock_next-x64.msi")
 set(MSI_SRC_DIR "${CMAKE_BINARY_DIR}/installer_files")
 

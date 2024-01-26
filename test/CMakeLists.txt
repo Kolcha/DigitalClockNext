@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Nick Korotysh <nick.korotysh@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 qt_add_executable(test_datetime_formatter test_datetime_formatter.cpp)
 target_link_libraries(test_datetime_formatter PRIVATE skin)
 target_link_libraries(test_datetime_formatter PRIVATE Qt::Test)

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Nick Korotysh <nick.korotysh@gmail.com>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #include "window_positioning.hpp"
 
 QPoint pick_ref_point(const QRect& r, Qt::Alignment a) noexcept

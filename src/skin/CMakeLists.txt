@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Nick Korotysh <nick.korotysh@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 qt_add_library(skin STATIC
     classic_skin.cpp
     classic_skin.hpp

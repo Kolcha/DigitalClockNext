@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Nick Korotysh <nick.korotysh@gmail.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #include "clock_icon_engine.hpp"
 
 #include <QtCore/QTime>
