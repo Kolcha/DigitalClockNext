@@ -106,14 +106,14 @@
       <item row="4" column="0" colspan="2">
        <widget class="QCheckBox" name="bg_per_element_cb">
         <property name="text">
-         <string>apply per character</string>
+         <string>apply per cha&amp;racter</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
        <widget class="QRadioButton" name="bg_solid_color_rbtn">
         <property name="text">
-         <string>solid color</string>
+         <string>solid &amp;color</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -123,7 +123,7 @@
       <item row="2" column="0">
        <widget class="QRadioButton" name="bg_pattern_rbtn">
         <property name="text">
-         <string>pattern</string>
+         <string>pat&amp;tern</string>
         </property>
        </widget>
       </item>
@@ -140,7 +140,7 @@
       <item row="1" column="0">
        <widget class="QRadioButton" name="bg_gradient_rbtn">
         <property name="text">
-         <string>gradient</string>
+         <string>gra&amp;dient</string>
         </property>
        </widget>
       </item>
@@ -167,7 +167,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>stretch instead of tile</string>
+         <string>&amp;stretch instead of tile</string>
         </property>
        </widget>
       </item>
@@ -186,7 +186,7 @@
       <item row="0" column="0">
        <widget class="QRadioButton" name="tx_solid_color_rbtn">
         <property name="text">
-         <string>solid color</string>
+         <string>solid &amp;color</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -196,7 +196,7 @@
       <item row="2" column="0">
        <widget class="QRadioButton" name="tx_pattern_rbtn">
         <property name="text">
-         <string>pattern</string>
+         <string>pat&amp;tern</string>
         </property>
        </widget>
       </item>
@@ -220,7 +220,7 @@
       <item row="4" column="0" colspan="2">
        <widget class="QCheckBox" name="tx_per_element_cb">
         <property name="text">
-         <string>apply per character</string>
+         <string>apply per cha&amp;racter</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -240,7 +240,7 @@
       <item row="1" column="0">
        <widget class="QRadioButton" name="tx_gradient_rbtn">
         <property name="text">
-         <string>gradient</string>
+         <string>gra&amp;dient</string>
         </property>
        </widget>
       </item>
@@ -250,7 +250,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>stretch instead of tile</string>
+         <string>&amp;stretch instead of tile</string>
         </property>
        </widget>
       </item>

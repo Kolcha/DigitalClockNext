@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-SPDX-FileCopyrightText: 2023 Nick Korotysh <nick.korotysh@gmail.com>
-
-SPDX-License-Identifier: GPL-3.0-or-later
--->
-
 <ui version="4.0">
  <class>SettingsDialog</class>
  <widget class="QDialog" name="SettingsDialog">
@@ -42,7 +35,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
             <item>
              <widget class="QRadioButton" name="font_rbtn">
               <property name="text">
-               <string>font</string>
+               <string>fon&amp;t</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -75,7 +68,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
             <item>
              <widget class="QRadioButton" name="skin_rbtn">
               <property name="text">
-               <string>skin</string>
+               <string>s&amp;kin</string>
               </property>
              </widget>
             </item>
@@ -99,17 +92,20 @@ SPDX-License-Identifier: GPL-3.0-or-later
             <item>
              <widget class="QCheckBox" name="is_separator_flashes">
               <property name="text">
-               <string>flashing separator</string>
+               <string>flashing sepa&amp;rator</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QLabel" name="scaling_label">
               <property name="text">
-               <string>Scaling:</string>
+               <string>s&amp;caling</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy">
+               <cstring>scaling_x_edit</cstring>
               </property>
              </widget>
             </item>
@@ -348,15 +344,21 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <layout class="QHBoxLayout" name="buttons_layout">
      <item>
       <widget class="QPushButton" name="import_btn">
+       <property name="toolTip">
+        <string>import settings</string>
+       </property>
        <property name="text">
-        <string>Import</string>
+        <string>&amp;Import</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="export_btn">
+       <property name="toolTip">
+        <string>export settings</string>
+       </property>
        <property name="text">
-        <string>Export</string>
+        <string>&amp;Export</string>
        </property>
       </widget>
      </item>

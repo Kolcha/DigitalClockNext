@@ -20,28 +20,28 @@
       <item row="1" column="0" colspan="2">
        <widget class="QCheckBox" name="leading_zero">
         <property name="text">
-         <string>leading zero</string>
+         <string>leading &amp;zero</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0" colspan="2">
        <widget class="QCheckBox" name="show_seconds">
         <property name="text">
-         <string>show seconds</string>
+         <string>show secon&amp;ds</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QRadioButton" name="rb_24h">
         <property name="text">
-         <string>24h</string>
+         <string>&amp;24h</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
        <widget class="QRadioButton" name="rb_12h">
         <property name="text">
-         <string>12h</string>
+         <string>&amp;12h</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -70,7 +70,7 @@
       <item row="0" column="0" colspan="2">
        <widget class="QCheckBox" name="show_apm">
         <property name="text">
-         <string>show AM/PM</string>
+         <string>show AM/&amp;PM</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -80,14 +80,14 @@
       <item row="1" column="0" colspan="2">
        <widget class="QCheckBox" name="add_space_before_apm">
         <property name="text">
-         <string>add space before AM/PM</string>
+         <string>add space &amp;before AM/PM</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
        <widget class="QRadioButton" name="rb_ucase_apm">
         <property name="text">
-         <string>uppercase</string>
+         <string>&amp;uppercase</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -97,7 +97,7 @@
       <item row="2" column="1">
        <widget class="QRadioButton" name="rb_lcase_apm">
         <property name="text">
-         <string>lowercase</string>
+         <string>&amp;lowercase</string>
         </property>
        </widget>
       </item>
@@ -109,7 +109,7 @@
      <item>
       <widget class="QCheckBox" name="use_custom_format">
        <property name="text">
-        <string>custom format</string>
+        <string>custo&amp;m format</string>
        </property>
        <property name="checked">
         <bool>true</bool>
