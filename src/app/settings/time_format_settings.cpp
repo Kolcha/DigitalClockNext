@@ -10,7 +10,7 @@
 #include <QtCore/QSet>
 #include <QtGui/QDesktopServices>
 
-#include "app/application_private.hpp"
+#include "app_config.hpp"
 #include "classic_skin.hpp"
 
 namespace {
@@ -28,30 +28,22 @@ const QSet<QString> standard_formats = {
 } // namespace
 
 struct TimeFormatSettings::Impl {
-  ApplicationPrivate* app;
-  std::size_t idx;
-  ClockWindow* wnd;
-  AppConfig* acfg;
   WindowConfig* wcfg;
   ClassicSkinConfig* scfg;
 
-  std::shared_ptr<ClassicSkin> skin;
+  ClassicSkin* skin;
 
-  Impl(ApplicationPrivate* a, std::size_t i) noexcept
-    : app(a)
-    , idx(i)
-    , wnd(a->window(i).get())
-    , acfg(a->app_config().get())
-    , wcfg(&acfg->window(i))
+  Impl(ClassicSkin* skin, WindowConfig* wcfg) noexcept
+    : wcfg(wcfg)
     , scfg(&wcfg->classicSkin())
-    , skin(std::dynamic_pointer_cast<ClassicSkin>(wnd->skin()))
+    , skin(skin)
   {}
 };
 
-TimeFormatSettings::TimeFormatSettings(ApplicationPrivate* app, std::size_t idx, QWidget* parent)
+TimeFormatSettings::TimeFormatSettings(ClassicSkin* skin, WindowConfig* wcfg, QWidget* parent)
   : QWidget(parent)
   , ui(new Ui::TimeFormatSettings)
-  , impl(std::make_unique<Impl>(app, idx))
+  , impl(std::make_unique<Impl>(skin, wcfg))
 {
   ui->setupUi(this);
 

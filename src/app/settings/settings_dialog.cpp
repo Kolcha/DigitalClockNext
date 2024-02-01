@@ -48,6 +48,11 @@ struct SettingsDialog::Impl {
   AppConfig* acfg;
   WindowConfig* wcfg;
   QString last_path;
+  const int skin_tab_idx = 2;
+  qsizetype skin_tab_cnt = 0;
+  // contains objects names
+  QSet<QString> global_tabs;
+  QSet<QString> window_tabs;
 
   Impl(ApplicationPrivate* a, std::size_t i) noexcept
     : app(a)
@@ -105,6 +110,8 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->setupUi(this);
   ui->tabWidget->setTabVisible(ui->tabWidget->count() - 1, false);
 
+  impl->window_tabs.insert(ui->general_tab->objectName());
+
   insertGlobalSettingsTab();
   insertDebugSettingsTab();
 
@@ -154,26 +161,35 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::HideAppGlobalSettings()
 {
-  const QSet<QString> global_settings = {
-    "AppGlobalSettings",
-    "DebugSettings",
-  };
   for (int i = 0; i < ui->tabWidget->count(); i++)
-    if (global_settings.contains(ui->tabWidget->widget(i)->objectName()))
+    if (impl->global_tabs.contains(ui->tabWidget->widget(i)->objectName()))
       ui->tabWidget->setTabVisible(i, false);
 }
 
 void SettingsDialog::HidePerWindowSettings()
 {
-  const QSet<QString> per_window_settings = {
-    "general_tab",
-    "ClassicSkinSettings",
-    "TimeFormatSettings",
-  };
   for (int i = 0; i < ui->tabWidget->count(); i++)
-    if (per_window_settings.contains(ui->tabWidget->widget(i)->objectName()))
+    if (impl->window_tabs.contains(ui->tabWidget->widget(i)->objectName()))
       ui->tabWidget->setTabVisible(i, false);
   ui->tabWidget->setCurrentIndex(0);
+}
+
+void SettingsDialog::insertSkinSettings(const QList<QWidget*>& tabs)
+{
+  for (qsizetype i = 0; i < impl->skin_tab_cnt; i++) {
+    auto skin_tab = ui->tabWidget->widget(impl->skin_tab_idx);
+    ui->tabWidget->removeTab(impl->skin_tab_idx);
+    impl->window_tabs.remove(skin_tab->objectName());
+    skin_tab->deleteLater();
+  }
+
+  for (auto iter = tabs.rbegin(); iter != tabs.rend(); ++iter) {
+    Q_ASSERT(*iter);
+    ui->tabWidget->insertTab(impl->skin_tab_idx, *iter, (*iter)->windowTitle());
+    impl->window_tabs.insert((*iter)->objectName());
+  }
+
+  impl->skin_tab_cnt = tabs.size();
 }
 
 void SettingsDialog::on_font_rbtn_clicked()
@@ -335,6 +351,7 @@ void SettingsDialog::insertGlobalSettingsTab()
 {
   // TODO: disable tab if more than one dialog is opened
   auto w = new AppGlobalSettings(impl->app);
+  impl->global_tabs.insert(w->objectName());
   connect(this, &QDialog::accepted, w, &AppGlobalSettings::commit);
   connect(this, &QDialog::rejected, w, &AppGlobalSettings::discard);
   ui->tabWidget->insertTab(0, w, tr("&App Global"));
@@ -346,6 +363,7 @@ void SettingsDialog::insertDebugSettingsTab()
     return;
   // TODO: disable tab if more than one dialog is opened
   auto w = new DebugSettings(impl->app);
+  impl->global_tabs.insert(w->objectName());
   connect(this, &QDialog::accepted, w, &DebugSettings::commit);
   connect(this, &QDialog::rejected, w, &DebugSettings::discard);
   ui->tabWidget->addTab(w, tr("&Debug"));
@@ -353,27 +371,20 @@ void SettingsDialog::insertDebugSettingsTab()
 
 void SettingsDialog::updateSkinSettingsTab()
 {
-  constexpr auto skin_tab_pos = 2;
-  const QString skin_tab_text = tr("&Skin");
+  SkinSettingsVisitor visitor(impl->app, impl->idx, this);
+  impl->wnd->skin()->visit(visitor);
+}
 
-  if (ui->tabWidget->tabText(skin_tab_pos) == skin_tab_text) {
-    auto skin_tab = ui->tabWidget->widget(skin_tab_pos);
-    ui->tabWidget->removeTab(skin_tab_pos);
-    delete skin_tab;
-  }
+void SkinSettingsVisitor::visit(ClassicSkin* skin)
+{
+  _dlg->insertSkinSettings({
+    new ClassicSkinSettings(skin, &_app->app_config()->window(_idx)),
+    new TimeFormatSettings(skin, &_app->app_config()->window(_idx)),
+  });
+}
 
-  const QString fmt_tab_text = tr("&Format");
-
-  if (ui->tabWidget->tabText(skin_tab_pos) == fmt_tab_text) {
-    auto fmt_tab = ui->tabWidget->widget(skin_tab_pos);
-    ui->tabWidget->removeTab(skin_tab_pos);
-    delete fmt_tab;
-  }
-
-  if (auto cskin = std::dynamic_pointer_cast<ClassicSkin>(impl->wnd->skin())) {
-    auto w = new ClassicSkinSettings(impl->app, impl->idx);
-    ui->tabWidget->insertTab(skin_tab_pos, w, skin_tab_text);
-    auto t = new TimeFormatSettings(impl->app, impl->idx);
-    ui->tabWidget->insertTab(skin_tab_pos + 1, t, fmt_tab_text);
-  }
+void SkinSettingsVisitor::visit(ErrorSkin* skin)
+{
+  Q_UNUSED(skin);
+  _dlg->insertSkinSettings({});
 }

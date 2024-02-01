@@ -28,6 +28,13 @@ std::optional<QString> tryLegacySkin(const QString& path)
   return std::nullopt;
 }
 
+auto loadLegacySkin(const QString& skin_path)
+{
+  LegacySkinLoader loader(skin_path);
+  auto skin = loader.skin();
+  return skin;
+}
+
 } // namespace
 
 SkinManagerImpl::SkinManagerImpl(ApplicationPrivate* app, QObject* parent)
@@ -74,11 +81,8 @@ SkinManager::SkinPtr SkinManagerImpl::loadSkin(std::size_t i) const
 
 void SkinManagerImpl::configureSkin(const SkinPtr& skin, std::size_t i) const
 {
-  // only classic skins for now
-  if (auto cskin = std::dynamic_pointer_cast<ClassicSkin>(skin)) {
-    configureClassicSkin(cskin, i);
-    return;
-  }
+  SkinConfigurator visitor(_app->app_config()->window(i));
+  skin->visit(visitor);
 }
 
 QStringList SkinManagerImpl::availableSkins() const
@@ -132,33 +136,24 @@ void SkinManagerImpl::findSkins()
   }
 }
 
-SkinManagerImpl::ClassicSkinPtr SkinManagerImpl::loadLegacySkin(const QString& skin_path) const
+void SkinConfigurator::visit(ClassicSkin* skin)
 {
-  LegacySkinLoader loader(skin_path);
-  auto skin = loader.skin();
-  return skin;
-}
+  const auto& scfg = _wnd_config.classicSkin();
 
-void SkinManagerImpl::configureClassicSkin(const ClassicSkinPtr& skin, std::size_t i) const
-{
-  using namespace Qt::Literals::StringLiterals;
+  skin->setTexturePerElement(scfg.getTexturePerElement());
+  skin->setTextureStretch(scfg.getTextureStretch());
+  skin->setTexture(scfg.getTexture());
+  skin->setBackgroundPerElement(scfg.getBackgroundPerElement());
+  skin->setBackgroundStretch(scfg.getBackgroundStretch());
+  skin->setBackground(scfg.getBackground());
 
-  const auto& cfg = _app->app_config()->window(i);
+  skin->setFormat(scfg.getTimeFormat());
+  skin->setOrientation(scfg.getOrientation());
+  skin->setSpacing(scfg.getSpacing());
+  skin->setCustomSeparators(scfg.getCustomSeparators());
 
-  skin->setTexturePerElement(cfg.classicSkin().getTexturePerElement());
-  skin->setTextureStretch(cfg.classicSkin().getTextureStretch());
-  skin->setTexture(cfg.classicSkin().getTexture());
-  skin->setBackgroundPerElement(cfg.classicSkin().getBackgroundPerElement());
-  skin->setBackgroundStretch(cfg.classicSkin().getBackgroundStretch());
-  skin->setBackground(cfg.classicSkin().getBackground());
+  skin->setIgnoreAdvanceX(scfg.getIgnoreAdvanceX());
+  skin->setIgnoreAdvanceY(scfg.getIgnoreAdvanceY());
 
-  skin->setFormat(cfg.classicSkin().getTimeFormat());
-  skin->setOrientation(cfg.classicSkin().getOrientation());
-  skin->setSpacing(cfg.classicSkin().getSpacing());
-  skin->setCustomSeparators(cfg.classicSkin().getCustomSeparators());
-
-  skin->setIgnoreAdvanceX(cfg.classicSkin().getIgnoreAdvanceX());
-  skin->setIgnoreAdvanceY(cfg.classicSkin().getIgnoreAdvanceY());
-
-  skin->setGlyphBaseHeight(cfg.classicSkin().getGlyphBaseHeight());
+  skin->setGlyphBaseHeight(scfg.getGlyphBaseHeight());
 }

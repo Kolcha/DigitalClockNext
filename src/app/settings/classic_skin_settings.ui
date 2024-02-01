@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-SPDX-FileCopyrightText: 2023 Nick Korotysh <nick.korotysh@gmail.com>
-
-SPDX-License-Identifier: GPL-3.0-or-later
--->
-
 <ui version="4.0">
  <class>ClassicSkinSettings</class>
  <widget class="QWidget" name="ClassicSkinSettings">
@@ -16,6 +9,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <width>400</width>
     <height>300</height>
    </rect>
+  </property>
+  <property name="windowTitle">
+   <string>&amp;Skin</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0" colspan="2">

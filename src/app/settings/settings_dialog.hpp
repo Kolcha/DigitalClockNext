@@ -10,6 +10,8 @@
 
 #include <memory>
 
+#include "skin_visitor.hpp"
+
 class ApplicationPrivate;
 class Skin;
 
@@ -29,6 +31,8 @@ public:
 
   void HideAppGlobalSettings();
   void HidePerWindowSettings();
+
+  void insertSkinSettings(const QList<QWidget*>& tabs);
 
 private slots:
   void on_font_rbtn_clicked();
@@ -68,4 +72,24 @@ private:
   Ui::SettingsDialog* ui;
   struct Impl;
   std::unique_ptr<Impl> impl;
+};
+
+class SkinSettingsVisitor final : public SkinVisitor
+{
+public:
+  SkinSettingsVisitor(ApplicationPrivate* app,
+                      std::size_t idx,
+                      SettingsDialog* dlg) noexcept
+    : _app(app)
+    , _idx(idx)
+    , _dlg(dlg)
+  {}
+
+  void visit(ClassicSkin* skin) override;
+  void visit(ErrorSkin* skin) override;
+
+private:
+  ApplicationPrivate* _app;
+  std::size_t _idx;
+  SettingsDialog* _dlg;
 };

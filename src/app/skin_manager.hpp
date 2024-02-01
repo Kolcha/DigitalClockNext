@@ -8,7 +8,21 @@
 
 #include "application_private.hpp"
 
-#include "classic_skin.hpp"
+#include "skin_visitor.hpp"
+
+class SkinConfigurator final : public SkinVisitor
+{
+public:
+  explicit SkinConfigurator(const WindowConfig& wnd_cfg) noexcept
+    : _wnd_config(wnd_cfg)
+  {}
+
+  void visit(ClassicSkin* skin) override;
+  void visit(ErrorSkin* skin) noexcept override { Q_UNUSED(skin); }
+
+private:
+  const WindowConfig& _wnd_config;
+};
 
 // skin manager is "integral part" of application
 // it does "all magic" related to skin configuration
@@ -28,12 +42,6 @@ public:
 
 public slots:
   void findSkins() override;
-
-private:
-  using ClassicSkinPtr = std::shared_ptr<ClassicSkin>;
-  ClassicSkinPtr loadLegacySkin(const QString& skin_path) const;
-
-  void configureClassicSkin(const ClassicSkinPtr& skin, std::size_t i) const;
 
 private:
   ApplicationPrivate* _app;

@@ -10,7 +10,8 @@
 
 #include <memory>
 
-class ApplicationPrivate;
+class ClassicSkin;
+class WindowConfig;
 
 namespace Ui {
 class ClassicSkinSettings;
@@ -21,9 +22,8 @@ class ClassicSkinSettings : public QWidget
   Q_OBJECT
 
 public:
-  explicit ClassicSkinSettings(ApplicationPrivate* app,
-                               std::size_t idx,
-                               QWidget* parent = nullptr);
+  ClassicSkinSettings(ClassicSkin* skin, WindowConfig* wcfg,
+                      QWidget* parent = nullptr);
   ~ClassicSkinSettings();
 
 private slots:

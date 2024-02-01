@@ -54,6 +54,8 @@ public:
   void setSeparatorAnimationEnabled([[maybe_unused]] bool enabled) override {}
   void animateSeparator() override { _msg->setVisible(!_msg->isVisible()); }
 
+  void visit(SkinVisitor& visitor) override { visitor.visit(this); }
+
 private:
   std::shared_ptr<ErrorMessage> _msg;
 };

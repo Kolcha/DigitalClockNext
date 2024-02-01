@@ -14,6 +14,7 @@ qt_add_library(skin STATIC
     legacy_skin_loader.hpp
     observable.hpp
     skin.hpp
+    skin_visitor.hpp
 )
 target_link_libraries(skin PUBLIC render core)
 target_include_directories(skin INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-SPDX-FileCopyrightText: 2024 Nick Korotysh <nick.korotysh@gmail.com>
-
-SPDX-License-Identifier: GPL-3.0-or-later
--->
-
 <ui version="4.0">
  <class>TimeFormatSettings</class>
  <widget class="QWidget" name="TimeFormatSettings">
@@ -16,6 +9,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <width>400</width>
     <height>300</height>
    </rect>
+  </property>
+  <property name="windowTitle">
+   <string>&amp;Format</string>
   </property>
   <layout class="QGridLayout" name="time_format_layout">
    <item row="0" column="0">

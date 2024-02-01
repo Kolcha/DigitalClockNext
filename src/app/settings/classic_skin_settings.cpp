@@ -13,27 +13,19 @@
 
 #include <gradient_dialog.h>
 
-#include "app/application_private.hpp"
+#include "app_config.hpp"
 #include "classic_skin.hpp"
 
 struct ClassicSkinSettings::Impl {
-  ApplicationPrivate* app;
-  std::size_t idx;
-  ClockWindow* wnd;
-  AppConfig* acfg;
   WindowConfig* wcfg;
   ClassicSkinConfig* scfg;
 
-  std::shared_ptr<ClassicSkin> skin;
+  ClassicSkin* skin;
 
-  Impl(ApplicationPrivate* a, std::size_t i) noexcept
-    : app(a)
-    , idx(i)
-    , wnd(a->window(i).get())
-    , acfg(a->app_config().get())
-    , wcfg(&acfg->window(i))
+  Impl(ClassicSkin* skin, WindowConfig* wcfg)
+    : wcfg(wcfg)
     , scfg(&wcfg->classicSkin())
-    , skin(std::dynamic_pointer_cast<ClassicSkin>(wnd->skin()))
+    , skin(skin)
     , last_path(QDir::homePath())
   {
     skin->disableCaching();
@@ -47,10 +39,10 @@ struct ClassicSkinSettings::Impl {
   QString last_path;
 };
 
-ClassicSkinSettings::ClassicSkinSettings(ApplicationPrivate* app, std::size_t idx, QWidget* parent)
+ClassicSkinSettings::ClassicSkinSettings(ClassicSkin* skin, WindowConfig* wcfg, QWidget* parent)
   : QWidget(parent)
   , ui(new Ui::ClassicSkinSettings)
-  , impl(std::make_unique<Impl>(app, idx))
+  , impl(std::make_unique<Impl>(skin, wcfg))
 {
   ui->setupUi(this);
 

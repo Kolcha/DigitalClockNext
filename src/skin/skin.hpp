@@ -12,6 +12,7 @@
 
 #include "resource.hpp"
 #include "observable.hpp"
+#include "skin_visitor.hpp"
 
 class SkinObserver {
 public:
@@ -31,6 +32,8 @@ public:
   inline void DisableSeparatorAnimation() { setSeparatorAnimationEnabled(false); }
 
   virtual void animateSeparator() = 0;
+
+  virtual void visit(SkinVisitor& visitor) = 0;
 
 protected:
   // implementations should call this to notify about its configuration change

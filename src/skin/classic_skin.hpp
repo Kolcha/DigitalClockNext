@@ -41,6 +41,8 @@ public:
     _separator_visible = !_separator_visible;
   }
 
+  void visit(SkinVisitor& visitor) override { visitor.visit(this); }
+
   void setSupportsGlyphBaseHeight(bool supports) noexcept
   {
     _supports_glyph_base_height = supports;

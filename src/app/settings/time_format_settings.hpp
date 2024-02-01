@@ -8,7 +8,8 @@
 
 #include <QWidget>
 
-class ApplicationPrivate;
+class ClassicSkin;
+class WindowConfig;
 
 namespace Ui {
 class TimeFormatSettings;
@@ -19,7 +20,7 @@ class TimeFormatSettings : public QWidget
   Q_OBJECT
 
 public:
-  TimeFormatSettings(ApplicationPrivate* app, std::size_t idx,
+  TimeFormatSettings(ClassicSkin* skin, WindowConfig* wcfg,
                      QWidget* parent = nullptr);
   ~TimeFormatSettings();
 
