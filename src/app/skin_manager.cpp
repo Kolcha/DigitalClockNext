@@ -156,4 +156,6 @@ void SkinConfigurator::visit(ClassicSkin* skin)
   skin->setIgnoreAdvanceY(scfg.getIgnoreAdvanceY());
 
   skin->setGlyphBaseHeight(scfg.getGlyphBaseHeight());
+
+  skin->setLayoutConfig(scfg.getLayoutConfig());
 }

@@ -25,6 +25,7 @@ class ClassicSkinConfig final : public ConfigBaseQVariant {
   CONFIG_OPTION_Q(bool, IgnoreAdvanceX, false)
   CONFIG_OPTION_Q(bool, IgnoreAdvanceY, true)
   CONFIG_OPTION_Q(int, GlyphBaseHeight, 100)
+  CONFIG_OPTION_Q(QString, LayoutConfig, QString("0"))
 public:
   using ConfigBaseQVariant::ConfigBaseQVariant;
 private:

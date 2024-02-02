@@ -71,6 +71,8 @@ TimeFormatSettings::TimeFormatSettings(ClassicSkin* skin, WindowConfig* wcfg, QW
   ui->custom_seps_edit->setEnabled(impl->skin->supportsCustomSeparator());
   ui->custom_seps_edit->setText(impl->scfg->getCustomSeparators());
 
+  ui->layout_cfg_edit->setText(impl->scfg->getLayoutConfig());
+
   connect(ui->rb_12h, &QRadioButton::clicked, this, &TimeFormatSettings::updateTimeFormat);
   connect(ui->rb_24h, &QRadioButton::clicked, this, &TimeFormatSettings::updateTimeFormat);
   connect(ui->leading_zero, &QCheckBox::clicked, this, &TimeFormatSettings::updateTimeFormat);
@@ -99,6 +101,14 @@ void TimeFormatSettings::on_use_custom_format_toggled(bool checked)
   if (!checked) updateTimeFormat();
 }
 
+void TimeFormatSettings::on_format_edit_textChanged(const QString& arg1)
+{
+  bool is_multiline = arg1.contains("\\n");
+  ui->layout_cfg_label->setEnabled(is_multiline);
+  ui->layout_cfg_edit->setEnabled(is_multiline);
+  ui->layout_cfg_help_btn->setEnabled(is_multiline);
+}
+
 void TimeFormatSettings::on_format_edit_textEdited(const QString& arg1)
 {
   ui->format_apply_btn->setEnabled(!arg1.isEmpty());
@@ -120,6 +130,17 @@ void TimeFormatSettings::on_custom_seps_edit_textEdited(const QString& arg1)
 {
   impl->skin->setCustomSeparators(arg1);
   impl->scfg->setCustomSeparators(arg1);
+}
+
+void TimeFormatSettings::on_layout_cfg_edit_textEdited(const QString& arg1)
+{
+  impl->skin->setLayoutConfig(arg1);
+  impl->scfg->setLayoutConfig(arg1);
+}
+
+void TimeFormatSettings::on_layout_cfg_help_btn_clicked()
+{
+  QDesktopServices::openUrl(QUrl("https://github.com/Kolcha/DigitalClockNext/wiki/Multiple-lines"));
 }
 
 void TimeFormatSettings::updateTimeFormat()

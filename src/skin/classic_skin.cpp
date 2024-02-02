@@ -46,6 +46,30 @@ std::shared_ptr<Resource> buildEffectsStack(std::shared_ptr<Resource> g, auto tx
   return g;
 }
 
+void applyLayoutConfig(LinearLayout& l, QStringView cfg) noexcept
+{
+  for (qsizetype i = 0; i < std::min<qsizetype>(l.items().size(), cfg.length()); i++) {
+    switch (cfg[i].unicode()) {
+      case '1':
+        l.items()[i]->enableResize();
+        break;
+      case '<':
+        l.setItemAlignment(i, Qt::AlignLeft | Qt::AlignTop);
+        break;
+      case '>':
+        l.setItemAlignment(i, Qt::AlignRight | Qt::AlignBottom);
+        break;
+      case 'x':
+      case 'X':
+        l.setItemAlignment(i, Qt::AlignCenter);
+        break;
+      case '0':
+      default:
+        break;
+    }
+  }
+}
+
 
 class CacheKeyUpdater final : public ResourceDecorator {
 public:
@@ -164,6 +188,7 @@ public:
     std::shared_ptr<LayoutItem> layout;
     if (_layout) {
       addLine(std::move(_line));
+      applyLayoutConfig(*_layout, _skin.layoutConfig());
       _layout->updateGeometry();
       layout = std::move(_layout);
     } else {
@@ -302,6 +327,14 @@ void ClassicSkin::setGlyphBaseHeight(qreal h)
 {
   if (!supportsGlyphBaseHeight()) return;
   _k_base_size = h / _factory->height();
+  handleConfigChange();
+}
+
+void ClassicSkin::setLayoutConfig(QString layout_config)
+{
+  if (layout_config == _layout_config)
+    return;
+  _layout_config = std::move(layout_config);
   handleConfigChange();
 }
 

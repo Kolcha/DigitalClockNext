@@ -14,6 +14,59 @@
    <string>&amp;Format</string>
   </property>
   <layout class="QGridLayout" name="time_format_layout">
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="am_pm_group">
+     <layout class="QGridLayout" name="am_pm_group_layout">
+      <item row="0" column="0" colspan="2">
+       <widget class="QCheckBox" name="show_apm">
+        <property name="text">
+         <string>show AM/&amp;PM</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QCheckBox" name="add_space_before_apm">
+        <property name="text">
+         <string>add space &amp;before AM/PM</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="rb_ucase_apm">
+        <property name="text">
+         <string>&amp;uppercase</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QRadioButton" name="rb_lcase_apm">
+        <property name="text">
+         <string>&amp;lowercase</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>132</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="format_group">
      <layout class="QGridLayout" name="format_group_layout">
@@ -64,46 +117,6 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QGroupBox" name="am_pm_group">
-     <layout class="QGridLayout" name="am_pm_group_layout">
-      <item row="0" column="0" colspan="2">
-       <widget class="QCheckBox" name="show_apm">
-        <property name="text">
-         <string>show AM/&amp;PM</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QCheckBox" name="add_space_before_apm">
-        <property name="text">
-         <string>add space &amp;before AM/PM</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QRadioButton" name="rb_ucase_apm">
-        <property name="text">
-         <string>&amp;uppercase</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QRadioButton" name="rb_lcase_apm">
-        <property name="text">
-         <string>&amp;lowercase</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="1" column="0" colspan="2">
     <layout class="QHBoxLayout" name="custom_format_layout">
      <item>
@@ -138,7 +151,7 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <layout class="QHBoxLayout" name="custom_seps_layout">
      <item>
       <widget class="QLabel" name="custom_seps_label">
@@ -159,18 +172,32 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>132</height>
-      </size>
-     </property>
-    </spacer>
+   <item row="2" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="layout_cfg_layout">
+     <item>
+      <widget class="QLabel" name="layout_cfg_label">
+       <property name="text">
+        <string>layout &amp;config string (useful only for multiline formats)</string>
+       </property>
+       <property name="buddy">
+        <cstring>layout_cfg_edit</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="layout_cfg_edit"/>
+     </item>
+     <item>
+      <widget class="QToolButton" name="layout_cfg_help_btn">
+       <property name="icon">
+        <iconset theme="help-hint"/>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

@@ -161,6 +161,9 @@ public:
 
   void setGlyphBaseHeight(qreal h);
 
+  void setLayoutConfig(QString layout_config);
+  QString layoutConfig() const noexcept { return _layout_config; }
+
   void setCachingEnabled(bool enable) noexcept { _caching_enabled = enable; }
   inline void enableCaching() noexcept { setCachingEnabled(true); }
   inline void disableCaching() noexcept { setCachingEnabled(false); }
@@ -195,4 +198,5 @@ private:
   Qt::Orientation _orienatation = Qt::Horizontal;
   qreal _spacing = 0.0;
   qreal _k_base_size = 1.0;
+  QString _layout_config;
 };

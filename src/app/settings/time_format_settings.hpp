@@ -26,10 +26,13 @@ public:
 
 private slots:
   void on_use_custom_format_toggled(bool checked);
+  void on_format_edit_textChanged(const QString& arg1);
   void on_format_edit_textEdited(const QString& arg1);
   void on_format_help_btn_clicked();
   void on_format_apply_btn_clicked();
   void on_custom_seps_edit_textEdited(const QString& arg1);
+  void on_layout_cfg_edit_textEdited(const QString& arg1);
+  void on_layout_cfg_help_btn_clicked();
 
   void updateTimeFormat();
 
