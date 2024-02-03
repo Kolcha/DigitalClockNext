@@ -55,6 +55,7 @@ void Application::showSettingsDialog()
   connect(dlg, &QDialog::accepted, _impl->settings_manager().get(), &SettingsManager::confirmImport);
   connect(dlg, &QDialog::rejected, _impl->settings_manager().get(), &SettingsManager::discardImport);
   connect(dlg, &QDialog::rejected, _impl.get(), reconfigure);
+  connect(dlg, &QDialog::rejected, _impl.get(), &ApplicationPrivate::applyDebugOptions);
   connect(dlg, &QObject::destroyed, w, &QWidget::raise);
 }
 
