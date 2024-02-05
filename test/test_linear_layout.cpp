@@ -13,6 +13,30 @@ static_assert(std::is_move_constructible_v<LinearLayout>, "!is_move_constructibl
 static_assert(!std::is_copy_assignable_v<LinearLayout>, "is_copy_assignable");
 static_assert(std::is_move_assignable_v<LinearLayout>, "!is_move_assignable");
 
+namespace {
+
+class ParentLayout : public Layout
+{
+public:
+  int updateGeometryCount() const noexcept { return _update_counter; }
+
+protected:
+  void doUpdateGeometry() override
+  {
+    ++_update_counter;
+    Layout::doUpdateGeometry();
+  }
+
+  // this test layout does nothing, just counts updateGeometry() calls
+  void doAddItem(std::shared_ptr<LayoutItem>) noexcept override {}
+  std::pair<qreal, qreal> doBuildLayout() noexcept override { return {0, 0}; }
+
+private:
+  int _update_counter = 0;
+};
+
+} // namespace
+
 class LinearLayoutTest : public QObject
 {
   Q_OBJECT
@@ -25,13 +49,15 @@ private slots:
   void changeOrientation();
   void ignoreAdvanceX();
   void ignoreAdvanceY();
-  // TODO: test scaling
-  // TODO: test alignment
-  // TODO: scaling + alignment
-  // TODO: test geomtery change propagation (implicitly done?)
+  void testScaling1();
+  void testScaling2();
+  void testScaling3();
+  void testAlignmentH();
+  void testAlignmentV();
+  void testScaleAndAlign();
 
 private:
-  auto createItem(auto&&... args)
+  auto createItem(auto&& ... args)
   {
     auto res = std::make_shared<InvisibleResource>(args...);
     return std::make_shared<LayoutItem>(std::move(res));
@@ -43,6 +69,15 @@ private:
     l.addItem(createItem(QRectF(-1, -3, 4, 7), 5, 4));
     l.addItem(createItem(QRectF(-1, -5, 4, 6), 3, 8));
     l.addItem(createItem(QRectF(-2, -2, 5, 5), 5, 4));
+    l.updateGeometry();
+  }
+
+  // for scaling and alignment tests
+  void addItems2(LinearLayout& l)
+  {
+    l.addItem(createItem(QRectF(-1, -5, 15, 6), 18, 9));
+    l.addItem(createItem(QRectF(-1, -5, 10, 6), 10, 9));
+    l.addItem(createItem(QRectF(-1, -7, 20, 8), 18, 9));
     l.updateGeometry();
   }
 };
@@ -211,6 +246,121 @@ void LinearLayoutTest::ignoreAdvanceY()
   QCOMPARE(ll->items()[3]->pos(), QPointF(0, 23));
   QCOMPARE(ll->ax(), 5);
   QCOMPARE(ll->ay(), 28);
+}
+
+void LinearLayoutTest::testScaling1()
+{
+  // only one central item is scalable
+  auto ll = std::make_shared<LinearLayout>(Qt::Vertical);
+  addItems2(*ll);
+  QCOMPARE(ll->items().size(), 3);
+  QVERIFY(ll->items()[1]->transform().isIdentity());
+  ll->items()[1]->enableResize();
+  ll->updateGeometry();
+  QVERIFY(ll->items()[1]->transform().isScaling());
+  QCOMPARE(ll->items()[1]->ax(), 20);
+  QCOMPARE(ll->items()[1]->ay(), 18);
+}
+
+void LinearLayoutTest::testScaling2()
+{
+  // two first items are scalable
+  auto ll = std::make_shared<LinearLayout>(Qt::Vertical);
+  addItems2(*ll);
+  QCOMPARE(ll->items().size(), 3);
+  QVERIFY(ll->items()[0]->transform().isIdentity());
+  QVERIFY(ll->items()[1]->transform().isIdentity());
+  ll->items()[0]->enableResize();
+  ll->items()[1]->enableResize();
+  ll->updateGeometry();
+  QVERIFY(ll->items()[0]->transform().isScaling());
+  QVERIFY(ll->items()[1]->transform().isScaling());
+  QCOMPARE(ll->items()[0]->ax(), 24);
+  QCOMPARE(ll->items()[0]->ay(), 12);
+  QCOMPARE(ll->items()[1]->ax(), 20);
+  QCOMPARE(ll->items()[1]->ay(), 18);
+}
+
+void LinearLayoutTest::testScaling3()
+{
+  // all items are scalable
+  auto ll = std::make_shared<LinearLayout>(Qt::Vertical);
+  addItems2(*ll);
+  QCOMPARE(ll->items().size(), 3);
+  QVERIFY(ll->items()[0]->transform().isIdentity());
+  QVERIFY(ll->items()[1]->transform().isIdentity());
+  QVERIFY(ll->items()[2]->transform().isIdentity());
+  ll->items()[0]->enableResize();
+  ll->items()[1]->enableResize();
+  ll->items()[2]->enableResize();
+  ll->updateGeometry();
+  // the first item is the reference one
+  QVERIFY(ll->items()[0]->transform().isIdentity());
+  QVERIFY(ll->items()[1]->transform().isScaling());
+  QVERIFY(ll->items()[2]->transform().isScaling());
+  QCOMPARE(ll->items()[0]->ax(), 18);
+  QCOMPARE(ll->items()[0]->ay(), 9);
+  QCOMPARE(ll->items()[1]->ax(), 15);
+  QCOMPARE(ll->items()[1]->ay(), 13.5);
+  QCOMPARE(ll->items()[2]->ax(), 13.5);
+  QCOMPARE(ll->items()[2]->ay(), 6.75);
+}
+
+void LinearLayoutTest::testAlignmentH()
+{
+  auto ll = std::make_shared<LinearLayout>(Qt::Vertical);
+  addItems2(*ll);
+  QCOMPARE(ll->items().size(), 3);
+  QCOMPARE(ll->items()[0]->pos().x(), 0);
+  QCOMPARE(ll->items()[1]->pos().x(), 0);
+  QCOMPARE(ll->items()[2]->pos().x(), 0);
+  ll->setItemAlignment(0, Qt::AlignRight | Qt::AlignBaseline);
+  ll->setItemAlignment(1, Qt::AlignHCenter | Qt::AlignBaseline);
+  ll->setItemAlignment(2, Qt::AlignLeft | Qt::AlignBaseline);
+  ll->updateGeometry();
+  QCOMPARE(ll->items()[0]->pos().x(), 5);
+  QCOMPARE(ll->items()[1]->pos().x(), 5);
+  QCOMPARE(ll->items()[2]->pos().x(), 0);
+}
+
+void LinearLayoutTest::testAlignmentV()
+{
+  auto ll = std::make_shared<LinearLayout>(Qt::Horizontal);
+  addItems2(*ll);
+  QCOMPARE(ll->items().size(), 3);
+  QCOMPARE(ll->items()[0]->pos().y(), 0);
+  QCOMPARE(ll->items()[1]->pos().y(), 0);
+  QCOMPARE(ll->items()[2]->pos().y(), 0);
+  ll->setItemAlignment(0, Qt::AlignTop | Qt::AlignJustify);
+  ll->setItemAlignment(1, Qt::AlignVCenter | Qt::AlignJustify);
+  ll->setItemAlignment(2, Qt::AlignBottom | Qt::AlignJustify);
+  ll->updateGeometry();
+  QCOMPARE(ll->items()[0]->pos().y(), -2);
+  QCOMPARE(ll->items()[1]->pos().y(), -1);
+  QCOMPARE(ll->items()[2]->pos().y(), 0);
+}
+
+void LinearLayoutTest::testScaleAndAlign()
+{
+  // the first item is scaled, the second is aligned
+  auto ll = std::make_shared<LinearLayout>(Qt::Vertical);
+  addItems2(*ll);
+  auto pp = std::make_shared<ParentLayout>();
+  pp->addItem(ll);
+  QCOMPARE(pp->updateGeometryCount(), 0);
+  QCOMPARE(ll->items().size(), 3);
+  QVERIFY(ll->items()[0]->transform().isIdentity());
+  QCOMPARE(ll->items()[1]->pos().x(), 0);
+  ll->items()[0]->enableResize();
+  ll->setItemAlignment(1, Qt::AlignRight | Qt::AlignBaseline);
+  ll->updateGeometry();
+  QCOMPARE(pp->updateGeometryCount(), 1);
+  QVERIFY(ll->items()[0]->transform().isScaling());
+  QCOMPARE(ll->items()[0]->ax(), 24);
+  QCOMPARE(ll->items()[0]->ay(), 12);
+  QCOMPARE(ll->items()[1]->pos().x(), 10);
+  QVERIFY(ll->items()[2]->transform().isIdentity());
+  QCOMPARE(ll->items()[2]->pos().x(), 0);
 }
 
 QTEST_MAIN(LinearLayoutTest)
