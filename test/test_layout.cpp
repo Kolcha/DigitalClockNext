@@ -13,17 +13,19 @@
 
 namespace {
 
-class TestItem : public LayoutItem {
+class TestItem : public LayoutItem
+{
 public:
   TestItem(QRectF r, qreal ax, qreal ay)
-      : LayoutItem(std::make_shared<InvisibleResource>(std::move(r), ax, ay))
+    : LayoutItem(std::make_shared<InvisibleResource>(std::move(r), ax, ay))
   {}
 };
 
 
 template<typename L>
-  requires std::is_base_of_v<LayoutItem, L>
-class UpdateCounter final : public L {
+requires std::is_base_of_v<LayoutItem, L>
+class UpdateCounter final : public L
+{
 public:
   using L::L;
 
@@ -44,7 +46,8 @@ private:
 };
 
 
-class TestLayout : public Layout {
+class TestLayout : public Layout
+{
 public:
   explicit TestLayout(qreal dx = 2.0) noexcept : _dx(dx) {}
 

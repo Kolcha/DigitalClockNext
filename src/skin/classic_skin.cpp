@@ -292,7 +292,6 @@ private:
 
 std::shared_ptr<Resource> ClassicSkin::process(const QDateTime& dt)
 {
-  // TODO: consider to make it class member instead
   ClassicLayoutBuilder builder(_factory, *this);
   builder.setSupportsCustomSeparator(supportsCustomSeparator());
   builder.setSupportsSeparatorAnimation(supportsSeparatorAnimation());

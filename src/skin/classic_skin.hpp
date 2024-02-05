@@ -15,8 +15,6 @@
 
 #include "resource_factory.hpp"
 
-// TODO: consider to add setter for factory object -
-// this will allow to change classic skins only with changing factory
 class ClassicSkin final : public Skin {
 public:
   explicit ClassicSkin(std::shared_ptr<ResourceFactory> factory)

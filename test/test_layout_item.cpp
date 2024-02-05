@@ -16,7 +16,8 @@ static_assert(std::is_move_assignable_v<LayoutItem>, "!is_move_assignable");
 
 namespace {
 
-class FakeItem final : public LayoutItem {
+class FakeItem final : public LayoutItem
+{
 public:
   FakeItem() : LayoutItem(std::make_shared<InvisibleResource>(QRectF(0, 0, 5, 5), 5, 5))
   {

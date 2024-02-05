@@ -36,7 +36,8 @@ namespace {
 
 using namespace std::string_literals;
 
-class TestConfigBackend final : public ConfigBackend<std::string, std::string, std::any> {
+class TestConfigBackend final : public ConfigBackend<std::string, std::string, std::any>
+{
 public:
   TestConfigBackend()
     : _all_settings{{
