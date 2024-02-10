@@ -22,6 +22,11 @@ target_link_libraries(test_linear_layout PRIVATE core)
 target_link_libraries(test_linear_layout PRIVATE Qt::Test)
 add_test(NAME test_linear_layout COMMAND test_linear_layout)
 
+qt_add_executable(test_placeholder test_placeholder.cpp)
+target_link_libraries(test_placeholder PRIVATE core)
+target_link_libraries(test_placeholder PRIVATE Qt::Test)
+add_test(NAME test_placeholder COMMAND test_placeholder)
+
 qt_add_executable(test_settings_core test_settings_core.cpp)
 target_link_libraries(test_settings_core PRIVATE settings)
 target_link_libraries(test_settings_core PRIVATE Qt::Test)

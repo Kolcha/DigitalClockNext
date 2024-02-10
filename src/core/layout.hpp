@@ -152,3 +152,69 @@ private:
 private:
   std::shared_ptr<LayoutResource> _res;
 };
+
+
+// fixed-size item which can hold another item
+class PlaceholderItem : public LayoutItem {
+public:
+  PlaceholderItem(QRectF r, qreal ax, qreal ay)
+    : PlaceholderItem(std::make_shared<PlaceholderResource>(r, ax, ay))
+  {
+    Q_ASSERT(_res);
+  }
+
+  void setContent(std::shared_ptr<LayoutItem> item)
+  {
+    if (item)
+      item->setParent(weak_from_this());
+    _res->setContent(std::move(item));
+  }
+
+  void setContentAlignment(Qt::Alignment a) noexcept { _alignment = a; }
+
+protected:
+  void doUpdateGeometry() override;
+
+private:
+  // integral part of implementation
+  // should not be a part of public API
+  class PlaceholderResource : public Resource {
+  public:
+    PlaceholderResource(QRectF r, qreal ax, qreal ay) noexcept
+      : _r(std::move(r))
+      , _ax(ax)
+      , _ay(ay)
+    {}
+
+    QRectF rect() const noexcept override { return _r; }
+    qreal advanceX() const noexcept override { return _ax; }
+    qreal advanceY() const noexcept override { return _ay; }
+
+    void draw(QPainter* p) override;
+
+    size_t cacheKey() const noexcept override { return -1; }
+
+    void setContent(std::shared_ptr<LayoutItem> item) noexcept
+    {
+      _item = std::move(item);
+    }
+
+    auto content() const noexcept { return _item; }
+
+  private:
+    QRectF _r;
+    qreal _ax;
+    qreal _ay;
+    std::shared_ptr<LayoutItem> _item;
+  };
+
+private:
+  PlaceholderItem(std::shared_ptr<PlaceholderResource> res)
+    : LayoutItem(res)
+    , _res(std::move(res))
+  {}
+
+private:
+  std::shared_ptr<PlaceholderResource> _res;
+  Qt::Alignment _alignment = Qt::AlignCenter;
+};

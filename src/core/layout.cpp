@@ -153,3 +153,44 @@ void Layout::LayoutResource::updateGeometry(qreal ax, qreal ay)
   _ax = ax;
   _ay = ay;
 }
+
+void PlaceholderItem::doUpdateGeometry()
+{
+  const auto& item = _res->content();
+  if (!item) return;
+
+  if (item->rect().width() > _res->rect().width() ||
+      item->rect().height() > _res->rect().height()) {
+    auto os = item->rect().size();
+    auto ss = os.scaled(_res->rect().size(), Qt::KeepAspectRatio);
+    auto kx = ss.width() / os.width();
+    auto ky = ss.height() / os.height();
+    item->setTransform(item->transform().scale(kx, ky));
+  }
+
+  const auto& g = _res->rect();
+  const auto& r = item->rect().translated(item->pos());
+  auto halign = _alignment & Qt::AlignHorizontal_Mask;
+  auto valign = _alignment & Qt::AlignVertical_Mask;
+  qreal dx = 0;
+  qreal dy = 0;
+  if (halign == Qt::AlignLeft) dx = g.left() - r.left();
+  if (halign == Qt::AlignHCenter) dx = g.center().x() - r.center().x();
+  if (halign == Qt::AlignRight) dx = g.right() - r.right();
+  if (valign == Qt::AlignTop) dy = g.top() - r.top();
+  if (valign == Qt::AlignVCenter) dy = g.center().y() - r.center().y();
+  if (valign == Qt::AlignBottom) dy = g.bottom() - r.bottom();
+
+  item->setPos(item->pos() + QPointF(dx, dy));
+}
+
+void PlaceholderItem::PlaceholderResource::draw(QPainter* p)
+{
+  if (!_item) return;
+
+  p->save();
+  p->translate(_item->pos());
+  p->setTransform(_item->transform(), true);
+  _item->resource()->draw(p);
+  p->restore();
+}
