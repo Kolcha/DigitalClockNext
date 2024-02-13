@@ -17,6 +17,7 @@
 #include "font_resource.hpp"
 #include "error_skin.hpp"
 #include "legacy_skin_loader.hpp"
+#include "modern_skin_loader.hpp"
 
 namespace {
 
@@ -31,6 +32,21 @@ std::optional<QString> tryLegacySkin(const QString& path)
 auto loadLegacySkin(const QString& skin_path)
 {
   LegacySkinLoader loader(skin_path);
+  auto skin = loader.skin();
+  return skin;
+}
+
+std::optional<QString> tryModernSkin(const QString& path)
+{
+  ModernSkinLoader loader(path);
+  if (loader.valid())
+    return loader.title();
+  return std::nullopt;
+}
+
+auto loadModernSkin(const QString& skin_path)
+{
+  ModernSkinLoader loader(skin_path);
   auto skin = loader.skin();
   return skin;
 }
@@ -60,6 +76,8 @@ SkinManager::SkinPtr SkinManagerImpl::loadSkin(const QString& skin_name) const
     switch (iter.value().type) {
       case SkinType::Legacy:
         return loadLegacySkin(iter.value().path);
+      case SkinType::Modern:
+        return loadModernSkin(iter.value().path);
     }
   }
   return std::make_unique<ErrorSkin>();
@@ -117,6 +135,7 @@ void SkinManagerImpl::findSkins()
 
   constexpr std::pair<SkinType, std::optional<QString>(*)(const QString&)> validators[] = {
     {SkinType::Legacy, &tryLegacySkin},
+    {SkinType::Modern, &tryModernSkin},
   };
 
   for (const auto& path : std::as_const(search_paths)) {

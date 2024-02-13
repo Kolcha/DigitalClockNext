@@ -87,6 +87,7 @@ public:
 
   void visit(ClassicSkin* skin) override;
   void visit(ErrorSkin* skin) override;
+  void visit(ModernSkin* skin) override;
 
 private:
   ApplicationPrivate* _app;

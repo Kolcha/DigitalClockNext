@@ -19,6 +19,7 @@ public:
 
   void visit(ClassicSkin* skin) override;
   void visit(ErrorSkin* skin) noexcept override { Q_UNUSED(skin); }
+  void visit(ModernSkin* skin) noexcept override { Q_UNUSED(skin); }
 
 private:
   const WindowConfig& _wnd_config;
@@ -48,6 +49,7 @@ private:
 
   enum class SkinType {
     Legacy,
+    Modern,
   };
 
   struct LoaderInfo {

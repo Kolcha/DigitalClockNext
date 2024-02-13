@@ -12,6 +12,10 @@ qt_add_library(skin STATIC
     error_skin.hpp
     legacy_skin_loader.cpp
     legacy_skin_loader.hpp
+    modern_skin.cpp
+    modern_skin.hpp
+    modern_skin_loader.cpp
+    modern_skin_loader.hpp
     observable.hpp
     skin.hpp
     skin_visitor.hpp

@@ -392,3 +392,9 @@ void SkinSettingsVisitor::visit(ErrorSkin* skin)
   Q_UNUSED(skin);
   _dlg->insertSkinSettings({});
 }
+
+void SkinSettingsVisitor::visit(ModernSkin* skin)
+{
+  Q_UNUSED(skin);
+  _dlg->insertSkinSettings({});
+}
