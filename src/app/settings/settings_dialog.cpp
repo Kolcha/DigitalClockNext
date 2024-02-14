@@ -129,6 +129,7 @@ SettingsDialog::SettingsDialog(ApplicationPrivate* app, std::size_t idx, QWidget
   ui->font_rbtn->setChecked(appearance_cfg.getUseFontInsteadOfSkin());
   ui->skin_rbtn->setChecked(!appearance_cfg.getUseFontInsteadOfSkin());
   ui->skin_cbox->addItems(impl->app->skin_manager()->availableSkins());
+  ui->skin_cbox->setCurrentIndex(-1);   // if skin is available, next line will update the index
   ui->skin_cbox->setCurrentText(impl->wcfg->state().getLastUsedSkin());
   ui->is_separator_flashes->setChecked(appearance_cfg.getFlashingSeparator());
   ui->scaling_x_edit->setValue(appearance_cfg.getScaleFactorX());
