@@ -16,7 +16,6 @@ std::pair<qreal, qreal> LinearLayout::doBuildLayout()
   auto [omin, omax] = resizeItems();
   // position items
   auto prev = _items.begin();
-  (*prev)->setPos({0, 0});  // the first item is always at (0,0)
   applyAlignment(0, omin, omax);
 
   for (auto iter = std::next(prev); iter != _items.end(); ++iter) {

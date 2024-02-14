@@ -88,9 +88,9 @@ void LayoutItem::resize(qreal l, Qt::Orientation o)
 {
   Q_ASSERT(_resize_enabled);
   if (o == Qt::Horizontal)
-    _ks = l / _rect.width();
+    _ks *= l / _rect.width();
   else
-    _ks = l / _rect.height();
+    _ks *= l / _rect.height();
   updateCachedGeometry();
 }
 

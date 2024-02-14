@@ -35,6 +35,11 @@ private:
   int _update_counter = 0;
 };
 
+inline QRectF g(const LayoutItem& item) noexcept
+{
+  return item.rect().translated(item.pos());
+}
+
 } // namespace
 
 class LinearLayoutTest : public QObject
@@ -258,6 +263,8 @@ void LinearLayoutTest::testScaling1()
   ll->items()[1]->enableResize();
   ll->updateGeometry();
   QVERIFY(ll->items()[1]->transform().isScaling());
+  QCOMPARE(g(*ll->items()[1]).left(), ll->rect().left());
+  QCOMPARE(g(*ll->items()[1]).right(), ll->rect().right());
   QCOMPARE(ll->items()[1]->ax(), 20);
   QCOMPARE(ll->items()[1]->ay(), 18);
 }
@@ -279,6 +286,10 @@ void LinearLayoutTest::testScaling2()
   QCOMPARE(ll->items()[0]->ay(), 12);
   QCOMPARE(ll->items()[1]->ax(), 20);
   QCOMPARE(ll->items()[1]->ay(), 18);
+  QCOMPARE(g(*ll->items()[0]).left(), ll->rect().left());
+  QCOMPARE(g(*ll->items()[0]).right(), ll->rect().right());
+  QCOMPARE(g(*ll->items()[1]).left(), ll->rect().left());
+  QCOMPARE(g(*ll->items()[1]).right(), ll->rect().right());
 }
 
 void LinearLayoutTest::testScaling3()
@@ -304,6 +315,12 @@ void LinearLayoutTest::testScaling3()
   QCOMPARE(ll->items()[1]->ay(), 13.5);
   QCOMPARE(ll->items()[2]->ax(), 13.5);
   QCOMPARE(ll->items()[2]->ay(), 6.75);
+  QCOMPARE(g(*ll->items()[0]).left(), ll->rect().left());
+  QCOMPARE(g(*ll->items()[0]).right(), ll->rect().right());
+  QCOMPARE(g(*ll->items()[1]).left(), ll->rect().left());
+  QCOMPARE(g(*ll->items()[1]).right(), ll->rect().right());
+  QCOMPARE(g(*ll->items()[2]).left(), ll->rect().left());
+  QCOMPARE(g(*ll->items()[2]).right(), ll->rect().right());
 }
 
 void LinearLayoutTest::testAlignmentH()

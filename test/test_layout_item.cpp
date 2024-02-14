@@ -153,6 +153,11 @@ void LayoutItemTest::testResizeItem()
   QCOMPARE(_test_item->ax(), 2*ax);
   QCOMPARE(_test_item->ay(), 2*ay);
   QCOMPARE(_test_item->resource()->rect(), r);
+  // resize to the same size should have no effect
+  _test_item->resize(2*r.width(), Qt::Horizontal);
+  QCOMPARE(_test_item->rect(), QRectF(2*r.x(), 2*r.y(), 2*r.width(), 2*r.height()));
+  QCOMPARE(_test_item->ax(), 2*ax);
+  QCOMPARE(_test_item->ay(), 2*ay);
   // disabling resize should reset geometry
   _test_item->disableResize();
   QVERIFY(!_test_item->resizeEnabled());
@@ -171,6 +176,11 @@ void LayoutItemTest::testResizeItem()
   QCOMPARE(_test_item->ax(), 2*ax);
   QCOMPARE(_test_item->ay(), 2*ay);
   QCOMPARE(_test_item->resource()->rect(), r);
+  // resize to the same size should have no effect
+  _test_item->resize(2*r.height(), Qt::Vertical);
+  QCOMPARE(_test_item->rect(), QRectF(2*r.x(), 2*r.y(), 2*r.width(), 2*r.height()));
+  QCOMPARE(_test_item->ax(), 2*ax);
+  QCOMPARE(_test_item->ay(), 2*ay);
   // should not propagate geometry change
   QCOMPARE(_fake_item->geometryUpdateCount(), 0);
 }
