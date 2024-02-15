@@ -109,7 +109,7 @@ private:
 class ClassicLayoutBuilder final : public DateTimeStringBuilder {
 public:
   ClassicLayoutBuilder(std::shared_ptr<ResourceFactory> factory,
-                       const ClassicSkin& skin)
+                       const ClassicSkinBase& skin)
     : _line(std::make_shared<LinearLayout>(skin.orientation(), skin.spacing()))
     , _factory(std::move(factory))
     , _skin(skin)
@@ -273,7 +273,7 @@ private:
   std::shared_ptr<LinearLayout> _line;
   std::shared_ptr<LinearLayout> _layout;
   std::shared_ptr<ResourceFactory> _factory;
-  const ClassicSkin& _skin;
+  const ClassicSkinBase& _skin;
 
   bool _supports_custom_separator = false;
   bool _supports_separator_animation = false;
@@ -304,32 +304,38 @@ std::shared_ptr<Resource> ClassicSkin::process(const QDateTime& dt)
   return builder.getLayout();
 }
 
-void ClassicSkin::setOrientation(Qt::Orientation orientation)
+void ClassicSkin::handleConfigChange()
+{
+  ClassicSkinBase::handleConfigChange();
+  configurationChanged();
+}
+
+void ClassicSkinBase::setOrientation(Qt::Orientation orientation)
 {
   _orienatation = orientation;
   handleConfigChange();
 }
 
-void ClassicSkin::setIgnoreAdvanceX(bool enable)
+void ClassicSkinBase::setIgnoreAdvanceX(bool enable)
 {
   _ignore_h_advance = enable;
   handleConfigChange();
 }
 
-void ClassicSkin::setIgnoreAdvanceY(bool enable)
+void ClassicSkinBase::setIgnoreAdvanceY(bool enable)
 {
   _ignore_v_advance = enable;
   handleConfigChange();
 }
 
-void ClassicSkin::setGlyphBaseHeight(qreal h)
+void ClassicSkinBase::setGlyphBaseHeight(qreal h)
 {
   if (!supportsGlyphBaseHeight()) return;
   _k_base_size = h / _factory->height();
   handleConfigChange();
 }
 
-void ClassicSkin::setLayoutConfig(QString layout_config)
+void ClassicSkinBase::setLayoutConfig(QString layout_config)
 {
   if (layout_config == _layout_config)
     return;
@@ -337,15 +343,24 @@ void ClassicSkin::setLayoutConfig(QString layout_config)
   handleConfigChange();
 }
 
-void ClassicSkin::handleConfigChange()
+void ClassicSkinBase::handleConfigChange()
 {
-  configurationChanged();
   updateConfigHash();
 }
 
-void ClassicSkin::updateConfigHash()
+void ClassicSkinBase::updateConfigHash()
 {
   _skin_cfg_hash = hasher(
       _texture, _texture_stretch, _texture_per_element,
       _background, _background_stretch, _background_per_element);
+}
+
+std::shared_ptr<Resource> StaticText::process(QStringView str) const
+{
+  ClassicLayoutBuilder builder(_factory, *this);
+  builder.setSkinConfigHash(_skin_cfg_hash);
+  builder.setGlyphScaleFactor(_k_base_size);
+  const auto code_points = str.toUcs4();
+  for (auto c : code_points) builder.addCharacter(c);
+  return builder.getLayout();
 }
