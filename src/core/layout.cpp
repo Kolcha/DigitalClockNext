@@ -15,7 +15,23 @@
 
 namespace {
 
-using DebugContext = ::debug::LayoutDebug;
+class DebugContext final {
+public:
+  explicit DebugContext(const char* env_var) noexcept
+    : _env_var(env_var)
+  {
+    Q_ASSERT(_env_var);
+  }
+
+  bool operator&(debug::LayoutDebugFlag flag) const noexcept
+  {
+    auto raw_value = qEnvironmentVariableIntValue(_env_var);
+    return (static_cast<debug::LayoutDebug>(raw_value) & flag) != 0;
+  }
+
+private:
+  const char* _env_var;
+};
 
 class DebugResource final : public ResourceDecorator {
 public:
@@ -25,10 +41,13 @@ public:
     if (auto dres = std::dynamic_pointer_cast<DebugResource>(res))
       return dres;
 
-    auto dres = std::make_shared<DebugResource>(std::move(res));
-    dres->_ctx = std::move(ctx);
-    return dres;
+    return std::make_shared<DebugResource>(std::move(res), std::move(ctx));
   }
+
+  DebugResource(std::shared_ptr<Resource> res, DebugContext ctx) noexcept
+    : ResourceDecorator(std::move(res))
+    , _ctx(std::move(ctx))
+  {}
 
   void draw(QPainter* p) override
   {
@@ -40,23 +59,18 @@ public:
     DEBUG_DRAW(debug::DrawVBaseline, _ctx, p, Line, 0, rect().top(), 0, rect().bottom());
   }
 
-protected:
-  using ResourceDecorator::ResourceDecorator;
-
 private:
   DebugContext _ctx;
 };
 
 auto item_context() noexcept
 {
-  auto raw_value = qEnvironmentVariableIntValue(debug::ItemDebugFlagsVar);
-  return static_cast<debug::LayoutDebug>(raw_value);
+  return DebugContext(debug::ItemDebugFlagsVar);
 }
 
 auto layout_context() noexcept
 {
-  auto raw_value = qEnvironmentVariableIntValue(debug::LayoutDebugFlagsVar);
-  return static_cast<debug::LayoutDebug>(raw_value);
+  return DebugContext(debug::LayoutDebugFlagsVar);
 }
 
 } // namespace
