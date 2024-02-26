@@ -8,6 +8,7 @@
 
 #include <QPainter>
 #include <QPaintEvent>
+#include <QPixmapCache>
 
 #include "skin.hpp"
 
@@ -18,6 +19,7 @@ public:
       : _widget(w)
       , _dt(dt.toUTC())
       , _tz(dt.timeZone())
+      , _last_palette(w->palette())
   {
     Q_ASSERT(_widget);
   }
@@ -67,6 +69,12 @@ public:
 
   void draw(QPainter* p)
   {
+    // skin may use system palette and cache rendering results,
+    // so drop cache on system theme change (e.g. light/dark)
+    if (_widget->palette() != _last_palette) {
+      _last_palette = _widget->palette();
+      QPixmapCache::clear();
+    }
     if (!_glyph) return;
     p->setRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::SmoothPixmapTransform);
@@ -94,6 +102,7 @@ private:
   QTimeZone _tz;
   qreal _kx = 1;
   qreal _ky = 1;
+  QPalette _last_palette;   // used just to detect theme changes
 };
 
 
