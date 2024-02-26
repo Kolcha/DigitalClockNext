@@ -49,6 +49,10 @@ TimeFormatSettings::TimeFormatSettings(ClassicSkin* skin, WindowConfig* wcfg, QW
 
   QString time_format = impl->scfg->getTimeFormat();
 
+  ui->smaller_seconds->setChecked(impl->scfg->getSecondsScaleFactor() != 100);
+  if (ui->smaller_seconds->isChecked())
+    ui->seconds_scale_factor_edit->setValue(impl->scfg->getSecondsScaleFactor());
+
   ui->use_custom_format->setChecked(!standard_formats.contains(time_format));
   on_use_custom_format_toggled(ui->use_custom_format->isChecked());
   ui->format_edit->setText(time_format);
@@ -87,6 +91,19 @@ TimeFormatSettings::TimeFormatSettings(ClassicSkin* skin, WindowConfig* wcfg, QW
 TimeFormatSettings::~TimeFormatSettings()
 {
   delete ui;
+}
+
+void TimeFormatSettings::on_smaller_seconds_clicked(bool checked)
+{
+  auto v = checked ? ui->seconds_scale_factor_edit->value() : 100;
+  on_seconds_scale_factor_edit_valueChanged(v);
+}
+
+void TimeFormatSettings::on_seconds_scale_factor_edit_valueChanged(int arg1)
+{
+  auto ssf = arg1 / 100.;
+  impl->skin->setTokenTransform("ss", QTransform::fromScale(ssf, ssf));
+  impl->scfg->setSecondsScaleFactor(arg1);
 }
 
 void TimeFormatSettings::on_use_custom_format_toggled(bool checked)

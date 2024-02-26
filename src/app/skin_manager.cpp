@@ -158,4 +158,7 @@ void SkinConfigurator::visit(ClassicSkin* skin)
   skin->setGlyphBaseHeight(scfg.getGlyphBaseHeight());
 
   skin->setLayoutConfig(scfg.getLayoutConfig());
+
+  qreal ssf = scfg.getSecondsScaleFactor() / 100.;
+  skin->setTokenTransform("ss", QTransform::fromScale(ssf, ssf));
 }

@@ -208,6 +208,9 @@ public:
 
   QString format() const noexcept { return _format; }
 
+  void setTokenTransform(QString token, QTransform transform);
+  QTransform tokenTransform(const QString& token) const noexcept;
+
 protected:
   void handleConfigChange() override;
 
@@ -220,4 +223,5 @@ private:
   bool _separator_visible = true;
   QString _format;
   QList<uint> _separators;
+  QHash<QString, QTransform> _token_transform;
 };

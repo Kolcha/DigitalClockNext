@@ -15,6 +15,9 @@ public:
 
   virtual void addCharacter(char32_t) {}
   virtual void addSeparator(char32_t) {}
+
+  virtual void tokenStart(QStringView token) {}
+  virtual void tokenEnd(QStringView token) {}
 };
 
 // in format string only ':' is considered as separator

@@ -106,7 +106,7 @@ private:
 };
 
 
-class ClassicLayoutBuilder final : public DateTimeStringBuilder {
+class ClassicLayoutBuilder : public DateTimeStringBuilder {
 public:
   ClassicLayoutBuilder(std::shared_ptr<ResourceFactory> factory,
                        const ClassicSkinBase& skin)
@@ -133,52 +133,6 @@ public:
     addItem(c);
   }
 
-  void addSeparator(char32_t c) override
-  {
-    if (_supports_custom_separator && _separator_idx < _separators.size())
-      c = _separators[_separator_idx];
-
-    ++_separator_idx;
-
-    // separator animation
-    bool separator_visible = true;
-    if (_animate_separator) {
-      if (!_separator_visible) {
-        if (_supports_separator_animation)
-          c = ' ';
-        else
-          separator_visible = false;
-      }
-    }
-
-    addItem(c, separator_visible);
-  }
-
-  void setSupportsCustomSeparator(bool supports) noexcept
-  {
-    _supports_custom_separator = supports;
-  }
-
-  void setSupportsSeparatorAnimation(bool supports) noexcept
-  {
-    _supports_separator_animation = supports;
-  }
-
-  void setCustomSeparators(QList<uint> separators) noexcept
-  {
-    _separators = std::move(separators);
-  }
-
-  void setSeparatorAnimationEnabled(bool enable) noexcept
-  {
-    _animate_separator = enable;
-  }
-
-  void setSeparatorVisible(bool visible) noexcept
-  {
-    _separator_visible = visible;
-  }
-
   void setSkinConfigHash(size_t hash) noexcept { _skin_cfg_hash = hash; }
 
   void setGlyphScaleFactor(qreal ks) noexcept { _ks = ks; }
@@ -198,7 +152,7 @@ public:
     return buildLayoutStack(layout->resource());
   }
 
-private:
+protected:
   void addItem(char32_t c, bool visible = true)
   {
     auto r = _factory->item(c);
@@ -209,10 +163,13 @@ private:
     else
       r = std::make_shared<InvisibleResource>(r->rect(), r->advanceX(), r->advanceY());
     auto item = std::make_shared<LayoutItem>(std::move(r));
-    item->setTransform(item->transform().scale(_ks, _ks));
+    item->setTransform(itemTransform(c).scale(_ks, _ks));
     _line->addItem(std::move(item));
   }
 
+  virtual QTransform itemTransform(char32_t c) const noexcept { return QTransform(); }
+
+private:
   void addLine(std::shared_ptr<LinearLayout> line)
   {
     _layout->addItem(updateLineRect(std::move(line)));
@@ -275,6 +232,87 @@ private:
   std::shared_ptr<ResourceFactory> _factory;
   const ClassicSkinBase& _skin;
 
+  size_t _skin_cfg_hash = 0;
+
+  qreal _ks = 1.0;
+};
+
+
+class DateTimeLayoutBuilder : public ClassicLayoutBuilder {
+public:
+  DateTimeLayoutBuilder(std::shared_ptr<ResourceFactory> factory,
+                        const ClassicSkin& skin)
+    : ClassicLayoutBuilder(std::move(factory), skin)
+    , _skin(skin)
+  {}
+
+  void addSeparator(char32_t c) override
+  {
+    if (_supports_custom_separator && _separator_idx < _separators.size())
+      c = _separators[_separator_idx];
+
+    ++_separator_idx;
+
+    // separator animation
+    bool separator_visible = true;
+    if (_animate_separator) {
+      if (!_separator_visible) {
+        if (_supports_separator_animation)
+          c = ' ';
+        else
+          separator_visible = false;
+      }
+    }
+
+    addItem(c, separator_visible);
+  }
+
+  void tokenStart(QStringView token) override
+  {
+    _current_token = token.toString();
+  }
+
+  void tokenEnd(QStringView token) override
+  {
+    Q_UNUSED(token)
+    _current_token.clear();
+  }
+
+  void setSupportsCustomSeparator(bool supports) noexcept
+  {
+    _supports_custom_separator = supports;
+  }
+
+  void setSupportsSeparatorAnimation(bool supports) noexcept
+  {
+    _supports_separator_animation = supports;
+  }
+
+  void setCustomSeparators(QList<uint> separators) noexcept
+  {
+    _separators = std::move(separators);
+  }
+
+  void setSeparatorAnimationEnabled(bool enable) noexcept
+  {
+    _animate_separator = enable;
+  }
+
+  void setSeparatorVisible(bool visible) noexcept
+  {
+    _separator_visible = visible;
+  }
+
+protected:
+  QTransform itemTransform(char32_t c) const noexcept override
+  {
+    Q_UNUSED(c);
+    return _skin.tokenTransform(_current_token);
+  }
+
+private:
+  const ClassicSkin& _skin;
+
   bool _supports_custom_separator = false;
   bool _supports_separator_animation = false;
   bool _animate_separator = true;
@@ -283,16 +321,14 @@ private:
   quint32 _separator_idx = 0;
   QList<uint> _separators;
 
-  size_t _skin_cfg_hash = 0;
-
-  qreal _ks = 1.0;
+  QString _current_token;
 };
 
 } // namespace
 
 std::shared_ptr<Resource> ClassicSkin::process(const QDateTime& dt)
 {
-  ClassicLayoutBuilder builder(_factory, *this);
+  DateTimeLayoutBuilder builder(_factory, *this);
   builder.setSupportsCustomSeparator(supportsCustomSeparator());
   builder.setSupportsSeparatorAnimation(supportsSeparatorAnimation());
   builder.setCustomSeparators(_separators);
@@ -302,6 +338,17 @@ std::shared_ptr<Resource> ClassicSkin::process(const QDateTime& dt)
   builder.setGlyphScaleFactor(_k_base_size);
   FormatDateTime(dt, _format, builder);
   return builder.getLayout();
+}
+
+void ClassicSkin::setTokenTransform(QString token, QTransform transform)
+{
+  _token_transform[std::move(token)] = std::move(transform);
+  handleConfigChange();
+}
+
+QTransform ClassicSkin::tokenTransform(const QString& token) const noexcept
+{
+  return _token_transform.value(token, QTransform());
 }
 
 void ClassicSkin::handleConfigChange()

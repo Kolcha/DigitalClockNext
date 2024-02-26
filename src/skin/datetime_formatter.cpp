@@ -39,6 +39,25 @@ void format_number(int n, int pad, DateTimeStringBuilder& str_builder)
   add_characters(QString("%L1").arg(n, pad, 10, QChar('0')), str_builder);
 }
 
+class TokenNotifier final {
+public:
+  TokenNotifier(DateTimeStringBuilder& builder, QString token)
+      : _builder(builder)
+      , _token(std::move(token))
+  {
+    _builder.tokenStart(_token);
+  }
+
+  ~TokenNotifier()
+  {
+    _builder.tokenEnd(_token);
+  }
+
+private:
+  DateTimeStringBuilder& _builder;
+  QString _token;
+};
+
 } // namespace
 
 void FormatDateTime(const QDateTime& dt, QStringView sfmt,
@@ -79,19 +98,24 @@ void FormatDateTime(const QDateTime& dt, QStringView sfmt,
     switch (c) {
       case 'h': {
         repeat = qMin(repeat, 2);
+        TokenNotifier _(str_builder, QString(repeat, QChar(c)));
         auto h = dt.time().hour();
         if (h == 0) h = 12;
         format_number(h > 12 ? h - 12 : h, repeat == 2 ? 2 : 0, str_builder);
         break;
       }
-      case 'J':
+      case 'J': {
         repeat = qMin(repeat, 1);
+        TokenNotifier _(str_builder, QString(repeat, QChar(c)));
         format_number(dt.date().dayOfYear(), 0, str_builder);
         break;
-      case 'W':
+      }
+      case 'W': {
         repeat = qMin(repeat, 2);
+        TokenNotifier _(str_builder, QString(repeat, QChar(c)));
         format_number(dt.date().weekNumber(), repeat == 2 ? 2 : 0, str_builder);
         break;
+      }
       case ':':
         str_builder.addSeparator(c);
         break;
@@ -103,6 +127,7 @@ void FormatDateTime(const QDateTime& dt, QStringView sfmt,
         [[fallthrough]];
       default: {
         const auto sfmt = QString::fromUcs4(&fmt[i], repeat);
+        TokenNotifier _(str_builder, sfmt);
         add_characters(QLocale::system().toString(dt, sfmt), str_builder);
       }
     }

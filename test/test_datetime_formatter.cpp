@@ -20,18 +20,24 @@ public:
     _seps.append(ch);
   }
 
+  void tokenStart(QStringView token) override { _tokens[token.toString()] += 1; }
+  void tokenEnd(QStringView token)   override { _tokens[token.toString()] -= 1; }
+
   QString result() const { return QString::fromUcs4(_result.data(), _result.size()); }
   QString separators() const { return QString::fromUcs4(_seps.data(), _seps.size()); }
+  const auto& tokens() const noexcept { return _tokens; }
 
   void reset()
   {
     _result.clear();
     _seps.clear();
+    _tokens.clear();
   }
 
 private:
   QVector<char32_t> _result;
   QVector<char32_t> _seps;
+  QHash<QString, int> _tokens;
 };
 
 } // namespace
@@ -52,6 +58,7 @@ private slots:
   void testSeparator();
   void testComplexCase();
   void testUnicode();
+  void testTokenNotify();
 
 private:
   SimpleDateTimeStringBuilder sb;
@@ -177,6 +184,20 @@ void DateTimeFormatterTest::testUnicode()
   QString fmt = "\U0001F605hh\U0001F643\U0001F643mm\U0001FAE0";
   FormatDateTime(dt, fmt, sb);
   QCOMPARE(sb.result(), "\U0001F60512\U0001F643\U0001F64330\U0001FAE0");
+}
+
+void DateTimeFormatterTest::testTokenNotify()
+{
+  // should consider only hh/mm/ss as tokens
+  QString fmt = "'foo'h:mm:ss'bar'";
+  FormatDateTime(dt, fmt, sb);
+  QCOMPARE(sb.tokens().size(), 3);
+  QVERIFY(sb.tokens().contains("h"));
+  QVERIFY(sb.tokens().contains("mm"));
+  QVERIFY(sb.tokens().contains("ss"));
+  QCOMPARE(sb.tokens()["h"], 0);
+  QCOMPARE(sb.tokens()["mm"], 0);
+  QCOMPARE(sb.tokens()["ss"], 0);
 }
 
 QTEST_MAIN(DateTimeFormatterTest)

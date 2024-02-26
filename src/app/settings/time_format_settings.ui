@@ -14,6 +14,67 @@
    <string>&amp;Format</string>
   </property>
   <layout class="QGridLayout" name="time_format_layout">
+   <item row="4" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="layout_cfg_layout">
+     <item>
+      <widget class="QLabel" name="layout_cfg_label">
+       <property name="text">
+        <string>layout &amp;config string (useful only for multiline formats)</string>
+       </property>
+       <property name="buddy">
+        <cstring>layout_cfg_edit</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="layout_cfg_edit"/>
+     </item>
+     <item>
+      <widget class="QToolButton" name="layout_cfg_help_btn">
+       <property name="icon">
+        <iconset theme="help-hint"/>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="custom_seps_layout">
+     <item>
+      <widget class="QLabel" name="custom_seps_label">
+       <property name="text">
+        <string>custom date/time separators (will be used instead of '&amp;:')</string>
+       </property>
+       <property name="buddy">
+        <cstring>custom_seps_edit</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="custom_seps_edit">
+       <property name="toolTip">
+        <string>replacement characters for ':' in format</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="7" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>132</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
    <item row="0" column="1">
     <widget class="QGroupBox" name="am_pm_group">
      <layout class="QGridLayout" name="am_pm_group_layout">
@@ -53,19 +114,6 @@
       </item>
      </layout>
     </widget>
-   </item>
-   <item row="5" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>132</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="format_group">
@@ -117,7 +165,7 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <layout class="QHBoxLayout" name="custom_format_layout">
      <item>
       <widget class="QCheckBox" name="use_custom_format">
@@ -151,49 +199,35 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="custom_seps_layout">
-     <item>
-      <widget class="QLabel" name="custom_seps_label">
-       <property name="text">
-        <string>custom date/time separators (will be used instead of '&amp;:')</string>
-       </property>
-       <property name="buddy">
-        <cstring>custom_seps_edit</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="custom_seps_edit">
-       <property name="toolTip">
-        <string>replacement characters for ':' in format</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="2" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="layout_cfg_layout">
+    <layout class="QHBoxLayout" name="smaller_secnds_layout" stretch="0,0,1">
      <item>
-      <widget class="QLabel" name="layout_cfg_label">
+      <widget class="QCheckBox" name="smaller_seconds">
        <property name="text">
-        <string>layout &amp;config string (useful only for multiline formats)</string>
+        <string>smaller seconds</string>
        </property>
-       <property name="buddy">
-        <cstring>layout_cfg_edit</cstring>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="layout_cfg_edit"/>
+      <widget class="QSpinBox" name="seconds_scale_factor_edit">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="minimum">
+        <number>30</number>
+       </property>
+       <property name="value">
+        <number>70</number>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="layout_cfg_help_btn">
-       <property name="icon">
-        <iconset theme="help-hint"/>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+      <widget class="QLabel" name="of_height_label">
+       <property name="text">
+        <string>of height</string>
        </property>
       </widget>
      </item>
@@ -210,8 +244,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>60</x>
-     <y>24</y>
+     <x>71</x>
+     <y>47</y>
     </hint>
     <hint type="destinationlabel">
      <x>315</x>
@@ -274,12 +308,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>106</x>
-     <y>123</y>
+     <x>118</x>
+     <y>188</y>
     </hint>
     <hint type="destinationlabel">
-     <x>142</x>
-     <y>123</y>
+     <x>267</x>
+     <y>188</y>
     </hint>
    </hints>
   </connection>
@@ -290,12 +324,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>103</x>
-     <y>127</y>
+     <x>115</x>
+     <y>188</y>
     </hint>
     <hint type="destinationlabel">
-     <x>249</x>
-     <y>127</y>
+     <x>312</x>
+     <y>191</y>
     </hint>
    </hints>
   </connection>
@@ -306,12 +340,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>99</x>
-     <y>131</y>
+     <x>111</x>
+     <y>188</y>
     </hint>
     <hint type="destinationlabel">
-     <x>288</x>
-     <y>133</y>
+     <x>391</x>
+     <y>196</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>smaller_seconds</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>seconds_scale_factor_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>130</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>155</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>smaller_seconds</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>of_height_label</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>131</x>
+     <y>142</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>141</y>
     </hint>
    </hints>
   </connection>
