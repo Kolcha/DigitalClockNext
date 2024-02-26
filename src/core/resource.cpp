@@ -30,6 +30,8 @@ void CachedResource::draw(QPainter* p)
     pxm.fill(Qt::transparent);
     {
       QPainter pp(&pxm);
+      pp.setBrush(p->brush());
+      pp.setPen(p->pen());
       pp.setRenderHints(p->renderHints());
       pp.translate(-br.topLeft());
       pp.setTransform(ext_tr, true);
