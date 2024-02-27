@@ -188,6 +188,9 @@ void SettingsDialog::insertSkinSettings(const QList<QWidget*>& tabs)
     Q_ASSERT(*iter);
     ui->tabWidget->insertTab(impl->skin_tab_idx, *iter, (*iter)->windowTitle());
     impl->window_tabs.insert((*iter)->objectName());
+    // make sure that skin will be alive until settings tab destruction
+    auto skin = impl->wnd->skin();
+    connect(*iter, &QObject::destroyed, *iter, [skin]() { Q_UNUSED(skin); });
   }
 
   impl->skin_tab_cnt = tabs.size();
