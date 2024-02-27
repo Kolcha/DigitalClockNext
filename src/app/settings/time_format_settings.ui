@@ -204,14 +204,14 @@
      <item>
       <widget class="QCheckBox" name="show_date">
        <property name="text">
-        <string>show &amp;date below time</string>
+        <string>show da&amp;te below time</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QCheckBox" name="smaller_seconds">
        <property name="text">
-        <string>smaller seconds</string>
+        <string>smaller seco&amp;nds</string>
        </property>
        <property name="checked">
         <bool>true</bool>
