@@ -25,9 +25,11 @@ public:
   ~TimeFormatSettings();
 
 private slots:
+  void on_show_date_clicked(bool checked);
   void on_smaller_seconds_clicked(bool checked);
   void on_seconds_scale_factor_edit_valueChanged(int arg1);
   void on_use_custom_format_toggled(bool checked);
+  void on_use_custom_format_clicked(bool checked);
   void on_format_edit_textChanged(const QString& arg1);
   void on_format_edit_textEdited(const QString& arg1);
   void on_format_help_btn_clicked();

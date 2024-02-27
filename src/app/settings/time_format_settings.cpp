@@ -25,6 +25,8 @@ const QSet<QString> standard_formats = {
   u"hh:mm:ssA"_s, u"hh:mm:ssa"_s, u"hh:mm:ss A"_s, u"hh:mm:ss a"_s,
 };
 
+const QString standard_date_format = u"\\ndd MM yyyy"_s;
+
 } // namespace
 
 struct TimeFormatSettings::Impl {
@@ -48,13 +50,13 @@ TimeFormatSettings::TimeFormatSettings(ClassicSkin* skin, WindowConfig* wcfg, QW
   ui->setupUi(this);
 
   QString time_format = impl->scfg->getTimeFormat();
+  time_format.remove(standard_date_format);
 
   ui->smaller_seconds->setChecked(impl->scfg->getSecondsScaleFactor() != 100);
   if (ui->smaller_seconds->isChecked())
     ui->seconds_scale_factor_edit->setValue(impl->scfg->getSecondsScaleFactor());
 
   ui->use_custom_format->setChecked(!standard_formats.contains(time_format));
-  on_use_custom_format_toggled(ui->use_custom_format->isChecked());
   ui->format_edit->setText(time_format);
 
   if (!ui->use_custom_format->isChecked()) {
@@ -67,6 +69,8 @@ TimeFormatSettings::TimeFormatSettings(ClassicSkin* skin, WindowConfig* wcfg, QW
     ui->add_space_before_apm->setChecked(time_format.contains(' '));
     ui->rb_ucase_apm->setChecked(time_format.contains('A'));
     ui->rb_lcase_apm->setChecked(time_format.contains('a'));
+
+    ui->show_date->setChecked(impl->scfg->getTimeFormat().contains(standard_date_format));
 
     updateTimeFormat();
   }
@@ -93,6 +97,12 @@ TimeFormatSettings::~TimeFormatSettings()
   delete ui;
 }
 
+void TimeFormatSettings::on_show_date_clicked(bool checked)
+{
+  if (checked) ui->layout_cfg_edit->setText("01");
+  updateTimeFormat();
+}
+
 void TimeFormatSettings::on_smaller_seconds_clicked(bool checked)
 {
   auto v = checked ? ui->seconds_scale_factor_edit->value() : 100;
@@ -109,12 +119,16 @@ void TimeFormatSettings::on_seconds_scale_factor_edit_valueChanged(int arg1)
 void TimeFormatSettings::on_use_custom_format_toggled(bool checked)
 {
   ui->format_group->setDisabled(checked);
+  ui->show_date->setDisabled(checked);
 
   if (checked)
     ui->am_pm_group->setDisabled(true);
   else
     ui->am_pm_group->setEnabled(ui->rb_12h->isChecked());
+}
 
+void TimeFormatSettings::on_use_custom_format_clicked(bool checked)
+{
   if (!checked) updateTimeFormat();
 }
 
@@ -177,6 +191,9 @@ void TimeFormatSettings::updateTimeFormat()
 
     time_format += ui->rb_ucase_apm->isChecked() ? 'A' : 'a';
   }
+
+  if (ui->show_date->isChecked())
+    time_format += standard_date_format;
 
   ui->format_edit->setText(time_format);
   on_format_apply_btn_clicked();

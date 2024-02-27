@@ -128,7 +128,7 @@
       <item row="2" column="0" colspan="2">
        <widget class="QCheckBox" name="show_seconds">
         <property name="text">
-         <string>show secon&amp;ds</string>
+         <string>show sec&amp;onds</string>
         </property>
        </widget>
       </item>
@@ -200,7 +200,14 @@
     </layout>
    </item>
    <item row="2" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="smaller_secnds_layout" stretch="0,0,1">
+    <layout class="QHBoxLayout" name="extra_options_layout" stretch="1,0,0,0">
+     <item>
+      <widget class="QCheckBox" name="show_date">
+       <property name="text">
+        <string>show &amp;date below time</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QCheckBox" name="smaller_seconds">
        <property name="text">
@@ -227,7 +234,10 @@
      <item>
       <widget class="QLabel" name="of_height_label">
        <property name="text">
-        <string>of height</string>
+        <string>of &amp;height</string>
+       </property>
+       <property name="buddy">
+        <cstring>seconds_scale_factor_edit</cstring>
        </property>
       </widget>
      </item>
@@ -244,8 +254,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>71</x>
-     <y>47</y>
+     <x>60</x>
+     <y>24</y>
     </hint>
     <hint type="destinationlabel">
      <x>315</x>
@@ -276,12 +286,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>199</x>
-     <y>29</y>
+     <x>378</x>
+     <y>43</y>
     </hint>
     <hint type="destinationlabel">
-     <x>199</x>
-     <y>79</y>
+     <x>292</x>
+     <y>95</y>
     </hint>
    </hints>
   </connection>
@@ -308,12 +318,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>118</x>
-     <y>188</y>
+     <x>107</x>
+     <y>153</y>
     </hint>
     <hint type="destinationlabel">
-     <x>267</x>
-     <y>188</y>
+     <x>264</x>
+     <y>153</y>
     </hint>
    </hints>
   </connection>
@@ -324,12 +334,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>115</x>
-     <y>188</y>
+     <x>111</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>312</x>
-     <y>191</y>
+     <x>291</x>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -340,12 +350,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>111</x>
-     <y>188</y>
+     <x>108</x>
+     <y>162</y>
     </hint>
     <hint type="destinationlabel">
-     <x>391</x>
-     <y>196</y>
+     <x>341</x>
+     <y>162</y>
     </hint>
    </hints>
   </connection>
@@ -356,12 +366,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>132</y>
+     <x>85</x>
+     <y>124</y>
     </hint>
     <hint type="destinationlabel">
-     <x>155</x>
-     <y>132</y>
+     <x>153</x>
+     <y>124</y>
     </hint>
    </hints>
   </connection>
@@ -372,12 +382,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>131</x>
-     <y>142</y>
+     <x>76</x>
+     <y>130</y>
     </hint>
     <hint type="destinationlabel">
-     <x>296</x>
-     <y>141</y>
+     <x>199</x>
+     <y>130</y>
     </hint>
    </hints>
   </connection>
