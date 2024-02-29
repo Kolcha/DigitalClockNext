@@ -16,6 +16,9 @@ Some key features:
 * horizontal/vertical layout out-of-the-box
 * [multiple time zones](https://github.com/Kolcha/DigitalClockNext/wiki/Multiple-timezones) (or just multiple windows) support
 * tray icon displays local time (implemented just-for-fun)
+* completely [new skin format](https://github.com/Kolcha/DigitalClockNext/wiki/Modern-skin) with a lot of customization options
+
+A lot of useful information about app usage and possible customization options can be found in the [Wiki](https://github.com/Kolcha/DigitalClockNext/wiki). Also some useful links and contact information can be found in the app's About dialog.
 
 Downloads are published on SourceForge.
 
@@ -31,3 +34,12 @@ Some recently implemented C++20 features are used in the source code, so pretty 
 * Windows: Visual Studio 2019 (at least version 16.10 with compiler version 19.29)
 * macOS: Xcode 14.3.1 (with Apple clang 14.0.3), Xcode 15 is recommended
 * Linux: GCC 10 (10.5.0 is known to work), GCC 11 or above is recommended
+
+License
+-------
+
+The source code is licensed under the [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html) license with exception for a few files which are [MIT](https://opensource.org/license/mit)-licensed, see files headers for license details.
+
+The most of artwork that can be found in this repository is public domain ([CC0-1.0](https://creativecommons.org/publicdomain/zero/1.0/)) unless otherwise explicitly specified, see the corresponding README files in the same folders as artwork for details.
+
+The macOS and Windows app icons are unique artwork that licensed under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/).
