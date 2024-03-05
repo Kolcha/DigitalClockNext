@@ -12,7 +12,7 @@
 
 // creates new drawing surface and draws inner item on it
 // new surface size is equal to the size of the orinal one
-class NewSurfaceEffect final : public ResourceDecorator {
+class NewSurfaceDecorator final : public ResourceDecorator {
 public:
   using ResourceDecorator::ResourceDecorator;
 
@@ -21,7 +21,7 @@ public:
 
 
 // applies texture to inner item, tiles by default
-class TexturingEffect final : public ResourceDecorator {
+class TexturingDecorator final : public ResourceDecorator {
 public:
   using ResourceDecorator::ResourceDecorator;
 
@@ -40,7 +40,7 @@ private:
 
 
 // fills background and draws inner item on it
-class BackgroundEffect final : public ResourceDecorator {
+class BackgroundDecorator final : public ResourceDecorator {
 public:
   using ResourceDecorator::ResourceDecorator;
 

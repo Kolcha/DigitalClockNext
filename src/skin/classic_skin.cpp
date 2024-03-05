@@ -31,16 +31,16 @@ std::shared_ptr<Resource> buildEffectsStack(std::shared_ptr<Resource> g, auto tx
     // do nothing
   }
   if (bg.style() != Qt::NoBrush && tx.style() == Qt::NoBrush) {
-    g = createEffect<BackgroundEffect>(std::move(g), std::move(bg), bg_stretch);
+    g = createEffect<BackgroundDecorator>(std::move(g), std::move(bg), bg_stretch);
   }
   if (bg.style() == Qt::NoBrush && tx.style() != Qt::NoBrush) {
-    g = createEffect<TexturingEffect>(std::move(g), std::move(tx), tx_stretch);
-    g = std::make_shared<NewSurfaceEffect>(std::move(g));
+    g = createEffect<TexturingDecorator>(std::move(g), std::move(tx), tx_stretch);
+    g = std::make_shared<NewSurfaceDecorator>(std::move(g));
   }
   if (bg.style() != Qt::NoBrush && tx.style() != Qt::NoBrush) {
-    g = createEffect<TexturingEffect>(std::move(g), std::move(tx), tx_stretch);
-    g = std::make_shared<NewSurfaceEffect>(std::move(g));
-    g = createEffect<BackgroundEffect>(std::move(g), std::move(bg), bg_stretch);
+    g = createEffect<TexturingDecorator>(std::move(g), std::move(tx), tx_stretch);
+    g = std::make_shared<NewSurfaceDecorator>(std::move(g));
+    g = createEffect<BackgroundDecorator>(std::move(g), std::move(bg), bg_stretch);
   }
 
   return g;

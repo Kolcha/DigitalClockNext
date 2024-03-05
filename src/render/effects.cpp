@@ -8,7 +8,7 @@
 
 #include <QPainter>
 
-void NewSurfaceEffect::draw(QPainter* p)
+void NewSurfaceDecorator::draw(QPainter* p)
 {
   p->save();
   QSize sz(p->device()->width(), p->device()->height());
@@ -27,7 +27,7 @@ void NewSurfaceEffect::draw(QPainter* p)
   p->restore();
 }
 
-void TexturingEffect::draw(QPainter* p)
+void TexturingDecorator::draw(QPainter* p)
 {
   ResourceDecorator::draw(p);
   p->save();
@@ -42,7 +42,7 @@ void TexturingEffect::draw(QPainter* p)
   p->restore();
 }
 
-void BackgroundEffect::draw(QPainter* p)
+void BackgroundDecorator::draw(QPainter* p)
 {
   p->save();
   p->setCompositionMode(QPainter::CompositionMode_SourceOver);
