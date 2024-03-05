@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 qt_add_library(core STATIC
+    effect.hpp
     hasher.hpp
     layout.cpp
     layout.hpp

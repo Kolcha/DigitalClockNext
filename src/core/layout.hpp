@@ -6,12 +6,13 @@
 
 #pragma once
 
-#include "resource.hpp"
-
 #include <memory>
 #include <vector>
 
 #include <QTransform>
+
+#include "effect.hpp"
+#include "resource.hpp"
 
 // implements geometry changes propagation,
 // geometry caching, and other common tasks
@@ -62,6 +63,13 @@ public:
   // resize item in given direction
   // aspect ratio is preserved
   void resize(qreal l, Qt::Orientation o);
+
+  // decorate resource with effect
+  void decorate(std::shared_ptr<Effect> effect)
+  {
+    _res = effect->decorate(std::move(_res));
+    updateCachedGeometry();
+  }
 
 protected:
   virtual void doUpdateGeometry() {}

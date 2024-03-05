@@ -14,6 +14,7 @@
 #include <QJsonObject>
 
 #include "classic_skin.hpp"
+#include "effects.hpp"
 #include "font_resource.hpp"
 #include "image_resource.hpp"
 #include "legacy_skin_loader.hpp"
@@ -426,6 +427,38 @@ void parseClassicSkinParams(const QJsonObject& js, ClassicSkin& skin)
   parseClassicSkinBaseParams(js, skin);
 }
 
+template<class EffectType>
+std::shared_ptr<Effect> parseTexturingEffect(const QJsonObject& js)
+{
+  auto effect = std::make_shared<EffectType>();
+
+  if (auto b = parseBrush(js); b != Qt::NoBrush)
+    effect->setBrush(std::move(b));
+
+  if (const auto v = js["stretch"]; v.isBool())
+    effect->setStretch(v.toBool());
+
+  return effect;
+}
+
+std::shared_ptr<Effect> parseEffect(const QJsonObject& js)
+{
+  auto type_v = js["type"];
+  if (!type_v.isString()) return nullptr;
+
+  std::shared_ptr<Effect> effect;
+
+  auto type_s = type_v.toString();
+  if (type_s == "new_surface")
+    effect = std::make_shared<NewSurfaceEffect>();
+  if (type_s == "texture")
+    effect = parseTexturingEffect<TexturingEffect>(js);
+  if (type_s == "background")
+    effect = parseTexturingEffect<BackgroundEffect>(js);
+
+  return effect;
+}
+
 } // namespace
 
 class ModernSkin::Impl {
@@ -465,6 +498,16 @@ private:
     }
   }
 
+  void parseEffects(const QJsonObject& js)
+  {
+    for (auto iter = js.begin(); iter != js.end(); ++iter) {
+      if (!iter.value().isObject())
+        continue;
+      if (auto effect = parseEffect(iter->toObject()))
+        _effects[iter.key()] = std::move(effect);
+    }
+  }
+
   void parseLayout(const QJsonArray& jsa)
   {
     for (const auto& v : jsa) {
@@ -493,7 +536,7 @@ private:
       item = parsePlaceholder(js);
 
     if (item)
-      parseCommonLayoutItemParams(js, *item);
+      applyCommonItemOptions(js, *item);
 
     if (auto sitem = std::dynamic_pointer_cast<SkinItem>(item))
       _items.insert(sitem);
@@ -670,6 +713,30 @@ private:
     return item;
   }
 
+  void parseItemsEffects(const QJsonArray& jsa, LayoutItem& item) const
+  {
+    for (const auto& v : jsa) {
+      std::shared_ptr<Effect> effect;
+
+      if (v.isString())
+        effect = _effects.value(v.toString());
+
+      if (v.isObject())
+        effect = parseEffect(v.toObject());
+
+      if (effect)
+        item.decorate(std::move(effect));
+    }
+  }
+
+  void applyCommonItemOptions(const QJsonObject& js, LayoutItem& item) const
+  {
+    parseCommonLayoutItemParams(js, item);
+
+    if (const auto v = js["effects"]; v.isArray())
+      parseItemsEffects(v.toArray(), item);
+  }
+
   void init(const QDir& skin_root)
   {
     _root = skin_root;
@@ -691,6 +758,9 @@ private:
     if (const auto v = js_obj["resources"]; v.isObject())
       parseResources(v.toObject());
 
+    if (const auto v = js_obj["effects"]; v.isObject())
+      parseEffects(v.toObject());
+
     if (const auto v = js_obj["layout"]; v.isArray())
       parseLayout(v.toArray());
   }
@@ -703,6 +773,8 @@ private:
   // resources
   QHash<QString, std::shared_ptr<Resource>> _images;
   QHash<QString, SkinFilesMap> _skins;
+  // shared effects
+  QHash<QString, std::shared_ptr<Effect>> _effects;
 };
 
 

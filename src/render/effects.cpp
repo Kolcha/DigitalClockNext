@@ -27,6 +27,11 @@ void NewSurfaceDecorator::draw(QPainter* p)
   p->restore();
 }
 
+Effect::ResourcePtr NewSurfaceEffect::decorate(ResourcePtr res)
+{
+  return std::make_shared<NewSurfaceDecorator>(std::move(res));
+}
+
 void TexturingDecorator::draw(QPainter* p)
 {
   ResourceDecorator::draw(p);
@@ -42,6 +47,14 @@ void TexturingDecorator::draw(QPainter* p)
   p->restore();
 }
 
+Effect::ResourcePtr TexturingEffect::decorate(ResourcePtr res)
+{
+  auto dres = std::make_shared<TexturingDecorator>(std::move(res));
+  dres->setBrush(brush());
+  dres->setStretch(stretch());
+  return dres;
+}
+
 void BackgroundDecorator::draw(QPainter* p)
 {
   p->save();
@@ -55,4 +68,12 @@ void BackgroundDecorator::draw(QPainter* p)
   }
   p->restore();
   ResourceDecorator::draw(p);
+}
+
+Effect::ResourcePtr BackgroundEffect::decorate(ResourcePtr res)
+{
+  auto dres = std::make_shared<BackgroundDecorator>(std::move(res));
+  dres->setBrush(brush());
+  dres->setStretch(stretch());
+  return dres;
 }
