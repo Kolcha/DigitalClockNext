@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFont>
+#include <QFontDatabase>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -469,6 +470,11 @@ public:
     init(skin_root);
   }
 
+  ~Impl()
+  {
+    std::ranges::for_each(std::as_const(_fonts), &QFontDatabase::removeApplicationFont);
+  }
+
   std::shared_ptr<Resource> process(const QDateTime& dt)
   {
     for (const auto& i : std::as_const(_items)) i->process(dt);
@@ -737,6 +743,15 @@ private:
       parseItemsEffects(v.toArray(), item);
   }
 
+  void loadCustomFonts(const QJsonArray& jsa)
+  {
+    for (const auto& v : jsa) {
+      if (!v.isString()) continue;
+      auto font_path = _root.absoluteFilePath(v.toString());
+      _fonts.insert(QFontDatabase::addApplicationFont(font_path));
+    }
+  }
+
   void init(const QDir& skin_root)
   {
     _root = skin_root;
@@ -754,6 +769,9 @@ private:
     auto js_obj = QJsonDocument::fromJson(skin_cfg.readAll()).object();
     if (const auto v = js_obj["name"]; v.isString())
       _name = v.toString();
+
+    if (const auto v = js_obj["fonts"]; v.isArray())
+      loadCustomFonts(v.toArray());
 
     if (const auto v = js_obj["resources"]; v.isObject())
       parseResources(v.toObject());
@@ -775,6 +793,8 @@ private:
   QHash<QString, SkinFilesMap> _skins;
   // shared effects
   QHash<QString, std::shared_ptr<Effect>> _effects;
+  // custom fonts (IDs, for internal use only)
+  QSet<int> _fonts;
 };
 
 
