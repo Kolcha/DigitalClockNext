@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
+        <file>skins/dseg/DSEG7Classic-Regular.ttf</file>
+        <file>skins/dseg/DSEG14Classic-Regular.ttf</file>
+        <file>skins/dseg/skin.json</file>
         <file>skins/electronic/0.svg</file>
         <file>skins/electronic/1.svg</file>
         <file>skins/electronic/2.svg</file>

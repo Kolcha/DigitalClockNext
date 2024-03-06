@@ -1,0 +1,76 @@
+{
+  "name": "DSEG font (built-in)",
+  "layout": [
+    {
+      "type": "layout",
+      "vertical": true,
+      "ignore_advance": true,
+      "spacing": 16,
+      "items": [
+        {
+          "type": "layout",
+          "items": [
+            {
+              "type": "classic",
+              "font": {
+                "family": "DSEG7 Classic",
+                "size": 24
+              },
+              "format": "yyyy-MM-dd"
+            },
+            {
+              "type": "classic",
+              "font": {
+                "family": "DSEG14 Classic",
+                "size": 24
+              },
+              "format": " ddd."
+            }
+          ]
+        },
+        {
+          "type": "layout",
+          "resize": true,
+          "items": [
+            {
+              "type": "classic",
+              "font": {
+                "family": "DSEG7 Classic",
+                "size": 72
+              },
+              "format": "hh:mm"
+            },
+            {
+              "type": "layout",
+              "vertical": true,
+              "resize": true,
+              "spacing": 8,
+              "items": [
+                {
+                  "type": "classic",
+                  "font": {
+                    "family": "DSEG14 Classic",
+                    "size": 24
+                  },
+                  "format": "ap"
+                },
+                {
+                  "type": "classic",
+                  "font": {
+                    "family": "DSEG7 Classic",
+                    "size": 24
+                  },
+                  "format": "ss"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fonts": [
+    "DSEG7Classic-Regular.ttf",
+    "DSEG14Classic-Regular.ttf"
+  ]
+}
