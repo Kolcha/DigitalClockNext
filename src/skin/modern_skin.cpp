@@ -571,6 +571,9 @@ private:
       }
     }
 
+    if (const auto v = js["ignore_advance"]; v.isBool())
+      layout->setIgnoreAdvance(v.toBool());
+
     layout->updateGeometry();
 
     return layout;
