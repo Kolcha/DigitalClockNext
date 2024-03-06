@@ -122,6 +122,38 @@ private:
 };
 
 
+class VisibilityEffect final : public Effect {
+public:
+  ResourcePtr decorate(ResourcePtr res) override
+  {
+    return std::make_shared<Decorator>(*this, std::move(res));
+  }
+
+  void setVisible(bool visible) noexcept { _visible = visible; }
+  bool isVisible() const noexcept { return _visible; }
+
+private:
+  class Decorator final : public ResourceDecorator {
+  public:
+    Decorator(const VisibilityEffect& effect, std::shared_ptr<Resource> res)
+      : ResourceDecorator(std::move(res))
+      , _effect(effect)
+    {}
+
+    void draw(QPainter* p) override
+    {
+      if (_effect.isVisible())
+        ResourceDecorator::draw(p);
+    }
+
+  private:
+    const VisibilityEffect& _effect;
+  };
+
+  bool _visible = true;
+};
+
+
 class ModernLayout : public Layout {
 public:
 protected:
@@ -485,12 +517,19 @@ public:
   {
     for (const auto& item : std::as_const(_items))
       item->skin()->setSeparatorAnimationEnabled(enabled);
+    if (!enabled)
+      std::ranges::for_each(std::as_const(_seps), [](auto& s) { s->setVisible(true); });
+    _animate_separator = enabled;
   }
 
   void animateSeparator()
   {
     for (const auto& item : std::as_const(_items))
       item->skin()->animateSeparator();
+    if (!_animate_separator)
+      return;
+    for (const auto& item : std::as_const(_seps))
+      item->setVisible(!item->isVisible());
   }
 
 private:
@@ -740,6 +779,12 @@ private:
 
   void applyCommonItemOptions(const QJsonObject& js, LayoutItem& item) const
   {
+    if (const auto v = js["is_separator"]; v.isBool() && v.toBool()) {
+      auto veffect = std::make_shared<VisibilityEffect>();
+      item.decorate(veffect);
+      _seps.insert(std::move(veffect));
+    }
+
     parseCommonLayoutItemParams(js, item);
 
     if (const auto v = js["effects"]; v.isArray())
@@ -788,6 +833,8 @@ private:
 
 private:
   mutable QSet<std::shared_ptr<SkinItem>> _items;
+  mutable QSet<std::shared_ptr<VisibilityEffect>> _seps;
+  bool _animate_separator = true;
   std::shared_ptr<ModernLayout> _layout;
   QDir _root;
   QString _name;
