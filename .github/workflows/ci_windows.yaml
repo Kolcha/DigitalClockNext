@@ -30,8 +30,7 @@ jobs:
 
       - name: Install build tools
         run: |
-          choco install ninja
-          "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+          "C:\Program Files (x86)\WiX Toolset v3.14\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
@@ -62,7 +61,7 @@ jobs:
           7z a upload\digital_clock_next-win64.zip DigitalClockNext
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: DigitalClockNext Windows Nightly
           path: upload

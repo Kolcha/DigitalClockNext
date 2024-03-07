@@ -26,16 +26,10 @@ jobs:
           submodules: recursive
 
       - name: Install dependencies
-        uses: Wandalen/wretry.action@v1
-        env:
-           HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
-           HOMEBREW_NO_INSTALL_CLEANUP: 1
-        with:
-          attempt_delay: 20000
-          attempt_limit: 6
-          command: |
-            brew update > /dev/null
-            brew install cmake ninja
+        run: |
+          sudo xcode-select -s /Applications/Xcode_14.3.1.app
+          brew update > /dev/null
+          brew install cmake ninja
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
@@ -65,7 +59,7 @@ jobs:
           mv build/DigitalClockNext.dmg upload/digital_clock_next-macos.dmg
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: DigitalClockNext macOS Nightly
           path: upload
