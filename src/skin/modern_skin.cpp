@@ -369,6 +369,8 @@ QGradient parseGradient(const QJsonObject& js)
     case QGradient::ConicalGradient:
       g = parseConicalGradient(js);
       break;
+    default:  // just to make compilers happy
+      break;
   }
 
   if (const auto v = js["stops"]; v.isArray())

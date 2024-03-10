@@ -33,7 +33,7 @@ public:
 
 class ResourceDecorator : public Resource {
 public:
-  explicit ResourceDecorator(std::shared_ptr<Resource> r)
+  explicit ResourceDecorator(std::shared_ptr<Resource> r) noexcept
     : _r(std::move(r))
   {}
 

@@ -10,9 +10,9 @@
 
 class LinearLayout : public Layout {
 public:
-  LinearLayout() noexcept = default;
+  LinearLayout() = default;
 
-  explicit LinearLayout(Qt::Orientation o, qreal spacing = 0.0) noexcept
+  explicit LinearLayout(Qt::Orientation o, qreal spacing = 0.0)
     : _spacing(spacing)
   {
     setOrientation(o);
