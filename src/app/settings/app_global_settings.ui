@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-SPDX-FileCopyrightText: 2023 Nick Korotysh <nick.korotysh@gmail.com>
-
-SPDX-License-Identifier: GPL-3.0-or-later
--->
-
 <ui version="4.0">
  <class>AppGlobalSettings</class>
  <widget class="QWidget" name="AppGlobalSettings">
@@ -102,6 +95,27 @@ SPDX-License-Identifier: GPL-3.0-or-later
     </layout>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="transparent_on_hover_layout">
+     <item>
+      <widget class="QCheckBox" name="transparent_on_hover">
+       <property name="text">
+        <string>become almost transparent on mouse hover</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="hide_on_mouse_hover">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>hide completely</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -140,8 +154,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>180</x>
-     <y>123</y>
+     <x>160</x>
+     <y>144</y>
     </hint>
     <hint type="destinationlabel">
      <x>202</x>
@@ -156,8 +170,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>178</x>
-     <y>123</y>
+     <x>160</x>
+     <y>144</y>
     </hint>
     <hint type="destinationlabel">
      <x>387</x>
@@ -172,12 +186,12 @@ SPDX-License-Identifier: GPL-3.0-or-later
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>158</x>
-     <y>151</y>
+     <x>152</x>
+     <y>176</y>
     </hint>
     <hint type="destinationlabel">
-     <x>198</x>
-     <y>150</y>
+     <x>265</x>
+     <y>178</y>
     </hint>
    </hints>
   </connection>
@@ -194,6 +208,22 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <hint type="destinationlabel">
      <x>294</x>
      <y>160</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>transparent_on_hover</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>hide_on_mouse_hover</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>199</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>198</y>
     </hint>
    </hints>
   </connection>

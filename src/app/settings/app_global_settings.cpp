@@ -52,6 +52,8 @@ AppGlobalSettings::AppGlobalSettings(ApplicationPrivate* app, QWidget* parent)
   ui->enable_multiwindow->setChecked(impl->config.getWindowsCount() > 1);
   ui->wnd_count_edit->setValue(impl->config.getWindowsCount());
   ui->use_same_appearance->setChecked(!impl->config.getConfigPerWindow());
+  ui->transparent_on_hover->setChecked(impl->config.getChangeOpacityOnMouseHover());
+  ui->hide_on_mouse_hover->setChecked(qFuzzyIsNull(impl->config.getOpacityOnMouseHover()));
   ui->enable_debug_options->setChecked(impl->config.getEnableDebugOptions());
 
   QSignalBlocker _(ui->update_period_edit);
@@ -141,6 +143,18 @@ void AppGlobalSettings::on_wnd_count_edit_valueChanged(int arg1)
 void AppGlobalSettings::on_use_same_appearance_clicked(bool checked)
 {
   impl->config.setConfigPerWindow(!checked);
+  impl->markDirty();
+}
+
+void AppGlobalSettings::on_transparent_on_hover_clicked(bool checked)
+{
+  impl->config.setChangeOpacityOnMouseHover(checked);
+  impl->markDirty();
+}
+
+void AppGlobalSettings::on_hide_on_mouse_hover_clicked(bool checked)
+{
+  impl->config.setOpacityOnMouseHover(checked ? 0.0 : 0.1);
   impl->markDirty();
 }
 

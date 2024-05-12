@@ -31,6 +31,8 @@ void ApplicationPrivate::configureWindow(ClockWindow* wnd)
   wnd->setSkin(std::move(skin));
   wnd->setSnapToEdge(_app_config->global().getSnapToEdge());
   wnd->setSnapThreshold(_app_config->global().getSnapThreshold());
+  wnd->changeOpacityOnMouseHover(_app_config->global().getChangeOpacityOnMouseHover());
+  wnd->setOpacityOnMouseHover(_app_config->global().getOpacityOnMouseHover());
   if (!_app_config->window(widx).general().getShowLocalTime())
     wnd->setTimeZone(_app_config->window(widx).state().getTimeZone());
   wnd->setWindowOpacity(cfg.appearance().getOpacity());
@@ -72,6 +74,8 @@ void ApplicationPrivate::createWindow(const QScreen* screen)
   connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::setDateTime);
   if (_windows.empty() || _app_config->global().getConfigPerWindow())
     connect(_time_src.get(), &TimeSource::timeChanged, wnd.get(), &ClockWindow::animateSeparator);
+  if (_mouse_tracker && _app_config->global().getChangeOpacityOnMouseHover())
+    connect(_mouse_tracker.get(), &MouseTracker::mousePositionChanged, wnd.get(), &ClockWindow::handleMouseMove);
   _windows.emplace_back(std::move(wnd));
 }
 

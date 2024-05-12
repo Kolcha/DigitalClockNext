@@ -18,6 +18,8 @@ class AppGlobalConfig final : public ConfigBaseQVariant {
   CONFIG_OPTION_Q(int, UpdatePeriodDays, 7)
   CONFIG_OPTION_Q(bool, SnapToEdge, true)
   CONFIG_OPTION_Q(int, SnapThreshold, 10)
+  CONFIG_OPTION_Q(bool, ChangeOpacityOnMouseHover, false)
+  CONFIG_OPTION_Q(qreal, OpacityOnMouseHover, 0.1)
   CONFIG_OPTION_Q(bool, EnableDebugOptions, false)
 public:
   using ConfigBaseQVariant::ConfigBaseQVariant;

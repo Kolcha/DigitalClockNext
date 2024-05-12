@@ -66,6 +66,13 @@ public slots:
   void setSnapToEdge(bool enable);
   void setSnapThreshold(int threshold);
 
+  void changeOpacityOnMouseHover(bool enable);
+  void setOpacityOnMouseHover(qreal opacity);
+  // if window is transparent for input, no input events are sent
+  // even to application, so mouse should be tracked using platform API
+  // handler should be public to keep only one instance of that tracker
+  void handleMouseMove(const QPoint& global_pos);
+
 protected:
   void contextMenuEvent(QContextMenuEvent* event) override;
   void mousePressEvent(QMouseEvent* event) override;

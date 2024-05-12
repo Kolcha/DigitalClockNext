@@ -23,10 +23,12 @@ struct ClockWindow::impl {
   QPoint drag_pos;
   QPoint ref_point;
   Qt::Alignment alignment = Qt::AlignTop | Qt::AlignLeft;
+  qreal opacity_on_hover = 0.1;
   int snap_threshold = 10;
   bool is_dragging = false;
   bool snap_to_edge = true;
   bool separator_flashes = true;
+  bool change_opacity_on_hover = false;
 };
 
 ClockWindow::State::~State() = default;
@@ -134,6 +136,43 @@ void ClockWindow::setSnapToEdge(bool enable)
 void ClockWindow::setSnapThreshold(int threshold)
 {
   _impl->snap_threshold = threshold;
+}
+
+void ClockWindow::changeOpacityOnMouseHover(bool enable)
+{
+  _impl->change_opacity_on_hover = enable;
+}
+
+void ClockWindow::setOpacityOnMouseHover(qreal opacity)
+{
+  _impl->opacity_on_hover = opacity;
+}
+
+void ClockWindow::handleMouseMove(const QPoint& global_pos)
+{
+  if (!_impl->change_opacity_on_hover)
+    return;
+
+  bool entered = property("dc_mouse_entered").toBool();
+
+  QRect rect = frameGeometry();
+#ifndef Q_OS_MACOS
+  QTransform t;
+  t.scale(devicePixelRatioF(), devicePixelRatioF());
+  rect = t.mapRect(rect);
+#endif
+  if (rect.contains(global_pos) && !entered) {
+    entered = true;
+    setProperty("dc_orig_opacity", windowOpacity());
+    setWindowOpacity(_impl->opacity_on_hover);
+  }
+
+  if (!rect.contains(global_pos) && entered) {
+    entered = false;
+    setWindowOpacity(property("dc_orig_opacity").toReal());
+  }
+
+  setProperty("dc_mouse_entered", entered);
 }
 
 void ClockWindow::contextMenuEvent(QContextMenuEvent* event)

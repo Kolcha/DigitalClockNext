@@ -14,6 +14,8 @@ void ApplicationPrivate::initCore()
 {
   _time_src = std::make_unique<TimeSource>();
   _skin_manager = std::make_unique<SkinManagerImpl>(this);
+  if (_app_config->global().getChangeOpacityOnMouseHover())
+    _mouse_tracker = std::make_unique<MouseTracker>();
 }
 
 void ApplicationPrivate::initUpdater()

@@ -85,6 +85,7 @@ configure_file(src/version.hpp.in src/version.hpp @ONLY)
 
 add_subdirectory(deps)
 add_subdirectory(dist)
+add_subdirectory(src/app/platform)
 add_subdirectory(src/core)
 add_subdirectory(src/render)
 add_subdirectory(src/settings)

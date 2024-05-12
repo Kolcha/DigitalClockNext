@@ -24,6 +24,7 @@
 #include "app_config.hpp"
 #include "app_state.hpp"
 #include "core/settings.hpp"
+#include "platform/mouse_tracker.hpp"
 
 
 class SkinManager : public QObject
@@ -91,6 +92,7 @@ public:
   inline const auto& time_source() const noexcept { return _time_src; }
   inline const auto& skin_manager() const noexcept { return _skin_manager; }
   inline const auto& settings_manager() const noexcept { return _settings_manager; }
+  inline const auto& mouse_tracker() const noexcept { return _mouse_tracker; }
   inline const auto& update_checker() const noexcept { return _update_checker; }
 
   // windows
@@ -126,6 +128,7 @@ private:
   // clock-specific stuff
   DialogManager<DialogTag> _dialog_manager;
   std::vector<std::unique_ptr<ClockWindow>> _windows;
+  std::unique_ptr<MouseTracker> _mouse_tracker;
   std::unique_ptr<TimeSource> _time_src;
   std::unique_ptr<SkinManager> _skin_manager;
   std::unique_ptr<SettingsManager> _settings_manager;
