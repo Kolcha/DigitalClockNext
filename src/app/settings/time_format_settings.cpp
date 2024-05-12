@@ -74,6 +74,9 @@ TimeFormatSettings::TimeFormatSettings(ClassicSkin* skin, WindowConfig* wcfg, QW
 
     updateTimeFormat();
   }
+  // slot is not called if initial control state matches new state,
+  // but the same logic should be triggered on initialization (regardless of the state)
+  on_use_custom_format_toggled(ui->use_custom_format->isChecked());
 
   ui->custom_seps_label->setEnabled(impl->skin->supportsCustomSeparator());
   ui->custom_seps_edit->setEnabled(impl->skin->supportsCustomSeparator());
