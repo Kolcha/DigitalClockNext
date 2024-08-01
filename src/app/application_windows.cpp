@@ -22,6 +22,16 @@ void ApplicationPrivate::initWindows(QScreen* primary_screen, QList<QScreen*> sc
   std::ranges::for_each(_windows, [this](auto&& wnd) { configureWindow(wnd.get()); });
 }
 
+#ifdef Q_OS_WINDOWS
+void ApplicationPrivate::initStayOnTopHacks()
+{
+  if (!_app_config->global().getStayOnTop()) return;
+  _win_stay_on_top_hacks = std::make_unique<WinStayOnToHacks>();
+  connect(_time_src.get(), &TimeSource::timeChanged, _win_stay_on_top_hacks.get(), &WinStayOnToHacks::apply);
+  std::ranges::for_each(_windows, [this](auto&& wnd) { _win_stay_on_top_hacks->addWindow(wnd.get()); });
+}
+#endif
+
 void ApplicationPrivate::configureWindow(ClockWindow* wnd)
 {
   const std::size_t widx = window_index(wnd);
@@ -91,4 +101,7 @@ void Application::createWindows()
   // for "common" (because cache is shared) 16 MB + 16 MB per window
   QPixmapCache::setCacheLimit((1 + _impl->windows().size()) * 16 * 1024);
   std::ranges::for_each(_impl->windows(), [](auto&& wnd) { wnd->show(); });
+#ifdef Q_OS_WINDOWS
+  _impl->initStayOnTopHacks();
+#endif
 }

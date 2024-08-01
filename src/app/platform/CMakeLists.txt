@@ -10,7 +10,11 @@ target_sources(${PROJECT_NAME} PRIVATE
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_sources(${PROJECT_NAME} PRIVATE
+        win/fullscreen_detect.cpp
+        win/fullscreen_detect.hpp
         win/mouse_tracker.cpp
+        win/stay_on_top_hacks.cpp
+        win/stay_on_top_hacks.hpp
     )
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     target_sources(${PROJECT_NAME} PRIVATE

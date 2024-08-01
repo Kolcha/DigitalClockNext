@@ -25,6 +25,9 @@
 #include "app_state.hpp"
 #include "core/settings.hpp"
 #include "platform/mouse_tracker.hpp"
+#ifdef Q_OS_WINDOWS
+#include "platform/win/stay_on_top_hacks.hpp"
+#endif
 
 
 class SkinManager : public QObject
@@ -97,6 +100,9 @@ public:
 
   // windows
   void initWindows(QScreen* primary_screen, QList<QScreen*> screens);
+#ifdef Q_OS_WINDOWS
+  void initStayOnTopHacks();
+#endif
   void configureWindow(ClockWindow* wnd);
   inline void configureWindow(std::size_t i) { configureWindow(_windows[i].get()); }
 
@@ -134,4 +140,8 @@ private:
   std::unique_ptr<SettingsManager> _settings_manager;
   // updater
   std::unique_ptr<UpdateChecker> _update_checker;
+  // platform-specific hacks
+#ifdef Q_OS_WINDOWS
+  std::unique_ptr<WinStayOnToHacks> _win_stay_on_top_hacks;
+#endif
 };
