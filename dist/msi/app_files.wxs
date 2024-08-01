@@ -4,6 +4,11 @@
 SPDX-FileCopyrightText: 2023 Nick Korotysh <nick.korotysh@gmail.com>
 
 SPDX-License-Identifier: MIT
+
+initial file was generated with the next command:
+
+  heat dir installer_files -indent 2 -gg -cg AllFiles -var var.MySource -srd -scom -sreg -svb6 -nologo -dr INSTALLDIR -out app_files.wxs
+
 -->
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
@@ -56,8 +61,8 @@ SPDX-License-Identifier: MIT
       <Component Id="cmp936AC238E2EA0F51E3BB91C5449A0A76" Directory="dir20F500013C22111CF35E03A6B87810E7" Guid="{ECFDD5D8-FB70-427E-B251-DA61D59CE0D6}">
         <File Id="filE49AA32C8913AE2348C59A5A35510458" KeyPath="yes" Source="$(var.MySource)\plugins\platforms\qwindows.dll" />
       </Component>
-      <Component Id="cmp68C268AEB9787BA2B9E1E5C51ED36AF3" Directory="dirDB2D03FD80E110C5D67A547A8D04CBD3" Guid="{00E7A79C-FFA4-4F08-8790-17EC28E613BB}">
-        <File Id="fil671796BA2B70107DBA0BA618B24C5E80" KeyPath="yes" Source="$(var.MySource)\plugins\styles\qwindowsvistastyle.dll" />
+      <Component Id="cmp573F54D4B8F63DC33F06203764E28F11" Directory="dirDB2D03FD80E110C5D67A547A8D04CBD3" Guid="{64C65303-B4AC-454C-8D32-226A4F480F71}">
+        <File Id="filA3AA6A3273F64F091AAC273083668730" KeyPath="yes" Source="$(var.MySource)\plugins\styles\qmodernwindowsstyle.dll" />
       </Component>
       <Component Id="cmp80E75174A493DF4F7221EE7BB7D63064" Directory="dirF6F536CAC2A521B870028196D039D8E6" Guid="{80241663-2C09-4C3B-9A2A-2BD235CE40E6}">
         <File Id="filEFFDA27E448FAD84740AEA7FE5939725" KeyPath="yes" Source="$(var.MySource)\plugins\tls\qcertonlybackend.dll" />
