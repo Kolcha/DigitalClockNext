@@ -30,7 +30,9 @@ int main(int argc, char *argv[])
   QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
   QApplication::setQuitOnLastWindowClosed(false);
-#ifndef Q_OS_WINDOWS
+#ifdef Q_OS_WINDOWS
+  QApplication::setStyle(u"windowsvista"_s);
+#else
   QApplication::setStyle(u"fusion"_s);
 #endif
   a.init();
