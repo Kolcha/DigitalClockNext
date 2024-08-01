@@ -8,6 +8,7 @@
 #include "ui_app_global_settings.h"
 
 #include "app/application_private.hpp"
+#include "app/platform/autostart.h"
 
 namespace {
 
@@ -42,8 +43,11 @@ AppGlobalSettings::AppGlobalSettings(ApplicationPrivate* app, QWidget* parent)
   , impl(std::make_unique<Impl>(app))
 {
   ui->setupUi(this);
-
+#if defined(Q_OS_WINDOWS) || defined(Q_OS_MACOS)
+  ui->enable_autostart->setChecked(IsAutoStartEnabled());
+#else
   ui->enable_autostart->setVisible(false);  // not implemented
+#endif
   ui->enable_stay_on_top->setChecked(impl->config.getStayOnTop());
   ui->enable_transp_for_input->setChecked(impl->config.getTransparentForMouse());
   ui->enable_snap_to_edge->setChecked(impl->config.getSnapToEdge());
@@ -71,6 +75,12 @@ AppGlobalSettings::~AppGlobalSettings()
 
 void AppGlobalSettings::commit()
 {
+#if defined(Q_OS_WINDOWS) || defined(Q_OS_MACOS)
+  // autostart case is unique
+  if (ui->enable_autostart->isChecked() != IsAutoStartEnabled()) {
+    SetAutoStart(ui->enable_autostart->isChecked());
+  }
+#endif
   if (!impl->resetDirty())
     return;
 

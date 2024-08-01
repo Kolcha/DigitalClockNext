@@ -5,11 +5,13 @@
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_sources(${PROJECT_NAME} PRIVATE
+    autostart.h
     mouse_tracker.hpp
 )
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_sources(${PROJECT_NAME} PRIVATE
+        win/autostart_win.cpp
         win/fullscreen_detect.cpp
         win/fullscreen_detect.hpp
         win/mouse_tracker.cpp
@@ -18,6 +20,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     )
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     target_sources(${PROJECT_NAME} PRIVATE
+        mac/autostart_mac.cpp
         mac/mouse_tracker.mm
     )
 else()
